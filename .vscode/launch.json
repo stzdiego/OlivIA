@@ -1,0 +1,26 @@
+{
+    // Use IntelliSense para saber los atributos posibles.
+    // Mantenga el puntero para ver las descripciones de los existentes atributos.
+    // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Olivia Api",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/Olivia.Api/Olivia.Api.csproj",
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+http://\\S+:([0-9]+)",
+                "uriFormat": "http://localhost:%s/swagger/index.html",
+                "killOnServerStop": true
+            }
+        },
+        {
+            "name": "Olivia.Console",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/Olivia.Console/Olivia.Console.csproj"
+        }
+    ]
+}

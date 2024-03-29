@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.6.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Olivia.Shared\Olivia.Shared.csproj" />
+    <ProjectReference Include="..\Olivia.Services\Olivia.Services.csproj" />
+  </ItemGroup>
+</Project>

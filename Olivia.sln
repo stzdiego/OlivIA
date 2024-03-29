@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olivia.Api", "Olivia.Api\Olivia.Api.csproj", "{188A692E-CE95-44D7-9375-457FB4A6DE4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olivia.Shared", "Olivia.Shared\Olivia.Shared.csproj", "{B4F955F0-335A-4118-9DDF-0CFC0BFCBFD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olivia.AI", "Olivia.AI\Olivia.AI.csproj", "{EE1BC93C-1A99-430A-BFEE-157D1F5350D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olivia.Console", "Olivia.Console\Olivia.Console.csproj", "{3E22CA82-818A-4A16-B8C6-97052FEEB7A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olivia.Services", "Olivia.Services\Olivia.Services.csproj", "{6C90E2DE-D447-4749-8F86-43F5F09E4C36}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olivia.Data", "Olivia.Data\Olivia.Data.csproj", "{B0BF5F2A-5226-40B9-9513-AF8F855F1DBF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{188A692E-CE95-44D7-9375-457FB4A6DE4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{188A692E-CE95-44D7-9375-457FB4A6DE4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{188A692E-CE95-44D7-9375-457FB4A6DE4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{188A692E-CE95-44D7-9375-457FB4A6DE4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4F955F0-335A-4118-9DDF-0CFC0BFCBFD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4F955F0-335A-4118-9DDF-0CFC0BFCBFD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4F955F0-335A-4118-9DDF-0CFC0BFCBFD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4F955F0-335A-4118-9DDF-0CFC0BFCBFD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE1BC93C-1A99-430A-BFEE-157D1F5350D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE1BC93C-1A99-430A-BFEE-157D1F5350D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE1BC93C-1A99-430A-BFEE-157D1F5350D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE1BC93C-1A99-430A-BFEE-157D1F5350D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E22CA82-818A-4A16-B8C6-97052FEEB7A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E22CA82-818A-4A16-B8C6-97052FEEB7A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E22CA82-818A-4A16-B8C6-97052FEEB7A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E22CA82-818A-4A16-B8C6-97052FEEB7A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C90E2DE-D447-4749-8F86-43F5F09E4C36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C90E2DE-D447-4749-8F86-43F5F09E4C36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C90E2DE-D447-4749-8F86-43F5F09E4C36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C90E2DE-D447-4749-8F86-43F5F09E4C36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0BF5F2A-5226-40B9-9513-AF8F855F1DBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0BF5F2A-5226-40B9-9513-AF8F855F1DBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0BF5F2A-5226-40B9-9513-AF8F855F1DBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0BF5F2A-5226-40B9-9513-AF8F855F1DBF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
