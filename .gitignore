@@ -1,5 +1,5 @@
 #AppSettings
-*appsettings.json
+**/appsettings.json
 
 # Created by https://www.toptal.com/developers/gitignore/api/aspnetcore,windows,macos,linux,visualstudiocode,visualstudio,rider
 # Edit at https://www.toptal.com/developers/gitignore?templates=aspnetcore,windows,macos,linux,visualstudiocode,visualstudio,rider
