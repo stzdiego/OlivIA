@@ -20,31 +20,35 @@ public class DoctorsAsistenceController : ControllerBase
 {
     private readonly IConfiguration _config;
     private readonly ILogger<DoctorsAsistenceController> _logger;
-    private readonly OpenAIAgent _asistence;
+    private readonly OpenAIAgent _agent;
     private readonly ChatService _chats;
     private readonly OliviaDbContext _context;
-    private readonly string _prompt;
 
     public DoctorsAsistenceController(IConfiguration configuration, ILogger<DoctorsAsistenceController> logger,
                                OpenAIAgent asistence, ChatService chats, OliviaDbContext context)
     {
         _config = configuration;
         _logger = logger;
-        _asistence = asistence;
         _chats = chats;
         _context = context;
-        _prompt = GetPrompt();
+        _agent = GetAgent();
+    }
 
-        _asistence.AddScoped<ChatService>();
-        _asistence.AddScoped<DoctorService>();
-        _asistence.AddScoped<ProgramationService>();
-        _asistence.AddScoped<IDatabase, DatabaseService>();
-        _asistence.AddDbContext<DbContext, OliviaDbContext>(_context);
-        _asistence.AddPlugin<ProgramationManagerPlugin>();
+    private OpenAIAgent GetAgent()
+    {
+        OpenAIAgent agent = new OpenAIAgent();
+        agent.AddScoped<ChatService>();
+        agent.AddScoped<DoctorService>();
+        agent.AddScoped<ProgramationService>();
+        agent.AddScoped<IDatabase, DatabaseService>();
+        agent.AddDbContext<DbContext, OliviaDbContext>(_context);
+        agent.AddPlugin<ProgramationManagerPlugin>();
 
-        _asistence.Initialize(_config.GetValue<string>("Agents:Reception:Model")!, _config.GetValue<string>("Agents:Reception:Key")!,
+        agent.Initialize(_config.GetValue<string>("Agents:Reception:Model")!, _config.GetValue<string>("Agents:Reception:Key")!,
             _config.GetValue<int>("Agents:Reception:MaxTokens"), _config.GetValue<double>("Agents:Reception:Temperature"),
             _config.GetValue<double>("Agents:Reception:Penalty"));
+
+        return agent;
     }
 
     private string GetPrompt()
@@ -93,14 +97,17 @@ public class DoctorsAsistenceController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("Creating chat");
             var id = await _chats.Create();
-            _logger.LogInformation("Chat created");
+            await _chats.NewMessage(id, MessageTypeEnum.Prompt, string.Format(GetPrompt(), id));
+            var summary = await _chats.GetSummary(id);
+            var response = await _agent.Send(summary);
+            await _chats.NewMessage(id, MessageTypeEnum.Agent, response);
 
-            _logger.LogInformation("Adding prompt to chat");
-            await _chats.NewMessage(id, MessageTypeEnum.Prompt, string.Format(_prompt, id));
-            await _chats.NewMessage(id, MessageTypeEnum.Prompt, "Hoy es: " + DateTime.Now.ToString("dd/MM/yyyy"));
-            return Ok(id);
+            return Ok(new AgentMessageDto
+            {
+                Id = id,
+                Content = "DoctorAgent: " + response
+            });
         }
         catch (Exception ex)
         {
@@ -114,22 +121,21 @@ public class DoctorsAsistenceController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("Adding user message to chat");
+            string response = string.Empty;
+
+            var chat = await _chats.Get(dto.ChatId);
+            if (chat == null) return BadRequest("Chat not found");
+
             await _chats.NewMessage(dto.ChatId, MessageTypeEnum.User, dto.Content);
-
-            _logger.LogInformation("Getting chat summary");
             var summary = await _chats.GetSummary(dto.ChatId);
+            response = await _agent.Send(summary);
 
-            _logger.LogInformation("Sending message to AI");
-            var response = await _asistence.Send(summary);
-
-            _logger.LogInformation("Adding agent message to chat");
             await _chats.NewMessage(dto.ChatId, MessageTypeEnum.Agent, response);
 
             return Ok(new AgentMessageDto
             {
-                Id = Guid.NewGuid(),
-                Content = response
+                Id = dto.ChatId,
+                Content = "DoctorAgent: " + response
             });
         }
         catch (Exception ex)

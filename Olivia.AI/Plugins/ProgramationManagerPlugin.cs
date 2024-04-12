@@ -22,6 +22,13 @@ public class ProgramationManagerPlugin
     }
 
     [KernelFunction]
+    [Description("Obtiene la fecha actual.")]
+    public DateTime GetDate()
+    {
+        return DateTime.Now;
+    }
+
+    [KernelFunction]
     [Description("Obtiene el id del doctor solicitando su numero de identificación.")]
     public async Task<Guid> GetDoctorId(Kernel kernel, long identification)
     {

@@ -112,7 +112,8 @@ namespace Olivia.Services
             try
             {
                 _logger.LogInformation("Getting appointment");
-                var appointments = await _database.Get<Appointment>(x => x.DoctorId == doctorId && x.Date == date);
+                var appointments = await _database
+                .Get<Appointment>(x => x.DoctorId == doctorId && x.Date.Year == date.Year && x.Date.Month == date.Month && x.Date.Day == date.Day);
 
                 if (appointments == null)
                 {

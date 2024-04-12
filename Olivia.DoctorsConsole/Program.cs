@@ -19,9 +19,11 @@ else
     return;
 }
 
-var chatId = await response.Content.ReadFromJsonAsync<Guid>();
+var agentMessageDto = await response.Content.ReadFromJsonAsync<AgentMessageDto>();
 
-Console.WriteLine($"Chat created with id: {chatId}");
+Console.WriteLine($"Chat created with id: {agentMessageDto!.Id}");
+Console.WriteLine(agentMessageDto!.Content);
+
 while(true)
 {
     Console.Write("You: ");
@@ -29,12 +31,13 @@ while(true)
 
     var messageResponse = await client.PostAsJsonAsync("NewMessage", new NewMessageDto
     {
-        ChatId = chatId,
+        ChatId = agentMessageDto.Id,
         Content = message!
     });
 
     var agentMessage = await messageResponse.Content.ReadFromJsonAsync<AgentMessageDto>();
-    chatId = agentMessage!.Id;
-    Console.WriteLine($"Agent: {agentMessage!.Content}");
+
+    Console.WriteLine(agentMessage!.Content);
 }
+
 

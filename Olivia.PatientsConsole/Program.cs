@@ -22,7 +22,7 @@ else
 var agentMessageDto = await response.Content.ReadFromJsonAsync<AgentMessageDto>();
 
 Console.WriteLine($"Chat created with id: {agentMessageDto!.Id}");
-Console.WriteLine("Agent: " + agentMessageDto!.Content);
+Console.WriteLine(agentMessageDto!.Content);
 
 while(true)
 {
@@ -35,8 +35,8 @@ while(true)
         Content = message!
     });
 
-    var agentMessage = await messageResponse.Content.ReadFromJsonAsync<AgentMessageDto>();
+    agentMessageDto = await messageResponse.Content.ReadFromJsonAsync<AgentMessageDto>();
 
-    Console.WriteLine($"Agent: {agentMessage!.Content}");
+    Console.WriteLine(agentMessageDto!.Content);
 }
 

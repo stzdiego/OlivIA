@@ -63,21 +63,6 @@ namespace Olivia.AI.Plugins
             }
         }
 
-        [KernelFunction]
-        [Description("Verificar si un paciente ya esta registrado, retorna un booleano.")]
-        public async Task<bool> CheckPatient(Kernel kernel,
-        [Description("Numero de identificación")] int Identification)
-        {
-            try
-            {
-                return await _patients.Exists(Identification);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw;
-            }
-        }
 
         [KernelFunction]
         [Description("Registrar un nuevo paciente, retorna Guid del paciente registrado. Todos los parametros son requeridos y no pueden ser nulos, vacios o 0.")]
@@ -98,6 +83,11 @@ namespace Olivia.AI.Plugins
                     throw new Exception("El paciente ya esta registrado");
                 }
 
+                if(string.IsNullOrEmpty(name) || string.IsNullOrEmpty(lastName) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(reason))
+                {
+                    throw new Exception("Todos los campos son requeridos");
+                }
+
                 var guid = await _patients.Create(name, lastName, email, phone, reason);
                 await _chats.AsociatePatient(chatId, guid);
                 return guid;
@@ -109,28 +99,6 @@ namespace Olivia.AI.Plugins
             }
         }
 
-        [KernelFunction]
-        [Description("Actualizar la información de un paciente, retorna el objeto paciente. Todos los parametros son requeridos y no pueden ser nulos, vacios o 0.")]
-        public async Task UpdatePatientInformation(
-            Kernel kernel,
-            Guid patientId,
-            [Description("Numero de identificación")] long identification,
-            [Description("Numero de telefono celular")] long phone,
-            [Description("Nombre")] string name,
-            [Description("Apellido")] string lastName,
-            [Description("Correo electronico real")] string email,
-            [Description("Motivo de consulta")] string reason)
-        {
-            try
-            {
-                await _patients.Update(patientId, identification, name, lastName, email, phone, reason);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw;
-            }
-        }
 
         [KernelFunction]
         [Description("Obtener disponibilidad de horas de un doctor, retorna una lista de horas disponibles.")]

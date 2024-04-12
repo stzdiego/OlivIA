@@ -76,17 +76,15 @@ namespace Olivia.Api.Controllers
         private string GetPromptRegister()
         {
             return @"
-            Eres Olivia, una asistente de doctores, tu objetivo es solicitar la información necesaria
-            para registrar un paciente en la base de datos, pide los parametros uno por uno y valida
-            que sean coherentemente correctos.
+            Eres Olivia, una cordial asistente, tu objetivo es solicitar la información necesaria
+            para registrar un paciente en la base de datos.
+            Inicia presentandote cordialmente y continua con la solicitud de parametros.
             Los parametros son: Identificación, Nombre, Apellido, Correo electronico, Telefono celular y razón de consulta.
-            Solicita los parametros de la siguiente forma (Ejemplo): 1. Ingresa tu número de identificación.
-            Solo registraras un paciente por lo cual habla con el en primera persona.
-            No respondas a nada diferente de tu objetivo principal.
-            Inicia presentandote con un saludo cordial y el objetivo de tu asistencia.
+            Debes pedir todos los parametros en el orden indicado antes de registrar al paciente.
+            No vas a enviar información vacia o null y no vas a inventar información de los pacientes.
+            Solicita los parametros de la siguiente forma (Ejemplo): Ingresa tu número de identificación.
             Una vez registrado el paciente, finaliza con un mensaje satisfactorio.
-            El paciente solo se comunicara contigo si no esta registrado en la base de datos, por lo cual 
-            debes insistir en la información necesaria para registrar al paciente y ejecutar el proceso de registro.
+            En tus respuestas no agregues información adicional, como Agent> o Olivia> o RegisterAgent: u otros.
             chatId: {0}
             ";
         }
@@ -94,16 +92,15 @@ namespace Olivia.Api.Controllers
         private string GetPromptPlanner()
         {
             return @"
-            Eres Olivia, una asistente de doctores.
-            Tu objetivo es programar una cita para un paciente registrado en la base de datos.
-            Inicia consultando el paciente registrado en la base de datos utilizando el patientId.
-            Continua consultando la información de los doctores disponibles.
-            En base a la razón de consulta del paciente, recomienda un doctor.
-            Consulta la confirmación del paciente para programar la cita con el doctor recomendado.
-            Una vez confirmado el doctor, consulta la disponibilidad de fechas y horas, para esto debes solicitar la fecha de la cita.
-            Solicita al paciente la fecha y hora de la cita y procede a programarla ejecutando el proceso de regristro de programación.
+            Eres Olivia, una cordial asistente, tu objetivo es brindar información de los doctores y permitir al paciente programar una cita con uno de ellos.
+            No registraras pacientes en la base de datos, solo programaras citas.
+            Consulta el día actual si es necesario, consulta la información del paciente si es necesario y consulta la información de los doctores disponibles.
+            Comparte al paciente la información de los doctores disponibles resumida.
+            Una vez el paciente elija el doctor, pregunta por la fecha y con esto consulta el horario disponible del doctor.
+            Una vez el paciente te confirme la hora, programa la cita y finaliza con un mensaje satisfactorio.
+            
             No respondas a nada diferente de tu objetivo principal.
-            Finaliza con un mensaje satisfactorio y el resumen de la cita programada.
+            En tus respuestas no agregues Agent> o Olivia> o PlannerAgent: u otros.
             chatId: {0}
             patientId: {1}
             ";
@@ -123,7 +120,7 @@ namespace Olivia.Api.Controllers
                 return Ok(new AgentMessageDto
                 {
                     Id = id,
-                    Content = response
+                    Content = "RegisterAgent: " + response
                 });
             }
             catch (Exception ex)
@@ -139,38 +136,41 @@ namespace Olivia.Api.Controllers
             try
             {
                 string response = string.Empty;
+                Guid chatId = dto.ChatId;
 
-                var chat = await _chats.Get(dto.ChatId);
+                var chat = await _chats.Get(chatId);
                 if (chat == null) return BadRequest("Chat not found");
 
-                await _chats.NewMessage(dto.ChatId, MessageTypeEnum.User, dto.Content);
-                var summary = await _chats.GetSummary(dto.ChatId);
+                await _chats.NewMessage(chatId, MessageTypeEnum.User, dto.Content);
+                var summary = await _chats.GetSummary(chatId);
 
                 if (chat.PatientId is null)
                 {
                     response = await _agentRegister!.Send(summary);
+                    response = "RegisterAgent: " + response;
 
                     if(chat.PatientId != null)
                     {
-                        var chatId = await _chats.Create();
-                        await _chats.AsociatePatient(chatId, chat.PatientId.Value);
-                        await _chats.NewMessage(chatId, MessageTypeEnum.Prompt, string.Format(GetPromptPlanner(), chatId, chat.PatientId));
-                        var summaryPlanner = await _chats.GetSummary(chatId);
+                        var newChatId = await _chats.Create();
+                        await _chats.AsociatePatient(newChatId, chat.PatientId.Value);
+                        await _chats.NewMessage(newChatId, MessageTypeEnum.Prompt, string.Format(GetPromptPlanner(), newChatId, chat.PatientId));
+                        var summaryPlanner = await _chats.GetSummary(newChatId);
                         response = await _agentPlanner!.Send(summaryPlanner);
-                        dto.ChatId = chatId;
-                        dto.Content = response;
+                        response = "PlannerAgent: " + response;
+                        chatId = newChatId;
                     }
                 }
                 else
                 {
                     response = await _agentPlanner!.Send(summary);
+                    response = "PlannerAgent: " + response;
                 }
 
                 await _chats.NewMessage(dto.ChatId, MessageTypeEnum.Agent, response);
 
                 return Ok(new AgentMessageDto
                 {
-                    Id = dto.ChatId,
+                    Id = chatId,
                     Content = response
                 });
             }
