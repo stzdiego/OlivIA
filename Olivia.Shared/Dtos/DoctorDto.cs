@@ -20,5 +20,9 @@ namespace Olivia.Shared.Dtos
         public required string Speciality { get; set; }
 
         public required string Information { get; set; }
+
+        public required TimeSpan Start { get; set; }
+
+        public required TimeSpan End { get; set; }
     }
 }

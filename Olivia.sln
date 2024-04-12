@@ -9,11 +9,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olivia.Shared", "Olivia.Sha
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olivia.AI", "Olivia.AI\Olivia.AI.csproj", "{EE1BC93C-1A99-430A-BFEE-157D1F5350D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olivia.Console", "Olivia.Console\Olivia.Console.csproj", "{3E22CA82-818A-4A16-B8C6-97052FEEB7A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olivia.PatientsConsole", "Olivia.PatientsConsole\Olivia.PatientsConsole.csproj", "{3E22CA82-818A-4A16-B8C6-97052FEEB7A1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olivia.Services", "Olivia.Services\Olivia.Services.csproj", "{6C90E2DE-D447-4749-8F86-43F5F09E4C36}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olivia.Data", "Olivia.Data\Olivia.Data.csproj", "{B0BF5F2A-5226-40B9-9513-AF8F855F1DBF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olivia.DoctorsConsole", "Olivia.DoctorsConsole\Olivia.DoctorsConsole.csproj", "{6531347E-1EE6-42BE-8C14-47770C3FB82B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olivia.Tests", "Olivia.Tests\Olivia.Tests.csproj", "{DFC23274-4747-4C32-AFF9-2BC962F65306}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,5 +52,13 @@ Global
 		{B0BF5F2A-5226-40B9-9513-AF8F855F1DBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0BF5F2A-5226-40B9-9513-AF8F855F1DBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0BF5F2A-5226-40B9-9513-AF8F855F1DBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6531347E-1EE6-42BE-8C14-47770C3FB82B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6531347E-1EE6-42BE-8C14-47770C3FB82B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6531347E-1EE6-42BE-8C14-47770C3FB82B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6531347E-1EE6-42BE-8C14-47770C3FB82B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFC23274-4747-4C32-AFF9-2BC962F65306}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFC23274-4747-4C32-AFF9-2BC962F65306}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFC23274-4747-4C32-AFF9-2BC962F65306}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFC23274-4747-4C32-AFF9-2BC962F65306}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

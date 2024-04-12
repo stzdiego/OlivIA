@@ -16,15 +16,13 @@ using Microsoft.EntityFrameworkCore;
 namespace Olivia.AI.Agents;
 public class OpenAIAgent
 {
-    private readonly ILogger<OpenAIAgent> _logger;
     private IKernelBuilder? _builder;
     private OpenAIPromptExecutionSettings? _settings;
     private Kernel? _kernel;
     private IChatCompletionService? _chatCompletionService;
 
-    public OpenAIAgent(ILogger<OpenAIAgent> logger)
+    public OpenAIAgent()
     {
-        _logger = logger;
         _builder = Kernel.CreateBuilder();
     }
 
@@ -36,7 +34,7 @@ public class OpenAIAgent
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            Console.WriteLine(ex.Message);
         }
     }
 
@@ -48,7 +46,7 @@ public class OpenAIAgent
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            Console.WriteLine(ex.Message);
         }
     }
 
@@ -60,7 +58,7 @@ public class OpenAIAgent
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            Console.WriteLine(ex.Message);
         }
     }
 
@@ -72,7 +70,7 @@ public class OpenAIAgent
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            Console.WriteLine(ex.Message);
         }
     }
 
@@ -86,7 +84,7 @@ public class OpenAIAgent
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            Console.WriteLine(ex.Message);
         }
     }
 
@@ -108,7 +106,7 @@ public class OpenAIAgent
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            Console.WriteLine(ex.Message);
         }
     }
 
@@ -126,7 +124,7 @@ public class OpenAIAgent
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            Console.WriteLine(ex.Message);
             throw;
         }
     }

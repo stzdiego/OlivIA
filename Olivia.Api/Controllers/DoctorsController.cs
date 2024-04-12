@@ -61,7 +61,8 @@ namespace Olivia.Api.Controllers
             try
             {
                 _logger.LogInformation("Creating doctor");
-                var id = await _doctors.Create(doctor.Identification, doctor.Name, doctor.LastName, doctor.Email, doctor.Phone, doctor.Speciality, doctor.Information);
+                var id = await _doctors.Create(doctor.Identification, doctor.Name, doctor.LastName, doctor.Email, 
+                doctor.Phone, doctor.Speciality, doctor.Information, doctor.Start, doctor.End);
                 return Ok(id);
             }
             catch (Exception ex)

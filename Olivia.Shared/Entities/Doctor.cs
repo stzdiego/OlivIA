@@ -24,5 +24,11 @@ namespace Olivia.Shared.Entities
         public required string Speciality { get; set; }
 
         public required string Information { get; set; }
+
+        public required TimeSpan Start { get; set; } = new TimeSpan(8, 0, 0);
+
+        public required TimeSpan End { get; set; } = new TimeSpan(18, 0, 0);
+
+        public required bool Available { get; set; } = true;
     }
 }

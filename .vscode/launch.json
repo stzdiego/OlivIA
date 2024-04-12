@@ -17,10 +17,16 @@
             }
         },
         {
-            "name": "Olivia.Console",
+            "name": "Patients Console",
             "type": "dotnet",
             "request": "launch",
-            "projectPath": "${workspaceFolder}/Olivia.Console/Olivia.Console.csproj"
+            "projectPath": "${workspaceFolder}/Olivia.PatientsConsole/Olivia.PatientsConsole.csproj"
+        },
+        {
+            "name": "Doctors Console",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/Olivia.DoctorsConsole/Olivia.DoctorsConsole.csproj"
         }
     ]
 }

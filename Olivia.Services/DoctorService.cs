@@ -15,7 +15,8 @@ public class DoctorService
         _logger = logger;
     }
 
-    public async Task<Guid> Create(long identification, string name, string lastName, string email, long phone, string speciality, string information)
+    public async Task<Guid> Create(long identification, string name, string lastName, string email, long phone, 
+    string speciality, string information, TimeSpan start, TimeSpan end)
     {
         try
         {
@@ -28,7 +29,10 @@ public class DoctorService
                 Email = email,
                 Phone = phone,
                 Speciality = speciality,
-                Information = information
+                Information = information,
+                Start = start,
+                End = end,
+                Available = true
             };
 
             await _database.Add(doctor);
@@ -102,12 +106,56 @@ public class DoctorService
         }
     }
 
+    public async Task<IEnumerable<Doctor>?> GetAvailable()
+    {
+        try
+        {
+            _logger.LogInformation("Getting available doctors");
+            var doctors = await _database.Get<Doctor>(x => x.Available == true);
+            
+            if (doctors == null)
+            {
+                _logger.LogWarning("No doctors available");
+                return null;
+            }
+
+            return doctors;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
+    }
+
     public async Task<Doctor> Find(Guid id)
     {
         try
         {
             _logger.LogInformation("Finding doctor");
             var doctor = await _database.Find<Doctor>(x => x.Id == id);
+
+            if (doctor == null)
+            {
+                _logger.LogError("Doctor not found");
+                throw new Exception("Doctor not found");
+            }
+
+            return doctor;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<Doctor> Find(long identification)
+    {
+        try
+        {
+            _logger.LogInformation("Finding doctor");
+            var doctor = await _database.Find<Doctor>(x => x.Identification == identification);
 
             if (doctor == null)
             {

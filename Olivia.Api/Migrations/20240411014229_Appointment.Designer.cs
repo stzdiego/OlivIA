@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Olivia.Data;
 
@@ -10,9 +11,11 @@ using Olivia.Data;
 namespace Olivia.Api.Migrations
 {
     [DbContext(typeof(OliviaDbContext))]
-    partial class OliviaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240411014229_Appointment")]
+    partial class Appointment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
@@ -79,14 +82,8 @@ namespace Olivia.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Available")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<TimeSpan>("End")
                         .HasColumnType("TEXT");
 
                     b.Property<long>("Identification")
@@ -109,9 +106,6 @@ namespace Olivia.Api.Migrations
 
                     b.Property<string>("Speciality")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<TimeSpan>("Start")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

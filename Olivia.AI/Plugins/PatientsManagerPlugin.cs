@@ -14,12 +14,53 @@ namespace Olivia.AI.Plugins
     public class PatientsManagerPlugin
     {
         private readonly PatientService _patients;
+        private readonly DoctorService _doctors;
         private readonly ChatService _chats;
+        private readonly ProgramationService _programations;
 
-        public PatientsManagerPlugin(PatientService patients, ChatService chats)
+        public PatientsManagerPlugin(PatientService patients, ChatService chats, ProgramationService programations, DoctorService doctors)
         {
             _patients = patients;
             _chats = chats;
+            _programations = programations;
+            _doctors = doctors;
+        }
+
+        [KernelFunction]
+        [Description("Obtiene la fecha actual.")]
+        public DateTime GetDate()
+        {
+            return DateTime.Now;
+        }
+
+        [KernelFunction]
+        [Description("Obtiene la información del paciente, requiere el patientId, retorna un objeto paciente.")]
+        public async Task<Patient?> GetPatient(Guid patientId)
+        {
+            try
+            {
+                return await _patients.Find(patientId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        [KernelFunction]
+        [Description("Obtiene información de los doctores disponibles, retorna una lista de doctores.")]
+        public async Task<IEnumerable<Doctor>?> GetDoctors()
+        {
+            try
+            {
+                return await _doctors.GetAvailable();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
         }
 
         [KernelFunction]
@@ -70,7 +111,7 @@ namespace Olivia.AI.Plugins
 
         [KernelFunction]
         [Description("Actualizar la información de un paciente, retorna el objeto paciente. Todos los parametros son requeridos y no pueden ser nulos, vacios o 0.")]
-        public async Task UpdatePatient(
+        public async Task UpdatePatientInformation(
             Kernel kernel,
             Guid patientId,
             [Description("Numero de identificación")] long identification,
@@ -91,5 +132,47 @@ namespace Olivia.AI.Plugins
             }
         }
 
+        [KernelFunction]
+        [Description("Obtener disponibilidad de horas de un doctor, retorna una lista de horas disponibles.")]
+        public async Task<IEnumerable<TimeSpan>> GetAvailableHours(
+            Kernel kernel,
+            Guid doctorId,
+            [Description("Fecha de la cita")] DateTime date)
+        {
+            try
+            {
+                if(date.Date < DateTime.Now.Date)
+                {
+                    throw new Exception("La fecha de la cita no puede ser menor a la fecha actual");
+                }
+
+                return await _programations.GetAvailableHours(doctorId, date);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        [KernelFunction]
+        [Description("Registra cita para un paciente, retorna Guid de la cita. Todos los parametros son requeridos y no pueden ser nulos, vacios o 0.")]
+        public async Task<Guid> RegisterAppointment(
+            Kernel kernel,
+            Guid patientId,
+            Guid doctorId,
+            [Description("Fecha y hora de la cita")] DateTime date,
+            [Description("Motivo de la cita")] string reason)
+        {
+            try
+            {
+                return await _programations.CreateAppointment(doctorId, patientId, date, reason);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
     }
 }

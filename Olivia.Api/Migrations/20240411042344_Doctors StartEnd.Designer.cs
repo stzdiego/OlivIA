@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Olivia.Data;
 
@@ -10,9 +11,11 @@ using Olivia.Data;
 namespace Olivia.Api.Migrations
 {
     [DbContext(typeof(OliviaDbContext))]
-    partial class OliviaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240411042344_Doctors StartEnd")]
+    partial class DoctorsStartEnd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
@@ -78,9 +81,6 @@ namespace Olivia.Api.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
-
-                    b.Property<bool>("Available")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Email")
                         .IsRequired()

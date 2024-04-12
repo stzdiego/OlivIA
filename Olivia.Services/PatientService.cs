@@ -78,4 +78,18 @@ public class PatientService
             throw;
         }
     }
+
+    public async Task<Patient?> Find(Guid id)
+    {
+        try
+        {
+            _logger.LogInformation("Finding patient");
+            return await _database.Find<Patient>(x => x.Id == id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
+    }
 }

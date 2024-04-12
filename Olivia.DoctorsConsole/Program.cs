@@ -3,7 +3,8 @@ using Olivia.Shared.Dtos;
 
 HttpClient client = new HttpClient()
 {
-    BaseAddress = new Uri("http://localhost:5146/api/Asistence/")
+    BaseAddress = new Uri("http://localhost:5146/api/DoctorsAsistence/"),
+    Timeout = TimeSpan.FromMinutes(5)
 };
 
 var response = await client.PostAsJsonAsync("Initialize", new {});
@@ -33,7 +34,7 @@ while(true)
     });
 
     var agentMessage = await messageResponse.Content.ReadFromJsonAsync<AgentMessageDto>();
-
+    chatId = agentMessage!.Id;
     Console.WriteLine($"Agent: {agentMessage!.Content}");
 }
 

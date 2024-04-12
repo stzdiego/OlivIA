@@ -23,11 +23,13 @@ builder.Services.AddDbContext<DbContext ,OliviaDbContext>(
 builder.Services.AddScoped<PatientService>();
 builder.Services.AddScoped<ChatService>();
 builder.Services.AddScoped<DoctorService>();
+builder.Services.AddScoped<ProgramationService>();
 builder.Services.AddScoped<IDatabase, DatabaseService>();
 
 //Plugins
 builder.Services.AddScoped<PatientsManagerPlugin>();
 builder.Services.AddScoped<DoctorsManagerPlugin>();
+builder.Services.AddScoped<ProgramationManagerPlugin>();
 
 //Agents
 builder.Services.AddScoped<OpenAIAgent>();
