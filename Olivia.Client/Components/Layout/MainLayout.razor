@@ -1,0 +1,44 @@
+﻿@inherits LayoutComponentBase
+
+<RadzenLayout>
+    <RadzenHeader Style="padding: 0.8rem 0.5rem 0rem 0.5rem;">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
+            JustifyContent="JustifyContent.SpaceBetween" Gap="0">
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0">
+                <RadzenText TextStyle="TextStyle.H5" Text="Olivia" Style="color: white;" />
+            </RadzenStack>
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0">
+                <RadzenText TextStyle="TextStyle.Overline" Text="Medical assistant" Style="color: white;" />
+            </RadzenStack>
+        </RadzenStack>
+    </RadzenHeader>
+
+    <RadzenSidebar Style="padding: 0.5rem 0.5rem 0rem 0.5rem;">
+        <RadzenStack>
+            <RadzenButton Text="New chat" Variant="Variant.Outlined" Shade="Shade.Lighter" />
+            <RadzenText TextStyle="TextStyle.Caption" Text="Chats" />
+        </RadzenStack>
+    </RadzenSidebar>
+
+    <RadzenBody>
+        <RadzenStack Style="height: 100%;">
+            <ChatDescription />
+            <MessageViewer />
+            <MessageSender />
+        </RadzenStack>
+    </RadzenBody>
+
+    <RadzenFooter Style="background-color: rgb(230, 230, 230);">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
+            JustifyContent="JustifyContent.SpaceBetween" Gap="0">
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0">
+                <RadzenText TextStyle="TextStyle.Caption" Text="© 2024 Olivia" />
+            </RadzenStack>
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0">
+                <RadzenText TextStyle="TextStyle.Caption" Text="v0.0.1" />
+            </RadzenStack>
+        </RadzenStack>
+    </RadzenFooter>
+</RadzenLayout>
+
+<RadzenComponents />

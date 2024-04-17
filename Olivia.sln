@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olivia.DoctorsConsole", "Ol
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olivia.Tests", "Olivia.Tests\Olivia.Tests.csproj", "{DFC23274-4747-4C32-AFF9-2BC962F65306}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olivia.Client", "Olivia.Client\Olivia.Client.csproj", "{C45336DD-F625-4F8C-95DA-B913F974ED8B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,5 +62,9 @@ Global
 		{DFC23274-4747-4C32-AFF9-2BC962F65306}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFC23274-4747-4C32-AFF9-2BC962F65306}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFC23274-4747-4C32-AFF9-2BC962F65306}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C45336DD-F625-4F8C-95DA-B913F974ED8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C45336DD-F625-4F8C-95DA-B913F974ED8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C45336DD-F625-4F8C-95DA-B913F974ED8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C45336DD-F625-4F8C-95DA-B913F974ED8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -5,7 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Olivia Api",
+            "name": "Client",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/Olivia.Client/Olivia.Client.csproj",
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+http://\\S+:([0-9]+)",
+                "uriFormat": "http://localhost:%s",
+                "killOnServerStop": true
+            }
+        },
+        {
+            "name": "Api",
             "type": "dotnet",
             "request": "launch",
             "projectPath": "${workspaceFolder}/Olivia.Api/Olivia.Api.csproj",

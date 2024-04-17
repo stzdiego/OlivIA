@@ -1,0 +1,30 @@
+<RadzenStack JustifyContent="JustifyContent.SpaceBetween">
+    <RadzenStack>
+        @foreach (var message in messages)
+        {
+            <RadzenStack>
+                <RadzenText>@message.Text</RadzenText>
+                <RadzenText TextStyle="TextStyle.Caption" Text="@message.Date.ToShortDateString()" />
+            </RadzenStack>
+        }
+    </RadzenStack>
+
+    <RadzenText TextStyle="TextStyle.Overline" Text="Writing..." />
+</RadzenStack>
+
+
+@code {
+    private List<Message> messages = new List<Message>();
+
+    protected override void OnInitialized()
+    {
+        messages.Add(new Message { Text = "Hello!", Date = DateTime.Now });
+        messages.Add(new Message { Text = "How can I help you?", Date = DateTime.Now });
+    }
+
+    public class Message
+    {
+        public string Text { get; set; } = string.Empty;
+        public DateTime Date { get; set; }
+    }
+}
