@@ -1,30 +1,72 @@
-<RadzenStack JustifyContent="JustifyContent.SpaceBetween">
+<RadzenStack class="@Class" JustifyContent="JustifyContent.SpaceBetween">
     <RadzenStack>
         @foreach (var message in messages)
         {
-            <RadzenStack>
-                <RadzenText>@message.Text</RadzenText>
-                <RadzenText TextStyle="TextStyle.Caption" Text="@message.Date.ToShortDateString()" />
-            </RadzenStack>
+            @if (message.IsMine)
+            {
+                <RadzenStack class="message-list-item-is-mine" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+                    <RadzenText TextStyle="TextStyle.Body2">@message.Text</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Caption" Text="@message.Date.ToString("HH:mm")" Style="color: gray;" />
+                </RadzenStack>
+            }
+            else
+            {
+                <RadzenStack class="message-list-item" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+                    <RadzenText TextStyle="TextStyle.Body2">@message.Text</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Caption" Text="@message.Date.ToString("HH:mm")" Style="color: gray;" />
+                </RadzenStack>
+            }
+
         }
     </RadzenStack>
-
-    <RadzenText TextStyle="TextStyle.Overline" Text="Writing..." />
 </RadzenStack>
 
+<style>
+    .message-list-item-is-mine {
+        padding: 0.5rem;
+        border-radius: 0.3rem;
+        background-color: rgb(230, 230, 230);
+        margin: 0.3rem;
+        align-self: flex-start;
+        flex-wrap: wrap;
+        max-width: 70%;
+    }
+
+    .message-list-item {
+        padding: 0.5rem;
+        border-radius: 0.3rem;
+        background-color: rgb(255, 255, 255);
+        margin: 0.3rem;
+        align-self: flex-end;
+        flex-wrap: wrap;
+        max-width: 70%;
+    }
+</style>
 
 @code {
+    [Parameter]
+    public string Class { get; set; } = string.Empty;
+
     private List<Message> messages = new List<Message>();
 
     protected override void OnInitialized()
     {
-        messages.Add(new Message { Text = "Hello!", Date = DateTime.Now });
-        messages.Add(new Message { Text = "How can I help you?", Date = DateTime.Now });
+        messages.Add(new Message { Text = "Hello!", Date = DateTime.Now, IsMine = true});
+        messages.Add(new Message { Text = "How can I help you?", Date = DateTime.Now, IsMine = false});
+        messages.Add(new Message { Text = "I have a headache", Date = DateTime.Now, IsMine = true});
+        messages.Add(new Message { Text = "I'm sorry to hear that. I can help you with that.", Date = DateTime.Now, IsMine = false});
+        messages.Add(new Message { Text = "Thank you!", Date = DateTime.Now, IsMine = true});
+        messages.Add(new Message { Text = "You're welcome!", Date = DateTime.Now, IsMine = false});
+        messages.Add(new Message { Text = "Goodbye!", Date = DateTime.Now, IsMine = true});
+        messages.Add(new Message { Text = "Goodbye!", Date = DateTime.Now, IsMine = false});
+        messages.Add(new Message { Text = "Goodbye!", Date = DateTime.Now, IsMine = true});
+        messages.Add(new Message { Text = "Test information anchor WWWWWWWXXXXXXXXXXXXXXXXXXXXXXXXXXXCCCCc D D DDFFFFFFEF EF EF EF EFE FEF EF EF EF", Date = DateTime.Now, IsMine = false});
     }
 
     public class Message
     {
         public string Text { get; set; } = string.Empty;
         public DateTime Date { get; set; }
+        public bool IsMine { get; set; }
     }
 }

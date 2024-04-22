@@ -14,18 +14,18 @@
     </RadzenHeader>
 
     <RadzenSidebar Style="padding: 0.5rem 0.5rem 0rem 0.5rem;">
-        <RadzenStack>
+        <RadzenStack Gap="0.3rem">
             <RadzenButton Text="New chat" Variant="Variant.Outlined" Shade="Shade.Lighter" />
             <RadzenText TextStyle="TextStyle.Caption" Text="Chats" />
+            <ChatList />
         </RadzenStack>
     </RadzenSidebar>
 
-    <RadzenBody>
-        <RadzenStack Style="height: 100%;">
-            <ChatDescription />
-            <MessageViewer />
-            <MessageSender />
-        </RadzenStack>
+    <RadzenBody class="chat-information">
+        <ChatDescription Class="chat-information-header" />
+        <MessageViewer Class="chat-information-messages" />
+        <ChatStatusReponse Class="chat-information-sender" />
+        <MessageSender Class="chat-information-sender" />
     </RadzenBody>
 
     <RadzenFooter Style="background-color: rgb(230, 230, 230);">
@@ -42,3 +42,26 @@
 </RadzenLayout>
 
 <RadzenComponents />
+
+<style>
+    .chat-information {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: 0;
+    }
+
+    .chat-information-header,
+    .chat-information-sender {
+        background-color: #f0f0f0;
+        border-bottom: 1px solid #ccc;
+        padding: 0.7rem;
+        
+    }
+
+    .chat-information-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+    }
+</style>
