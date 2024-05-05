@@ -7,9 +7,9 @@ HttpClient client = new HttpClient()
     Timeout = TimeSpan.FromMinutes(5)
 };
 
-var response = await client.PostAsJsonAsync("Initialize", new {});
+var response = await client.PostAsJsonAsync("Initialize", new { });
 
-if(response.IsSuccessStatusCode)
+if (response.IsSuccessStatusCode)
 {
     Console.WriteLine("Olivia initialized");
 }
@@ -24,7 +24,7 @@ var agentMessageDto = await response.Content.ReadFromJsonAsync<AgentMessageDto>(
 Console.WriteLine($"Chat created with id: {agentMessageDto!.Id}");
 Console.WriteLine(agentMessageDto!.Content);
 
-while(true)
+while (true)
 {
     Console.Write("You: ");
     var message = Console.ReadLine();

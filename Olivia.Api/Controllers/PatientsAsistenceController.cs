@@ -1,39 +1,42 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Olivia.AI.Agents;
-using Olivia.AI.Plugins;
-using Olivia.Data;
-using Olivia.Services;
-using Olivia.Shared.Dtos;
-using Olivia.Shared.Enums;
-using Olivia.Shared.Interfaces;
+// Copyright (c) Olivia Inc.. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace Olivia.Api.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using Olivia.AI.Agents;
+    using Olivia.AI.Plugins;
+    using Olivia.Data;
+    using Olivia.Services;
+    using Olivia.Shared.Dtos;
+    using Olivia.Shared.Enums;
+    using Olivia.Shared.Interfaces;
+
     [ApiController]
     [Route("api/[controller]")]
     public class PatientsAsistenceController : ControllerBase
     {
-        private readonly IConfiguration _config;
-        private readonly ILogger<PatientsAsistenceController> _logger;
-        private readonly OpenAIAgent _agentRegister;
-        private readonly OpenAIAgent _agentPlanner;
-        private readonly ChatService _chats;
-        private readonly OliviaDbContext _context;
+        private readonly IConfiguration config;
+        private readonly ILogger<PatientsAsistenceController> logger;
+        private readonly OpenAIAgent agentRegister;
+        private readonly OpenAIAgent agentPlanner;
+        private readonly ChatService chats;
+        private readonly OliviaDbContext context;
 
         public PatientsAsistenceController(IConfiguration configuration, ILogger<PatientsAsistenceController> logger,
                                            ChatService chats, OliviaDbContext context)
         {
-            _config = configuration;
-            _logger = logger;
-            _chats = chats;
-            _context = context;
-            _agentRegister = GetRegisterAgent();
-            _agentPlanner = GetPlannerAgent();
+            this.config = configuration;
+            this.logger = logger;
+            this.chats = chats;
+            this.context = context;
+            this.agentRegister = this.GetRegisterAgent();
+            this.agentPlanner = this.GetPlannerAgent();
         }
 
         private OpenAIAgent GetRegisterAgent()
@@ -44,12 +47,12 @@ namespace Olivia.Api.Controllers
             agent.AddScoped<DoctorService>();
             agent.AddScoped<ProgramationService>();
             agent.AddScoped<IDatabase, DatabaseService>();
-            agent.AddDbContext<DbContext, OliviaDbContext>(_context);
+            agent.AddDbContext<DbContext, OliviaDbContext>(this.context);
             agent.AddPlugin<PatientsManagerPlugin>();
 
-            agent.Initialize(_config.GetValue<string>("Agents:Reception:Model")!, _config.GetValue<string>("Agents:Reception:Key")!,
-                _config.GetValue<int>("Agents:Reception:MaxTokens"), _config.GetValue<double>("Agents:Reception:Temperature"),
-                _config.GetValue<double>("Agents:Reception:Penalty"));
+            agent.Initialize(this.config.GetValue<string>("Agents:Reception:Model") !, this.config.GetValue<string>("Agents:Reception:Key") !,
+                this.config.GetValue<int>("Agents:Reception:MaxTokens"), this.config.GetValue<double>("Agents:Reception:Temperature"),
+                this.config.GetValue<double>("Agents:Reception:Penalty"));
 
             return agent;
         }
@@ -62,16 +65,15 @@ namespace Olivia.Api.Controllers
             agent.AddScoped<DoctorService>();
             agent.AddScoped<ProgramationService>();
             agent.AddScoped<IDatabase, DatabaseService>();
-            agent.AddDbContext<DbContext, OliviaDbContext>(_context);
+            agent.AddDbContext<DbContext, OliviaDbContext>(this.context);
             agent.AddPlugin<PatientsManagerPlugin>();
 
-            agent.Initialize(_config.GetValue<string>("Agents:Reception:Model")!, _config.GetValue<string>("Agents:Reception:Key")!,
-                _config.GetValue<int>("Agents:Reception:MaxTokens"), _config.GetValue<double>("Agents:Reception:Temperature"),
-                _config.GetValue<double>("Agents:Reception:Penalty"));
+            agent.Initialize(this.config.GetValue<string>("Agents:Reception:Model") !, this.config.GetValue<string>("Agents:Reception:Key") !,
+                this.config.GetValue<int>("Agents:Reception:MaxTokens"), this.config.GetValue<double>("Agents:Reception:Temperature"),
+                this.config.GetValue<double>("Agents:Reception:Penalty"));
 
             return agent;
         }
-
 
         private string GetPromptRegister()
         {
@@ -111,22 +113,22 @@ namespace Olivia.Api.Controllers
         {
             try
             {
-                var id = await _chats.Create();
-                await _chats.NewMessage(id, MessageTypeEnum.Prompt, string.Format(GetPromptRegister(), id));
-                var summary = await _chats.GetSummary(id);
-                var response = await _agentRegister.Send(summary);
-                await _chats.NewMessage(id, MessageTypeEnum.Agent, response);
+                var id = await this.chats.Create();
+                await this.chats.NewMessage(id, MessageTypeEnum.Prompt, string.Format(this.GetPromptRegister(), id));
+                var summary = await this.chats.GetSummary(id);
+                var response = await this.agentRegister.Send(summary);
+                await this.chats.NewMessage(id, MessageTypeEnum.Agent, response);
 
-                return Ok(new AgentMessageDto
+                return this.Ok(new AgentMessageDto
                 {
                     Id = id,
-                    Content = "RegisterAgent: " + response
+                    Content = "RegisterAgent: " + response,
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
-                return BadRequest(ex.Message);
+                this.logger.LogError(ex, ex.Message);
+                return this.BadRequest(ex.Message);
             }
         }
 
@@ -138,46 +140,49 @@ namespace Olivia.Api.Controllers
                 string response = string.Empty;
                 Guid chatId = dto.ChatId;
 
-                var chat = await _chats.Get(chatId);
-                if (chat == null) return BadRequest("Chat not found");
+                var chat = await this.chats.Get(chatId);
+                if (chat == null)
+                {
+                    return this.BadRequest("Chat not found");
+                }
 
-                await _chats.NewMessage(chatId, MessageTypeEnum.User, dto.Content);
-                var summary = await _chats.GetSummary(chatId);
+                await this.chats.NewMessage(chatId, MessageTypeEnum.User, dto.Content);
+                var summary = await this.chats.GetSummary(chatId);
 
                 if (chat.PatientId is null)
                 {
-                    response = await _agentRegister!.Send(summary);
+                    response = await this.agentRegister!.Send(summary);
                     response = "RegisterAgent: " + response;
 
-                    if(chat.PatientId != null)
+                    if (chat.PatientId != null)
                     {
-                        var newChatId = await _chats.Create();
-                        await _chats.AsociatePatient(newChatId, chat.PatientId.Value);
-                        await _chats.NewMessage(newChatId, MessageTypeEnum.Prompt, string.Format(GetPromptPlanner(), newChatId, chat.PatientId));
-                        var summaryPlanner = await _chats.GetSummary(newChatId);
-                        response = await _agentPlanner!.Send(summaryPlanner);
+                        var newChatId = await this.chats.Create();
+                        await this.chats.AsociatePatient(newChatId, chat.PatientId.Value);
+                        await this.chats.NewMessage(newChatId, MessageTypeEnum.Prompt, string.Format(this.GetPromptPlanner(), newChatId, chat.PatientId));
+                        var summaryPlanner = await this.chats.GetSummary(newChatId);
+                        response = await this.agentPlanner!.Send(summaryPlanner);
                         response = "PlannerAgent: " + response;
                         chatId = newChatId;
                     }
                 }
                 else
                 {
-                    response = await _agentPlanner!.Send(summary);
+                    response = await this.agentPlanner!.Send(summary);
                     response = "PlannerAgent: " + response;
                 }
 
-                await _chats.NewMessage(dto.ChatId, MessageTypeEnum.Agent, response);
+                await this.chats.NewMessage(dto.ChatId, MessageTypeEnum.Agent, response);
 
-                return Ok(new AgentMessageDto
+                return this.Ok(new AgentMessageDto
                 {
                     Id = chatId,
-                    Content = response
+                    Content = response,
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
-                return BadRequest(ex.Message);
+                this.logger.LogError(ex, ex.Message);
+                return this.BadRequest(ex.Message);
             }
         }
 
@@ -186,23 +191,23 @@ namespace Olivia.Api.Controllers
         {
             try
             {
-                _logger.LogInformation("Getting chat");
-                var chat = await _chats.Get(dto.Id);
+                this.logger.LogInformation("Getting chat");
+                var chat = await this.chats.Get(dto.Id);
 
-                _logger.LogInformation("Getting chat messages");
-                var messages = await _chats.GetMessages(dto.Id);
+                this.logger.LogInformation("Getting chat messages");
+                var messages = await this.chats.GetMessages(dto.Id);
 
-                return Ok(new ResumeDto
+                return this.Ok(new ResumeDto
                 {
                     ChatId = chat.Id,
                     Chat = chat,
-                    Messages = messages.OrderBy(x => x.CreatedAt)
+                    Messages = messages.OrderBy(x => x.CreatedAt),
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
-                return BadRequest(ex.Message);
+                this.logger.LogError(ex, ex.Message);
+                return this.BadRequest(ex.Message);
             }
         }
     }

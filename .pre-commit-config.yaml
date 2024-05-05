@@ -1,0 +1,98 @@
+# Este es el repositorio de donde se obtiene el hook para formatear el código .NET
+repos:
+  - repo: https://github.com/dotnet/format
+    # Esta es la versión del hook que se está utilizando
+    rev: v8.0.453106
+    hooks:
+      # Este hook formatea el código .NET antes de cada commit
+      - id: dotnet-format
+        name: Format .NET project
+
+  # Estos son hooks locales, definidos específicamente para este repositorio
+  - repo: local
+    hooks:
+      # Este hook construye el proyecto Shared antes de cada commit
+      - id: dotnet-build-shared
+        name: Build Olivia.Shared
+        entry: dotnet build ./Olivia.Shared/Olivia.Shared.csproj
+        language: system
+        # Este hook se ejecuta solo cuando se modifican los archivos .cs en el directorio ApiCreditSimulator.Shared
+        files: '^Olivia\.Shared/.*\.cs$'
+        pass_filenames: false
+
+      # Este hook construye el proyecto Services antes de cada commit
+      - id: dotnet-build-services
+        name: Build Olivia.Services
+        entry: dotnet build ./Olivia.Services/Olivia.Services.csproj
+        language: system
+        # Este hook se ejecuta solo cuando se modifican los archivos .cs en el directorio ApiCreditSimulator.Services
+        files: '^Olivia\.Services/.*\.cs$'
+        pass_filenames: false
+
+      # Este hook construye el proyecto AI antes de cada commit
+      - id: dotnet-build-ai
+        name: Build Olivia.AI
+        entry: dotnet build ./Olivia.AI/Olivia.AI.csproj
+        language: system
+        # Este hook se ejecuta solo cuando se modifican los archivos .cs en el directorio ApiCreditSimulator.Api
+        files: '^Olivia\.AI/.*\.cs$'
+        pass_filenames: false
+
+      # Este hook construye el proyecto Data antes de cada commit
+      - id: dotnet-build-data
+        name: Build Olivia.Data
+        entry: dotnet build ./Olivia.Data/Olivia.Data.csproj
+        language: system
+        # Este hook se ejecuta solo cuando se modifican los archivos .cs en el directorio ApiCreditSimulator.Data
+        files: '^Olivia\.Data/.*\.cs$'
+        pass_filenames: false
+
+      # Este hook construye el proyecto Api antes de cada commit
+      - id: dotnet-build-api
+        name: Build Olivia.Api
+        entry: dotnet build ./Olivia.Api/Olivia.Api.csproj
+        language: system
+        # Este hook se ejecuta solo cuando se modifican los archivos .cs en el directorio ApiCreditSimulator.Api
+        files: '^Olivia\.Api/.*\.cs$'
+        pass_filenames: false
+
+      # Este hook construye el proyecto Client antes de cada commit
+      - id: dotnet-build-client
+        name: Build Olivia.Client
+        entry: dotnet build ./Olivia.Client/Olivia.Client.csproj
+        language: system
+        # Este hook se ejecuta solo cuando se modifican los archivos .cs en el directorio ApiCreditSimulator.Client
+        files: '^Olivia\.Client/.*\.cs$'
+        pass_filenames: false
+
+      # Este hook verifica las dependencias .NET desactualizadas antes de cada commit
+      - id: dotnet-outdated
+        name: Check for outdated .NET dependencies
+        entry: dotnet outdated
+        language: system
+        # Este hook se ejecuta solo cuando se modifican los archivos .csproj o .config
+        files: '\.(csproj|config)$'
+        pass_filenames: false
+
+      # Este hook ejecuta las pruebas unitarias antes de cada commit
+      - id: dotnet-test
+        name: Run .NET unit tests
+        entry: dotnet test ./Olivia.Tests/Olivia.Tests.csproj
+        language: system
+        # Este hook se ejecuta solo cuando se modifican los archivos .cs en el directorio ApiCreditSimulator.Tests
+        files: '.*\.cs$'
+        pass_filenames: false
+
+      # Este hook ejecuta las pruebas unitarias con cobertura de código antes de cada commit
+      - id: dotnet-test-coverage
+        name: Run .NET unit tests with code coverage
+        entry: dotnet test --collect:"XPlat Code Coverage" ./Olivia.Tests/Olivia.Tests.csproj
+        language: system
+        pass_filenames: false
+
+      # Este hook genera un reporte de cobertura de código .NET antes de cada commit
+      #- id: dotnet-coverage-report
+      #  name: Generate .NET code coverage report
+      #  entry: reportgenerator "-reports:./Olivia.Tests/TestResults/**/*.cobertura.xml" "-targetdir:./Olivia.Tests/coveragereport" -reporttypes:Html
+      #  language: system
+      #  pass_filenames: false

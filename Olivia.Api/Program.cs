@@ -1,3 +1,7 @@
+// Copyright (c) Olivia Inc.. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#pragma warning disable SA1200 // UsingDirectivesMustBePlacedWithinNamespace
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Olivia.AI.Agents;
@@ -14,29 +18,29 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<DbContext ,OliviaDbContext>(
-    options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"),
-    b => b.MigrationsAssembly("Olivia.Api"))
-);
+builder.Services.AddDbContext<DbContext, OliviaDbContext>(
+    options => options.UseSqlite(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        b => b.MigrationsAssembly("Olivia.Api")));
 
-//Services
+////Services
 builder.Services.AddScoped<PatientService>();
 builder.Services.AddScoped<ChatService>();
 builder.Services.AddScoped<DoctorService>();
 builder.Services.AddScoped<ProgramationService>();
 builder.Services.AddScoped<IDatabase, DatabaseService>();
 
-//Plugins
+////Plugins
 builder.Services.AddScoped<PatientsManagerPlugin>();
 builder.Services.AddScoped<DoctorsManagerPlugin>();
 builder.Services.AddScoped<ProgramationManagerPlugin>();
 
-//Agents
+////Agents
 builder.Services.AddScoped<OpenAIAgent>();
 
 var app = builder.Build();
 
-//Execute migrations
+////Execute migrations
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;

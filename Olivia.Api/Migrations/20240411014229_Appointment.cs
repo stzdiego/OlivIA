@@ -1,10 +1,13 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿// Copyright (c) Olivia Inc.. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 #nullable disable
 
 namespace Olivia.Api.Migrations
 {
+    using System;
+    using Microsoft.EntityFrameworkCore.Migrations;
+
     /// <inheritdoc />
     public partial class Appointment : Migration
     {
@@ -21,7 +24,7 @@ namespace Olivia.Api.Migrations
                     Date = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Time = table.Column<TimeSpan>(type: "TEXT", nullable: false),
                     Reason = table.Column<string>(type: "TEXT", nullable: false),
-                    Observations = table.Column<string>(type: "TEXT", nullable: false)
+                    Observations = table.Column<string>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {

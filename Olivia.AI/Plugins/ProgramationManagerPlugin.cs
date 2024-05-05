@@ -1,3 +1,6 @@
+// Copyright (c) Olivia Inc.. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,19 +9,20 @@ using System.Threading.Tasks;
 using Microsoft.SemanticKernel;
 using Olivia.Services;
 using Olivia.Shared.Entities;
+using Olivia.Shared.Interfaces;
 
 namespace Olivia.AI.Plugins;
-public class ProgramationManagerPlugin
+public class ProgramationManagerPlugin : IPlugin
 {
-    private readonly ProgramationService _programations;
-    private readonly DoctorService _doctors;
-    private readonly ChatService _chats;
+    private readonly ProgramationService programations;
+    private readonly DoctorService doctors;
+    private readonly ChatService chats;
 
     public ProgramationManagerPlugin(ProgramationService programations, ChatService chats, DoctorService doctors)
     {
-        _programations = programations;
-        _chats = chats;
-        _doctors = doctors;
+        this.programations = programations;
+        this.chats = chats;
+        this.doctors = doctors;
     }
 
     [KernelFunction]
@@ -34,7 +38,7 @@ public class ProgramationManagerPlugin
     {
         try
         {
-            var doctor = await _doctors.Find(identification);
+            var doctor = await this.doctors.Find(identification);
             return doctor.Id;
         }
         catch (Exception ex)
@@ -46,13 +50,14 @@ public class ProgramationManagerPlugin
 
     [KernelFunction]
     [Description("Obtiene la lista de citas de un doctor en el dia actual.")]
-    public async Task<IEnumerable<Appointment>?> GetAppointmentsByDoctorToday(Kernel kernel,
+    public async Task<IEnumerable<Appointment>?> GetAppointmentsByDoctorToday(
+        Kernel kernel,
         Guid chatId,
         Guid doctorId)
     {
         try
         {
-            return await _programations.GetAppointmentsListDay(doctorId, DateTime.Now);
+            return await this.programations.GetAppointmentsListDay(doctorId, DateTime.Now);
         }
         catch (Exception ex)
         {
@@ -63,14 +68,15 @@ public class ProgramationManagerPlugin
 
     [KernelFunction]
     [Description("Obtiene la lista de citas de un doctor en una fecha especifica.")]
-    public async Task<IEnumerable<Appointment>?> GetAppointmentsByDoctorByDate(Kernel kernel,
+    public async Task<IEnumerable<Appointment>?> GetAppointmentsByDoctorByDate(
+        Kernel kernel,
         Guid chatId,
         Guid doctorId,
         [Description("Fecha de la cita")] DateTime date)
     {
         try
         {
-            return await _programations.GetAppointmentsListDay(doctorId, date);
+            return await this.programations.GetAppointmentsListDay(doctorId, date);
         }
         catch (Exception ex)
         {
@@ -81,7 +87,8 @@ public class ProgramationManagerPlugin
 
     [KernelFunction]
     [Description("Obtiene la lista de citas de un doctor en un rango de fechas.")]
-    public async Task<IEnumerable<Appointment>?> GetAppointmentsByDoctorByRange(Kernel kernel,
+    public async Task<IEnumerable<Appointment>?> GetAppointmentsByDoctorByRange(
+        Kernel kernel,
         Guid chatId,
         Guid doctorId,
         [Description("Fecha de inicio del rango")] DateTime startDate,
@@ -89,7 +96,7 @@ public class ProgramationManagerPlugin
     {
         try
         {
-            return await _programations.GetAppointmentsListRange(doctorId, startDate, endDate);
+            return await this.programations.GetAppointmentsListRange(doctorId, startDate, endDate);
         }
         catch (Exception ex)
         {
@@ -97,5 +104,4 @@ public class ProgramationManagerPlugin
             throw;
         }
     }
-
 }

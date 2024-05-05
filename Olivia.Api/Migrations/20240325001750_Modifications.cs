@@ -1,10 +1,13 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿// Copyright (c) Olivia Inc.. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 #nullable disable
 
 namespace Olivia.Api.Migrations
 {
+    using System;
+    using Microsoft.EntityFrameworkCore.Migrations;
+
     /// <inheritdoc />
     public partial class Modifications : Migration
     {
@@ -44,7 +47,7 @@ namespace Olivia.Api.Migrations
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     Type = table.Column<int>(type: "INTEGER", nullable: false),
                     Content = table.Column<string>(type: "TEXT", nullable: false),
-                    ChatId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    ChatId = table.Column<Guid>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -105,7 +108,7 @@ namespace Olivia.Api.Migrations
                 table: "Chats",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Chats_Patients_PatientId",

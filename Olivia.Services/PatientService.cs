@@ -1,51 +1,81 @@
+// Copyright (c) Olivia Inc.. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+namespace Olivia.Services;
 using Microsoft.Extensions.Logging;
 using Olivia.Shared.Entities;
 using Olivia.Shared.Interfaces;
 
-namespace Olivia.Services;
-
+/// <summary>
+/// Patient service.
+/// </summary>
 public class PatientService
 {
-    private readonly IDatabase _database;
-    private readonly ILogger<ChatService> _logger;
+    private readonly IDatabase database;
+    private readonly ILogger<PatientService> logger;
 
-    public PatientService(IDatabase database, ILogger<ChatService> logger)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PatientService"/> class.
+    /// </summary>
+    /// <param name="database">Database.</param>
+    /// <param name="logger">Logger.</param>
+    public PatientService(IDatabase database, ILogger<PatientService> logger)
     {
-        _database = database;
-        _logger = logger;
+        this.database = database;
+        this.logger = logger;
     }
 
-    public async Task<Guid> Create(string name, string lastName, string email, long phone, string reason)
+    /// <summary>
+    /// Creates a patient.
+    /// </summary>
+    /// <param name="name">Name.</param>
+    /// <param name="lastName">Last name.</param>
+    /// <param name="email">Email.</param>
+    /// <param name="phone">Phone.</param>
+    /// <param name="reason">Reason.</param>
+    /// <returns>Patient id.</returns>
+    public virtual async Task<Guid> Create(string name, string lastName, string email, long phone, string reason)
     {
         try
         {
-            _logger.LogInformation("Creating chat service");
-            Patient patient = new()
+            this.logger.LogInformation("Creating chat service");
+            Patient patient = new ()
             {
                 Name = name,
                 LastName = lastName,
                 Email = email,
                 Phone = phone,
-                Reason = reason
+                Reason = reason,
             };
 
-            await _database.Add(patient);
-            _logger.LogInformation("Patient created");
+            await this.database.Add(patient);
+            this.logger.LogInformation("Patient created");
             return patient.Id;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            this.logger.LogError(ex, ex.Message);
             throw;
         }
     }
 
-    public async Task Update(Guid id, long identification, string name, string lastName, string email, long phone, string reason)
+    /// <summary>
+    /// Updates a patient.
+    /// </summary>
+    /// <param name="id">Id.</param>
+    /// <param name="identification">Identification.</param>
+    /// <param name="name">Name.</param>
+    /// <param name="lastName">Last name.</param>
+    /// <param name="email">Email.</param>
+    /// <param name="phone">Phone.</param>
+    /// <param name="reason">Reason.</param>
+    /// <returns>Task.</returns>
+    public virtual async Task Update(Guid id, long identification, string name, string lastName, string email, long phone, string reason)
     {
         try
         {
-            _logger.LogInformation("Updating patient");
-            Patient patient = await _database.Find<Patient>(x => x.Id == id)
+            this.logger.LogInformation("Updating patient");
+            Patient patient = await this.database.Find<Patient>(x => x.Id == id)
                 ?? throw new Exception("Patient not found");
 
             patient.Identification = identification;
@@ -55,40 +85,50 @@ public class PatientService
             patient.Phone = phone;
             patient.Reason = reason;
 
-            await _database.Update(patient);
-            _logger.LogInformation("Patient updated");
+            await this.database.Update(patient);
+            this.logger.LogInformation("Patient updated");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            this.logger.LogError(ex, ex.Message);
             throw;
         }
     }
 
-    public async Task<bool> Exists(long Identification)
+    /// <summary>
+    /// Checks if a patient exists.
+    /// </summary>
+    /// <param name="identification">Identification.</param>
+    /// <returns>True if exists, false otherwise.</returns>
+    public virtual async Task<bool> Exists(long identification)
     {
         try
         {
-            _logger.LogInformation("Checking if patient exists");
-            return await _database.Exist<Patient>(p => p.Identification == Identification);
+            this.logger.LogInformation("Checking if patient exists");
+            return await this.database.Exist<Patient>(p => p.Identification == identification);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            this.logger.LogError(ex, ex.Message);
             throw;
         }
     }
 
-    public async Task<Patient?> Find(Guid id)
+    /// <summary>
+    /// Finds a patient.
+    /// </summary>
+    /// <param name="id">Id.</param>
+    /// <returns>Patient.</returns>
+    public virtual async Task<Patient?> Find(Guid id)
     {
         try
         {
-            _logger.LogInformation("Finding patient");
-            return await _database.Find<Patient>(x => x.Id == id);
+            this.logger.LogInformation("Finding patient");
+            return await this.database.Find<Patient>(x => x.Id == id);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            this.logger.LogError(ex, ex.Message);
             throw;
         }
     }

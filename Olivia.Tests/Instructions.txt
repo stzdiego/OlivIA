@@ -1,0 +1,6 @@
+dotnet test --collect:"XPlat Code Coverage"
+reportgenerator "-reports:TestResults/**/*.cobertura.xml" "-targetdir:coveragereport" -reporttypes:Html
+
+pre-commit run --all-files
+
+file:///Users/diegosantacruz/Documents/GitHub/OlivIA/Olivia.Tests/coveragereport/index.html

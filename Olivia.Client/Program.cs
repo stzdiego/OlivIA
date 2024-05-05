@@ -1,5 +1,9 @@
+// Copyright (c) Olivia Inc.. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#pragma warning disable SA1200 // UsingDirectivesMustBePlacedWithinNamespace
 using Olivia.Client.Components;
- using Radzen;
+using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +18,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

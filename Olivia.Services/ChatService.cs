@@ -1,39 +1,42 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Olivia.Shared.Interfaces;
-using Olivia.Shared.Entities;
-using System.Text;
-using Olivia.Shared.Enums;
+// Copyright (c) Olivia Inc.. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace Olivia.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Microsoft.Extensions.Logging;
+    using Olivia.Shared.Entities;
+    using Olivia.Shared.Enums;
+    using Olivia.Shared.Interfaces;
+
     public class ChatService
     {
-        private readonly IDatabase _database;
-        private readonly ILogger<ChatService> _logger;
+        private readonly IDatabase database;
+        private readonly ILogger<ChatService> logger;
 
         public ChatService(IDatabase database, ILogger<ChatService> logger)
         {
-            _database = database;
-            _logger = logger;
+            this.database = database;
+            this.logger = logger;
         }
 
         public async Task<Guid> Create()
         {
             try
             {
-                _logger.LogInformation("Creating chat service");
+                this.logger.LogInformation("Creating chat service");
                 Chat chat = new Chat();
-                await _database.Add(chat);
-                _logger.LogInformation("Chat service created");
+                await this.database.Add(chat);
+                this.logger.LogInformation("Chat service created");
                 return chat.Id;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                this.logger.LogError(ex, ex.Message);
                 throw;
             }
         }
@@ -42,15 +45,15 @@ namespace Olivia.Services
         {
             try
             {
-                _logger.LogInformation("Getting chat service");
-                Chat chat = await _database.Find<Chat>(x => x.Id == id)
+                this.logger.LogInformation("Getting chat service");
+                Chat chat = await this.database.Find<Chat>(x => x.Id == id)
                     ?? throw new Exception("Chat service not found");
-                _logger.LogInformation("Chat service retrieved");
+                this.logger.LogInformation("Chat service retrieved");
                 return chat;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                this.logger.LogError(ex, ex.Message);
                 throw;
             }
         }
@@ -59,54 +62,54 @@ namespace Olivia.Services
         {
             try
             {
-                _logger.LogInformation("Adding message to chat");
-                var message = new Message { ChatId = chatId, Type = type, Content = content};
-                await _database.Add(message);
-                _logger.LogInformation("Message added to chat");
+                this.logger.LogInformation("Adding message to chat");
+                var message = new Message { ChatId = chatId, Type = type, Content = content };
+                await this.database.Add(message);
+                this.logger.LogInformation("Message added to chat");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                this.logger.LogError(ex, ex.Message);
                 throw;
             }
         }
-
 
         public async Task<StringBuilder> GetSummary(Guid chatId)
         {
             try
             {
-                _logger.LogInformation("Getting chat summary");
-                Chat chat = await _database.Find<Chat>(x => x.Id == chatId)
+                this.logger.LogInformation("Getting chat summary");
+                Chat chat = await this.database.Find<Chat>(x => x.Id == chatId)
                     ?? throw new Exception("Chat service not found");
-                    
-                List<Message> messages = await _database.Get<Message>(x => x.ChatId == chatId);
+
+                List<Message> messages = await this.database.Get<Message>(x => x.ChatId == chatId);
                 StringBuilder summary = new StringBuilder();
                 foreach (var message in messages)
                 {
                     summary.AppendLine($"{message.Type.ToString()}> {message.Content}");
                 }
-                _logger.LogInformation("Chat summary retrieved");
+
+                this.logger.LogInformation("Chat summary retrieved");
                 return summary;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                this.logger.LogError(ex, ex.Message);
                 throw;
             }
         }
-        
+
         public async Task Update(Chat chat)
         {
             try
             {
-                _logger.LogInformation("Updating chat service");
-                await _database.Update(chat);
-                _logger.LogInformation("Chat service updated");
+                this.logger.LogInformation("Updating chat service");
+                await this.database.Update(chat);
+                this.logger.LogInformation("Chat service updated");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                this.logger.LogError(ex, ex.Message);
                 throw;
             }
         }
@@ -115,15 +118,15 @@ namespace Olivia.Services
         {
             try
             {
-                _logger.LogInformation("Deleting chat service");
-                Chat chat = await _database.Find<Chat>(x => x.Id == id)
+                this.logger.LogInformation("Deleting chat service");
+                Chat chat = await this.database.Find<Chat>(x => x.Id == id)
                     ?? throw new Exception("Chat service not found");
-                await _database.Delete(chat);
-                _logger.LogInformation("Chat service deleted");
+                await this.database.Delete(chat);
+                this.logger.LogInformation("Chat service deleted");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                this.logger.LogError(ex, ex.Message);
                 throw;
             }
         }
@@ -132,15 +135,15 @@ namespace Olivia.Services
         {
             try
             {
-                _logger.LogInformation("Getting chat messages");
-                IEnumerable<Message> messages = await _database
+                this.logger.LogInformation("Getting chat messages");
+                IEnumerable<Message> messages = await this.database
                     .Get<Message>(x => x.ChatId == chatId);
-                _logger.LogInformation("Chat messages retrieved");
+                this.logger.LogInformation("Chat messages retrieved");
                 return messages;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                this.logger.LogError(ex, ex.Message);
                 throw;
             }
         }
@@ -149,20 +152,19 @@ namespace Olivia.Services
         {
             try
             {
-                _logger.LogInformation("Asociating patient to chat");
-                Chat chat = await _database.Find<Chat>(x => x.Id == chatId)
+                this.logger.LogInformation("Asociating patient to chat");
+                Chat chat = await this.database.Find<Chat>(x => x.Id == chatId)
                     ?? throw new Exception("Chat service not found");
-                    
+
                 chat.PatientId = patientId;
-                await _database.Update(chat);
-                _logger.LogInformation("Patient asociated to chat");
+                await this.database.Update(chat);
+                this.logger.LogInformation("Patient asociated to chat");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                this.logger.LogError(ex, ex.Message);
                 throw;
             }
         }
-        
     }
 }

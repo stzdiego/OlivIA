@@ -1,3 +1,6 @@
+// Copyright (c) Olivia Inc.. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,20 +21,20 @@ namespace Olivia.Api.Controllers;
 [Route("api/[controller]")]
 public class DoctorsAsistenceController : ControllerBase
 {
-    private readonly IConfiguration _config;
-    private readonly ILogger<DoctorsAsistenceController> _logger;
-    private readonly OpenAIAgent _agent;
-    private readonly ChatService _chats;
-    private readonly OliviaDbContext _context;
+    private readonly IConfiguration config;
+    private readonly ILogger<DoctorsAsistenceController> logger;
+    private readonly OpenAIAgent agent;
+    private readonly ChatService chats;
+    private readonly OliviaDbContext context;
 
     public DoctorsAsistenceController(IConfiguration configuration, ILogger<DoctorsAsistenceController> logger,
                                OpenAIAgent asistence, ChatService chats, OliviaDbContext context)
     {
-        _config = configuration;
-        _logger = logger;
-        _chats = chats;
-        _context = context;
-        _agent = GetAgent();
+        this.config = configuration;
+        this.logger = logger;
+        this.chats = chats;
+        this.context = context;
+        this.agent = this.GetAgent();
     }
 
     private OpenAIAgent GetAgent()
@@ -41,12 +44,12 @@ public class DoctorsAsistenceController : ControllerBase
         agent.AddScoped<DoctorService>();
         agent.AddScoped<ProgramationService>();
         agent.AddScoped<IDatabase, DatabaseService>();
-        agent.AddDbContext<DbContext, OliviaDbContext>(_context);
+        agent.AddDbContext<DbContext, OliviaDbContext>(this.context);
         agent.AddPlugin<ProgramationManagerPlugin>();
 
-        agent.Initialize(_config.GetValue<string>("Agents:Reception:Model")!, _config.GetValue<string>("Agents:Reception:Key")!,
-            _config.GetValue<int>("Agents:Reception:MaxTokens"), _config.GetValue<double>("Agents:Reception:Temperature"),
-            _config.GetValue<double>("Agents:Reception:Penalty"));
+        agent.Initialize(this.config.GetValue<string>("Agents:Reception:Model") !, this.config.GetValue<string>("Agents:Reception:Key") !,
+            this.config.GetValue<int>("Agents:Reception:MaxTokens"), this.config.GetValue<double>("Agents:Reception:Temperature"),
+            this.config.GetValue<double>("Agents:Reception:Penalty"));
 
         return agent;
     }
@@ -97,22 +100,22 @@ public class DoctorsAsistenceController : ControllerBase
     {
         try
         {
-            var id = await _chats.Create();
-            await _chats.NewMessage(id, MessageTypeEnum.Prompt, string.Format(GetPrompt(), id));
-            var summary = await _chats.GetSummary(id);
-            var response = await _agent.Send(summary);
-            await _chats.NewMessage(id, MessageTypeEnum.Agent, response);
+            var id = await this.chats.Create();
+            await this.chats.NewMessage(id, MessageTypeEnum.Prompt, string.Format(this.GetPrompt(), id));
+            var summary = await this.chats.GetSummary(id);
+            var response = await this.agent.Send(summary);
+            await this.chats.NewMessage(id, MessageTypeEnum.Agent, response);
 
-            return Ok(new AgentMessageDto
+            return this.Ok(new AgentMessageDto
             {
                 Id = id,
-                Content = "DoctorAgent: " + response
+                Content = "DoctorAgent: " + response,
             });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
-            return BadRequest(ex.Message);
+            this.logger.LogError(ex, ex.Message);
+            return this.BadRequest(ex.Message);
         }
     }
 
@@ -123,25 +126,28 @@ public class DoctorsAsistenceController : ControllerBase
         {
             string response = string.Empty;
 
-            var chat = await _chats.Get(dto.ChatId);
-            if (chat == null) return BadRequest("Chat not found");
+            var chat = await this.chats.Get(dto.ChatId);
+            if (chat == null)
+            {
+                return this.BadRequest("Chat not found");
+            }
 
-            await _chats.NewMessage(dto.ChatId, MessageTypeEnum.User, dto.Content);
-            var summary = await _chats.GetSummary(dto.ChatId);
-            response = await _agent.Send(summary);
+            await this.chats.NewMessage(dto.ChatId, MessageTypeEnum.User, dto.Content);
+            var summary = await this.chats.GetSummary(dto.ChatId);
+            response = await this.agent.Send(summary);
 
-            await _chats.NewMessage(dto.ChatId, MessageTypeEnum.Agent, response);
+            await this.chats.NewMessage(dto.ChatId, MessageTypeEnum.Agent, response);
 
-            return Ok(new AgentMessageDto
+            return this.Ok(new AgentMessageDto
             {
                 Id = dto.ChatId,
-                Content = "DoctorAgent: " + response
+                Content = "DoctorAgent: " + response,
             });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
-            return BadRequest(ex.Message);
+            this.logger.LogError(ex, ex.Message);
+            return this.BadRequest(ex.Message);
         }
     }
 
@@ -150,23 +156,23 @@ public class DoctorsAsistenceController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("Getting chat");
-            var chat = await _chats.Get(dto.Id);
+            this.logger.LogInformation("Getting chat");
+            var chat = await this.chats.Get(dto.Id);
 
-            _logger.LogInformation("Getting chat messages");
-            var messages = await _chats.GetMessages(dto.Id);
+            this.logger.LogInformation("Getting chat messages");
+            var messages = await this.chats.GetMessages(dto.Id);
 
-            return Ok(new ResumeDto
+            return this.Ok(new ResumeDto
             {
                 ChatId = chat.Id,
                 Chat = chat,
-                Messages = messages.OrderBy(x => x.CreatedAt)
+                Messages = messages.OrderBy(x => x.CreatedAt),
             });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
-            return BadRequest(ex.Message);
+            this.logger.LogError(ex, ex.Message);
+            return this.BadRequest(ex.Message);
         }
     }
 }

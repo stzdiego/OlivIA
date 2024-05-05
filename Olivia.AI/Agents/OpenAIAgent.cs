@@ -1,48 +1,120 @@
+// Copyright (c) Olivia Inc.. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+namespace Olivia.AI.Agents;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.SemanticKernel;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel.Connectors.OpenAI;
-using System.Text;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Text;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Connectors.OpenAI;
+using Olivia.Shared.Interfaces;
 
-namespace Olivia.AI.Agents;
+/// <summary>
+/// The OpenAI agent.
+/// </summary>
 public class OpenAIAgent
 {
-    private IKernelBuilder? _builder;
-    private OpenAIPromptExecutionSettings? _settings;
-    private Kernel? _kernel;
-    private IChatCompletionService? _chatCompletionService;
+    /// <summary>
+    /// Gets the plugins.
+    /// </summary>
+    public List<Type> Plugins { get; } =[];
 
+    /// <summary>
+    /// Gets the services.
+    /// </summary>
+    public List<Type> Services { get; } =[];
+
+    private readonly IKernelBuilder? builder;
+    private OpenAIPromptExecutionSettings? settings;
+    private Kernel? kernel;
+    private IChatCompletionService? chatCompletionService;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OpenAIAgent"/> class.
+    /// </summary>
     public OpenAIAgent()
     {
-        _builder = Kernel.CreateBuilder();
+        this.builder = Kernel.CreateBuilder();
     }
 
+    /// <summary>
+    /// Adds the plugin.
+    /// </summary>
+    /// <typeparam name="T">The plugin type.</typeparam>
     public void AddPlugin<T>()
     {
-        try
+        if (!typeof(IPlugin).IsAssignableFrom(typeof(T)))
         {
-            _builder!.Plugins.AddFromType<T>();
+            throw new Exception("T is not a plugin");
         }
-        catch (Exception ex)
+
+        if (this.Plugins.Contains(typeof(T)))
         {
-            Console.WriteLine(ex.Message);
+            return;
         }
+
+        this.builder!.Plugins.AddFromType<T>();
+        this.Plugins.Add(typeof(T));
     }
 
-    public void AddSingleton<T>() where T : class
+    /// <summary>
+    /// Adds the singleton.
+    /// </summary>
+    /// <typeparam name="T">The singleton type.</typeparam>
+    public void AddSingleton<T>()
+        where T : class
+    {
+        if (this.Services.Contains(typeof(T)))
+        {
+            return;
+        }
+
+        this.builder!.Services.AddSingleton<T>();
+        this.Services.Add(typeof(T));
+    }
+
+    /// <summary>
+    /// Adds the singleton.
+    /// </summary>
+    /// <typeparam name="T">The singleton type.</typeparam>
+    public void AddScoped<T>()
+        where T : class
+    {
+        if (this.Services.Contains(typeof(T)))
+        {
+            return;
+        }
+
+        this.builder!.Services.AddScoped<T>();
+        this.Services.Add(typeof(T));
+    }
+
+    /// <summary>
+    /// Adds the singleton.
+    /// </summary>
+    /// <typeparam name="TInterface">The interface type.</typeparam>
+    /// <typeparam name="TClass">The class type.</typeparam>
+    public void AddScoped<TInterface, TClass>()
+        where TInterface : class
+        where TClass : class, TInterface
     {
         try
         {
-            _builder!.Services.AddSingleton<T>();
+            if (this.Services.Contains(typeof(TInterface)))
+            {
+                return;
+            }
+
+            this.builder!.Services.AddScoped<TInterface, TClass>();
+            this.Services.Add(typeof(TInterface));
         }
         catch (Exception ex)
         {
@@ -50,82 +122,60 @@ public class OpenAIAgent
         }
     }
 
-    public void AddScoped<T>() where T : class
-    {
-        try
-        {
-            _builder!.Services.AddScoped<T>();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-    }
-
-    public void AddScoped<TInterface, TClass>() where TInterface : class where TClass : class, TInterface
-    {
-        try
-        {
-            _builder!.Services.AddScoped<TInterface, TClass>();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-    }
-
+    /// <summary>
+    /// Adds the singleton.
+    /// </summary>
+    /// <typeparam name="TContextService">The context service type.</typeparam>
+    /// <typeparam name="TContextImplementation">The context implementation type.</typeparam>
+    /// <param name="context">Context instance.</param>
     public void AddDbContext<TContextService, TContextImplementation>(TContextImplementation context)
     where TContextService : DbContext
     where TContextImplementation : class, TContextService
     {
-        try
+        if (this.Services.Contains(typeof(TContextService)))
         {
-            _builder!.Services.AddSingleton<TContextService>(context);
+            return;
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
+
+        this.builder!.Services.AddSingleton<TContextService>(context);
+        this.Services.Add(typeof(TContextService));
     }
 
+    /// <summary>
+    /// Initializes the OpenAI agent.
+    /// </summary>
+    /// <param name="modelId">The model identifier.</param>
+    /// <param name="apiKey">The API key.</param>
+    /// <param name="maxTokens">The maximum tokens.</param>
+    /// <param name="temperature">The temperature.</param>
+    /// <param name="presencePenalty">The presence penalty.</param>
     public void Initialize(string modelId, string apiKey, int maxTokens, double temperature = 0.5, double presencePenalty = 0.0)
     {
-        try
+        this.builder!.Services.AddLogging();
+        this.builder!.Services.AddOpenAIChatCompletion(modelId, apiKey);
+        this.kernel = this.builder.Build();
+        this.chatCompletionService = this.kernel.GetRequiredService<IChatCompletionService>();
+        this.settings = new OpenAIPromptExecutionSettings
         {
-            _builder!.Services.AddLogging();
-            _builder!.Services.AddOpenAIChatCompletion(modelId, apiKey);
-            _kernel = _builder.Build();
-            _chatCompletionService = _kernel.GetRequiredService<IChatCompletionService>();
-            _settings = new OpenAIPromptExecutionSettings
-            {
-                ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions,
-                MaxTokens = maxTokens,
-                Temperature = temperature,
-                PresencePenalty = presencePenalty
-            };
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
+            ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions,
+            MaxTokens = maxTokens,
+            Temperature = temperature,
+            PresencePenalty = presencePenalty,
+        };
     }
 
+    /// <summary>
+    /// Sends the specified string builder.
+    /// </summary>
+    /// <param name="stringBuilder">The string builder.</param>
+    /// <returns>The response.</returns>
     public async Task<string> Send(StringBuilder stringBuilder)
     {
-        try
-        {
-            var response = await _chatCompletionService!.GetChatMessageContentAsync(
-                stringBuilder.ToString(),
-                _settings!,
-                _kernel!
-            );
+        var response = await this.chatCompletionService!.GetChatMessageContentAsync(
+            stringBuilder.ToString(),
+            this.settings!,
+            this.kernel!);
 
-            return response.ToString();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            throw;
-        }
+        return response.ToString();
     }
 }

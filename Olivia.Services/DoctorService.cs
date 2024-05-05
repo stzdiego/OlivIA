@@ -1,27 +1,49 @@
+// Copyright (c) Olivia Inc.. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+namespace Olivia.Services;
 using Microsoft.Extensions.Logging;
 using Olivia.Shared.Entities;
 using Olivia.Shared.Interfaces;
 
-namespace Olivia.Services;
-
+/// <summary>
+/// Doctor service.
+/// </summary>
 public class DoctorService
 {
-    private readonly IDatabase _database;
-    private readonly ILogger<DoctorService> _logger;
+    private readonly IDatabase database;
+    private readonly ILogger<DoctorService> logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DoctorService"/> class.
+    /// </summary>
+    /// <param name="database">Database.</param>
+    /// <param name="logger">Logger.</param>
     public DoctorService(IDatabase database, ILogger<DoctorService> logger)
     {
-        _database = database;
-        _logger = logger;
+        this.database = database;
+        this.logger = logger;
     }
 
-    public async Task<Guid> Create(long identification, string name, string lastName, string email, long phone, 
-    string speciality, string information, TimeSpan start, TimeSpan end)
+    /// <summary>
+    /// Creates a doctor.
+    /// </summary>
+    /// <param name="identification">Identification.</param>
+    /// <param name="name">Name.</param>
+    /// <param name="lastName">Last name.</param>
+    /// <param name="email">Email.</param>
+    /// <param name="phone">Phone.</param>
+    /// <param name="speciality">Speciality.</param>
+    /// <param name="information">Information.</param>
+    /// <param name="start">Start hour.</param>
+    /// <param name="end">End hour.</param>
+    /// <returns>Doctor id.</returns>
+    public virtual async Task<Guid> Create(long identification, string name, string lastName, string email, long phone, string speciality, string information, TimeSpan start, TimeSpan end)
     {
         try
         {
-            _logger.LogInformation("Creating doctor");
-            Doctor doctor = new()
+            this.logger.LogInformation("Creating doctor");
+            Doctor doctor = new ()
             {
                 Identification = identification,
                 Name = name,
@@ -32,31 +54,43 @@ public class DoctorService
                 Information = information,
                 Start = start,
                 End = end,
-                Available = true
+                Available = true,
             };
 
-            await _database.Add(doctor);
-            _logger.LogInformation("Doctor created");
+            await this.database.Add(doctor);
+            this.logger.LogInformation("Doctor created");
 
             return doctor.Id;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            this.logger.LogError(ex, ex.Message);
             throw;
         }
     }
 
-    public async Task Update(Guid id, long identification, string name, string lastName, string email, long phone, string speciality, string information)
+    /// <summary>
+    /// Updates a doctor.
+    /// </summary>
+    /// <param name="id">Doctor id.</param>
+    /// <param name="identification">Identification.</param>
+    /// <param name="name">Name.</param>
+    /// <param name="lastName">Last name.</param>
+    /// <param name="email">Email.</param>
+    /// <param name="phone">Phone.</param>
+    /// <param name="speciality">Speciality.</param>
+    /// <param name="information">Information.</param>
+    /// <returns>Task.</returns>
+    public virtual async Task Update(Guid id, long identification, string name, string lastName, string email, long phone, string speciality, string information)
     {
         try
         {
-            _logger.LogInformation("Updating doctor");
-            Doctor? doctor = await _database.Find<Doctor>(x => x.Id == id);
+            this.logger.LogInformation("Updating doctor");
+            Doctor? doctor = await this.database.Find<Doctor>(x => x.Id == id);
 
             if (doctor == null)
             {
-                _logger.LogError("Doctor not found");
+                this.logger.LogError("Doctor not found");
                 return;
             }
 
@@ -68,54 +102,67 @@ public class DoctorService
             doctor.Speciality = speciality;
             doctor.Information = information;
 
-            await _database.Update(doctor);
-            _logger.LogInformation("Doctor updated");
+            await this.database.Update(doctor);
+            this.logger.LogInformation("Doctor updated");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            this.logger.LogError(ex, ex.Message);
             throw;
         }
     }
 
-    public async Task<bool> Exists(int Identification)
+    /// <summary>
+    /// Updates the availability of a doctor.
+    /// </summary>
+    /// <param name="identification">Identification.</param>
+    /// <returns>Task.</returns>
+    public virtual async Task<bool> Exists(int identification)
     {
         try
         {
-            _logger.LogInformation("Checking if patient exists");
-            return await _database.Exist<Patient>(p => p.Identification == Identification);
+            this.logger.LogInformation("Checking if patient exists");
+            return await this.database.Exist<Patient>(p => p.Identification == identification);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            this.logger.LogError(ex, ex.Message);
             throw;
         }
     }
 
-    public async Task<IEnumerable<Doctor>> Get()
+    /// <summary>
+    /// Gets all doctors.
+    /// </summary>
+    /// <returns>Doctors.</returns>
+    public virtual async Task<IEnumerable<Doctor>> Get()
     {
         try
         {
-            _logger.LogInformation("Getting doctors");
-            return await _database.Get<Doctor>();
+            this.logger.LogInformation("Getting doctors");
+            return await this.database.Get<Doctor>();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            this.logger.LogError(ex, ex.Message);
             throw;
         }
     }
 
-    public async Task<IEnumerable<Doctor>?> GetAvailable()
+    /// <summary>
+    /// Gets available doctors.
+    /// </summary>
+    /// <returns>Doctors.</returns>
+    public virtual async Task<IEnumerable<Doctor>?> GetAvailable()
     {
         try
         {
-            _logger.LogInformation("Getting available doctors");
-            var doctors = await _database.Get<Doctor>(x => x.Available == true);
-            
+            this.logger.LogInformation("Getting available doctors");
+            var doctors = await this.database.Get<Doctor>(x => x.Available == true);
+
             if (doctors == null)
             {
-                _logger.LogWarning("No doctors available");
+                this.logger.LogWarning("No doctors available");
                 return null;
             }
 
@@ -123,21 +170,26 @@ public class DoctorService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            this.logger.LogError(ex, ex.Message);
             throw;
         }
     }
 
-    public async Task<Doctor> Find(Guid id)
+    /// <summary>
+    /// Finds a doctor.
+    /// </summary>
+    /// <param name="id">Doctor id.</param>
+    /// <returns>Doctor.</returns>
+    public virtual async Task<Doctor> Find(Guid id)
     {
         try
         {
-            _logger.LogInformation("Finding doctor");
-            var doctor = await _database.Find<Doctor>(x => x.Id == id);
+            this.logger.LogInformation("Finding doctor");
+            var doctor = await this.database.Find<Doctor>(x => x.Id == id);
 
             if (doctor == null)
             {
-                _logger.LogError("Doctor not found");
+                this.logger.LogError("Doctor not found");
                 throw new Exception("Doctor not found");
             }
 
@@ -145,21 +197,26 @@ public class DoctorService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            this.logger.LogError(ex, ex.Message);
             throw;
         }
     }
 
-    public async Task<Doctor> Find(long identification)
+    /// <summary>
+    /// Finds a doctor.
+    /// </summary>
+    /// <param name="identification">Doctor identification.</param>
+    /// <returns>Doctor.</returns>
+    public virtual async Task<Doctor> Find(long identification)
     {
         try
         {
-            _logger.LogInformation("Finding doctor");
-            var doctor = await _database.Find<Doctor>(x => x.Identification == identification);
+            this.logger.LogInformation("Finding doctor");
+            var doctor = await this.database.Find<Doctor>(x => x.Identification == identification);
 
             if (doctor == null)
             {
-                _logger.LogError("Doctor not found");
+                this.logger.LogError("Doctor not found");
                 throw new Exception("Doctor not found");
             }
 
@@ -167,30 +224,35 @@ public class DoctorService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            this.logger.LogError(ex, ex.Message);
             throw;
         }
     }
 
-    public async Task Delete(Guid id)
+    /// <summary>
+    /// Deletes a doctor.
+    /// </summary>
+    /// <param name="id">Doctor id.</param>
+    /// <returns>Task.</returns>
+    public virtual async Task Delete(Guid id)
     {
         try
         {
-            _logger.LogInformation("Deleting doctor");
-            Doctor? doctor = await _database.Find<Doctor>(x => x.Id == id);
+            this.logger.LogInformation("Deleting doctor");
+            Doctor? doctor = await this.database.Find<Doctor>(x => x.Id == id);
 
             if (doctor == null)
             {
-                _logger.LogError("Doctor not found");
+                this.logger.LogError("Doctor not found");
                 return;
             }
 
-            await _database.Delete(doctor);
-            _logger.LogInformation("Doctor deleted");
+            await this.database.Delete(doctor);
+            this.logger.LogInformation("Doctor deleted");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            this.logger.LogError(ex, ex.Message);
             throw;
         }
     }
