@@ -692,3 +692,4 @@ FodyWeavers.xsd
 # End of https://www.toptal.com/developers/gitignore/api/aspnetcore,windows,macos,linux,visualstudiocode,visualstudio,rider
 Olivia.Api/appsettings.json
 Olivia.Api/appsettings.json
+Olivia.Api/appsettings.json
