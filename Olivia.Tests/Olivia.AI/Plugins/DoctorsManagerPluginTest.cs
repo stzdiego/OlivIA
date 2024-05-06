@@ -35,7 +35,7 @@ public class DoctorsManagerPluginTest
     }
 
     [Fact]
-    public async void GetInformation_Should_Return_Doctors_Information()
+    public async Task GetInformation_Should_Return_Doctors_Information()
     {
         // Arrange
         var kernel = new Kernel();

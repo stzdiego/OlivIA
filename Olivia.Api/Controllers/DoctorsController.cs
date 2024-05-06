@@ -12,20 +12,33 @@ namespace Olivia.Api.Controllers
     using Microsoft.Extensions.Logging;
     using Olivia.Services;
     using Olivia.Shared.Dtos;
+    using Olivia.Shared.Interfaces;
 
+    /// <summary>
+    /// Doctors controller.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class DoctorsController : Controller
     {
         private readonly ILogger<DoctorsController> logger;
-        private readonly DoctorService doctors;
+        private readonly IDoctorService doctors;
 
-        public DoctorsController(ILogger<DoctorsController> logger, DoctorService doctors)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DoctorsController"/> class.
+        /// </summary>
+        /// <param name="logger">Logger.</param>
+        /// <param name="doctors">Doctors service.</param>
+        public DoctorsController(ILogger<DoctorsController> logger, IDoctorService doctors)
         {
             this.logger = logger;
             this.doctors = doctors;
         }
 
+        /// <summary>
+        /// Gets doctors.
+        /// </summary>
+        /// <returns>Doctors.</returns>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -42,6 +55,11 @@ namespace Olivia.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets doctor.
+        /// </summary>
+        /// <param name="id">Id.</param>
+        /// <returns>Doctor.</returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
@@ -58,14 +76,18 @@ namespace Olivia.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Creates doctor.
+        /// </summary>
+        /// <param name="doctor">Doctor.</param>
+        /// <returns>Doctor id.</returns>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] DoctorDto doctor)
         {
             try
             {
                 this.logger.LogInformation("Creating doctor");
-                var id = await this.doctors.Create(doctor.Identification, doctor.Name, doctor.LastName, doctor.Email,
-                doctor.Phone, doctor.Speciality, doctor.Information, doctor.Start, doctor.End);
+                var id = await this.doctors.Create(doctor.Identification, doctor.Name, doctor.LastName, doctor.Email, doctor.Phone, doctor.Speciality, doctor.Information, doctor.Start, doctor.End);
                 return this.Ok(id);
             }
             catch (Exception ex)
@@ -75,6 +97,12 @@ namespace Olivia.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Updates doctor.
+        /// </summary>
+        /// <param name="id">Id.</param>
+        /// <param name="doctor">Doctor.</param>
+        /// <returns>Task.</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, [FromBody] DoctorDto doctor)
         {
@@ -91,6 +119,11 @@ namespace Olivia.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Deletes doctor.
+        /// </summary>
+        /// <param name="id">Id.</param>
+        /// <returns>Task.</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

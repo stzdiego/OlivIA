@@ -20,7 +20,7 @@ using Olivia.Shared.Interfaces;
 /// <summary>
 /// The OpenAI agent.
 /// </summary>
-public class OpenAIAgent
+public class OpenAIAgent : IAgent
 {
     /// <summary>
     /// Gets the plugins.
@@ -50,6 +50,7 @@ public class OpenAIAgent
     /// </summary>
     /// <typeparam name="T">The plugin type.</typeparam>
     public void AddPlugin<T>()
+        where T : class
     {
         if (!typeof(IPlugin).IsAssignableFrom(typeof(T)))
         {
@@ -106,20 +107,13 @@ public class OpenAIAgent
         where TInterface : class
         where TClass : class, TInterface
     {
-        try
+        if (this.Services.Contains(typeof(TInterface)))
         {
-            if (this.Services.Contains(typeof(TInterface)))
-            {
-                return;
-            }
+            return;
+        }
 
-            this.builder!.Services.AddScoped<TInterface, TClass>();
-            this.Services.Add(typeof(TInterface));
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
+        this.builder!.Services.AddScoped<TInterface, TClass>();
+        this.Services.Add(typeof(TInterface));
     }
 
     /// <summary>
@@ -129,8 +123,8 @@ public class OpenAIAgent
     /// <typeparam name="TContextImplementation">The context implementation type.</typeparam>
     /// <param name="context">Context instance.</param>
     public void AddDbContext<TContextService, TContextImplementation>(TContextImplementation context)
-    where TContextService : DbContext
-    where TContextImplementation : class, TContextService
+        where TContextService : DbContext
+        where TContextImplementation : class, TContextService
     {
         if (this.Services.Contains(typeof(TContextService)))
         {

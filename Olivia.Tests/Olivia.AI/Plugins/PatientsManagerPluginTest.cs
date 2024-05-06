@@ -13,6 +13,7 @@ namespace Olivia.Tests.Olivia.AI.Plugins;
 public class PatientsManagerPluginTest
 {
     private ServiceProvider serviceProvider;
+    private Mock<PatientService> mockPatientService;
 
     public PatientsManagerPluginTest()
     {
@@ -23,7 +24,7 @@ public class PatientsManagerPluginTest
         var mockLoggerChatService = new Mock<ILogger<ChatService>>();
         var mockLoggerProgramationService = new Mock<ILogger<ProgramationService>>();
         var mockLoggerDoctorService = new Mock<ILogger<DoctorService>>();
-        var mockPatientService = new Mock<PatientService>(mockDatabase.Object, mockLoggerPatientService.Object);
+        mockPatientService = new Mock<PatientService>(mockDatabase.Object, mockLoggerPatientService.Object);
         var mockChatService = new Mock<ChatService>(mockDatabase.Object, mockLoggerChatService.Object);
         var mockDoctorService = new Mock<DoctorService>(mockDatabase.Object, mockLoggerDoctorService.Object);
         var mockProgramationService = new Mock<ProgramationService>(mockDatabase.Object, mockLoggerProgramationService.Object);
@@ -60,7 +61,7 @@ public class PatientsManagerPluginTest
     }
 
     [Fact]
-    public async void GetPatient_Should_Return_Patient_Information()
+    public async Task GetPatient_Should_Return_Patient_Information()
     {
         // Arrange
         var plugin = new PatientsManagerPlugin(serviceProvider.GetService<PatientService>()!, serviceProvider.GetService<ChatService>()!, serviceProvider.GetService<ProgramationService>()!, serviceProvider.GetService<DoctorService>()!);
@@ -73,7 +74,7 @@ public class PatientsManagerPluginTest
     }
 
     [Fact]
-    public async void GetDoctors_Should_Return_Doctors_Information()
+    public async Task GetDoctors_Should_Return_Doctors_Information()
     {
         // Arrange
         var plugin = new PatientsManagerPlugin(serviceProvider.GetService<PatientService>()!, serviceProvider.GetService<ChatService>()!, serviceProvider.GetService<ProgramationService>()!, serviceProvider.GetService<DoctorService>()!);
@@ -86,7 +87,7 @@ public class PatientsManagerPluginTest
     }
 
     [Fact]
-    public async void RegisterPatient_Should_Return_Patient_Guid()
+    public async Task RegisterPatient_Should_Return_Patient_Guid()
     {
         // Arrange
         var plugin = new PatientsManagerPlugin(serviceProvider.GetService<PatientService>()!, serviceProvider.GetService<ChatService>()!, serviceProvider.GetService<ProgramationService>()!, serviceProvider.GetService<DoctorService>()!);
@@ -99,7 +100,34 @@ public class PatientsManagerPluginTest
     }
 
     [Fact]
-    public async void GetAvailableHours_Should_Return_Available_Hours()
+    public async Task RegisterPatient_Should_Patient_Exist()
+    {
+        // Arrange
+        mockPatientService.Setup(x => x.Exists(It.IsAny<long>())).ReturnsAsync(true);
+        var plugin = new PatientsManagerPlugin(mockPatientService.Object, serviceProvider.GetService<ChatService>()!, serviceProvider.GetService<ProgramationService>()!, serviceProvider.GetService<DoctorService>()!);
+
+        // Act
+        var exception = await Assert.ThrowsAsync<Exception>(() => plugin.RegisterPatient(new Kernel(), Guid.NewGuid(), 123456, "Mike", "Wazowski", "email", 123456789, "Reason"));
+
+        // Assert
+        Assert.IsType<Exception>(exception);
+    }
+
+    [Fact]
+    public async Task RegisterPatient_Should_Patient_Exist_With_Out_Email()
+    {
+        // Arrange
+        var plugin = new PatientsManagerPlugin(mockPatientService.Object, serviceProvider.GetService<ChatService>()!, serviceProvider.GetService<ProgramationService>()!, serviceProvider.GetService<DoctorService>()!);
+
+        // Act
+        var exception = await Assert.ThrowsAsync<Exception>(() => plugin.RegisterPatient(new Kernel(), Guid.NewGuid(), 123456, "Mike", "Wazowski", "", 123456789, "Reason"));
+
+        // Assert
+        Assert.IsType<Exception>(exception);
+    }
+
+    [Fact]
+    public async Task GetAvailableHours_Should_Return_Available_Hours()
     {
         // Arrange
         var plugin = new PatientsManagerPlugin(serviceProvider.GetService<PatientService>()!, serviceProvider.GetService<ChatService>()!, serviceProvider.GetService<ProgramationService>()!, serviceProvider.GetService<DoctorService>()!);
@@ -112,7 +140,7 @@ public class PatientsManagerPluginTest
     }
 
     [Fact]
-    public async void GetAvailableHours_Should_DateTime_Is_Less_Than_Current_DateTime()
+    public async Task GetAvailableHours_Should_DateTime_Is_Less_Than_Current_DateTime()
     {
         // Arrange
         var plugin = new PatientsManagerPlugin(serviceProvider.GetService<PatientService>()!, serviceProvider.GetService<ChatService>()!, serviceProvider.GetService<ProgramationService>()!, serviceProvider.GetService<DoctorService>()!);
@@ -126,7 +154,7 @@ public class PatientsManagerPluginTest
     }
 
     [Fact]
-    public async void RegisterAppointment_Should_Return_Appointment_Guid()
+    public async Task RegisterAppointment_Should_Return_Appointment_Guid()
     {
         // Arrange
         var plugin = new PatientsManagerPlugin(serviceProvider.GetService<PatientService>()!, serviceProvider.GetService<ChatService>()!, serviceProvider.GetService<ProgramationService>()!, serviceProvider.GetService<DoctorService>()!);

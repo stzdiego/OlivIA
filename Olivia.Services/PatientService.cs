@@ -28,35 +28,29 @@ public class PatientService
     /// <summary>
     /// Creates a patient.
     /// </summary>
+    /// /// <param name="identification">Identification.</param>
     /// <param name="name">Name.</param>
     /// <param name="lastName">Last name.</param>
     /// <param name="email">Email.</param>
     /// <param name="phone">Phone.</param>
     /// <param name="reason">Reason.</param>
     /// <returns>Patient id.</returns>
-    public virtual async Task<Guid> Create(string name, string lastName, string email, long phone, string reason)
+    public virtual async Task<Guid> Create(long identification, string name, string lastName, string email, long phone, string reason)
     {
-        try
+        this.logger.LogInformation("Creating chat service");
+        Patient patient = new ()
         {
-            this.logger.LogInformation("Creating chat service");
-            Patient patient = new ()
-            {
-                Name = name,
-                LastName = lastName,
-                Email = email,
-                Phone = phone,
-                Reason = reason,
-            };
+            Identification = identification,
+            Name = name,
+            LastName = lastName,
+            Email = email,
+            Phone = phone,
+            Reason = reason,
+        };
 
-            await this.database.Add(patient);
-            this.logger.LogInformation("Patient created");
-            return patient.Id;
-        }
-        catch (Exception ex)
-        {
-            this.logger.LogError(ex, ex.Message);
-            throw;
-        }
+        await this.database.Add(patient);
+        this.logger.LogInformation("Patient created");
+        return patient.Id;
     }
 
     /// <summary>
@@ -72,27 +66,19 @@ public class PatientService
     /// <returns>Task.</returns>
     public virtual async Task Update(Guid id, long identification, string name, string lastName, string email, long phone, string reason)
     {
-        try
-        {
-            this.logger.LogInformation("Updating patient");
-            Patient patient = await this.database.Find<Patient>(x => x.Id == id)
-                ?? throw new Exception("Patient not found");
+        this.logger.LogInformation("Updating patient");
+        Patient patient = await this.database.Find<Patient>(x => x.Id == id)
+            ?? throw new Exception("Patient not found");
 
-            patient.Identification = identification;
-            patient.Name = name;
-            patient.LastName = lastName;
-            patient.Email = email;
-            patient.Phone = phone;
-            patient.Reason = reason;
+        patient.Identification = identification;
+        patient.Name = name;
+        patient.LastName = lastName;
+        patient.Email = email;
+        patient.Phone = phone;
+        patient.Reason = reason;
 
-            await this.database.Update(patient);
-            this.logger.LogInformation("Patient updated");
-        }
-        catch (Exception ex)
-        {
-            this.logger.LogError(ex, ex.Message);
-            throw;
-        }
+        await this.database.Update(patient);
+        this.logger.LogInformation("Patient updated");
     }
 
     /// <summary>
@@ -102,16 +88,8 @@ public class PatientService
     /// <returns>True if exists, false otherwise.</returns>
     public virtual async Task<bool> Exists(long identification)
     {
-        try
-        {
-            this.logger.LogInformation("Checking if patient exists");
-            return await this.database.Exist<Patient>(p => p.Identification == identification);
-        }
-        catch (Exception ex)
-        {
-            this.logger.LogError(ex, ex.Message);
-            throw;
-        }
+        this.logger.LogInformation("Checking if patient exists");
+        return await this.database.Exist<Patient>(p => p.Identification == identification);
     }
 
     /// <summary>
@@ -121,15 +99,7 @@ public class PatientService
     /// <returns>Patient.</returns>
     public virtual async Task<Patient?> Find(Guid id)
     {
-        try
-        {
-            this.logger.LogInformation("Finding patient");
-            return await this.database.Find<Patient>(x => x.Id == id);
-        }
-        catch (Exception ex)
-        {
-            this.logger.LogError(ex, ex.Message);
-            throw;
-        }
+        this.logger.LogInformation("Finding patient");
+        return await this.database.Find<Patient>(x => x.Id == id);
     }
 }

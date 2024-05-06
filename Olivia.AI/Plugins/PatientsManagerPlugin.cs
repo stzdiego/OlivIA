@@ -107,7 +107,7 @@ namespace Olivia.AI.Plugins
                 throw new Exception("Todos los campos son requeridos");
             }
 
-            var guid = await this.patients.Create(name, lastName, email, phone, reason);
+            var guid = await this.patients.Create(123456, name, lastName, email, phone, reason);
             await this.chats.AsociatePatient(chatId, guid);
             return guid;
         }

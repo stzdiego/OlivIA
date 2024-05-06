@@ -1,6 +1,7 @@
 // Copyright (c) Olivia Inc.. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+namespace Olivia.AI.Plugins;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,13 +12,21 @@ using Olivia.Services;
 using Olivia.Shared.Entities;
 using Olivia.Shared.Interfaces;
 
-namespace Olivia.AI.Plugins;
+/// <summary>
+/// Plugin para la gestión de programaciones.
+/// </summary>
 public class ProgramationManagerPlugin : IPlugin
 {
     private readonly ProgramationService programations;
     private readonly DoctorService doctors;
     private readonly ChatService chats;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProgramationManagerPlugin"/> class.
+    /// </summary>
+    /// <param name="programations">ProgramationService.</param>
+    /// <param name="chats">ChatService.</param>
+    /// <param name="doctors">DoctorService.</param>
     public ProgramationManagerPlugin(ProgramationService programations, ChatService chats, DoctorService doctors)
     {
         this.programations = programations;
@@ -25,6 +34,10 @@ public class ProgramationManagerPlugin : IPlugin
         this.doctors = doctors;
     }
 
+    /// <summary>
+    /// Obtiene la fecha actual.
+    /// </summary>
+    /// <returns>Fecha actual.</returns>
     [KernelFunction]
     [Description("Obtiene la fecha actual.")]
     public DateTime GetDate()
@@ -32,22 +45,27 @@ public class ProgramationManagerPlugin : IPlugin
         return DateTime.Now;
     }
 
+    /// <summary>
+    /// Get the doctor id by identification.
+    /// </summary>
+    /// <param name="kernel">Kernel.</param>
+    /// <param name="identification">Número de identificación del doctor.</param>
+    /// <returns>Id del doctor.</returns>
     [KernelFunction]
     [Description("Obtiene el id del doctor solicitando su numero de identificación.")]
     public async Task<Guid> GetDoctorId(Kernel kernel, long identification)
     {
-        try
-        {
-            var doctor = await this.doctors.Find(identification);
-            return doctor.Id;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            throw;
-        }
+        var doctor = await this.doctors.Find(identification);
+        return doctor.Id;
     }
 
+    /// <summary>
+    /// Get appointments by doctor today.
+    /// </summary>
+    /// <param name="kernel">Kernel.</param>
+    /// <param name="chatId">Id del chat.</param>
+    /// <param name="doctorId">Id del doctor.</param>
+    /// <returns>Lista de citas.</returns>
     [KernelFunction]
     [Description("Obtiene la lista de citas de un doctor en el dia actual.")]
     public async Task<IEnumerable<Appointment>?> GetAppointmentsByDoctorToday(
@@ -55,17 +73,17 @@ public class ProgramationManagerPlugin : IPlugin
         Guid chatId,
         Guid doctorId)
     {
-        try
-        {
-            return await this.programations.GetAppointmentsListDay(doctorId, DateTime.Now);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            throw;
-        }
+        return await this.programations.GetAppointmentsListDay(doctorId, DateTime.Now);
     }
 
+    /// <summary>
+    /// Get appointments by doctor by date.
+    /// </summary>
+    /// <param name="kernel">Kernel.</param>
+    /// <param name="chatId">Id del chat.</param>
+    /// <param name="doctorId">Id del doctor.</param>
+    /// <param name="date">Fecha de la cita.</param>
+    /// <returns>Lista de citas.</returns>
     [KernelFunction]
     [Description("Obtiene la lista de citas de un doctor en una fecha especifica.")]
     public async Task<IEnumerable<Appointment>?> GetAppointmentsByDoctorByDate(
@@ -74,17 +92,18 @@ public class ProgramationManagerPlugin : IPlugin
         Guid doctorId,
         [Description("Fecha de la cita")] DateTime date)
     {
-        try
-        {
-            return await this.programations.GetAppointmentsListDay(doctorId, date);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            throw;
-        }
+        return await this.programations.GetAppointmentsListDay(doctorId, date);
     }
 
+    /// <summary>
+    /// Get appointments by doctor by range.
+    /// </summary>
+    /// <param name="kernel">Kernel.</param>
+    /// <param name="chatId">ChatId.</param>
+    /// <param name="doctorId">DoctorId.</param>
+    /// <param name="startDate">StartDate.</param>
+    /// <param name="endDate">EndDate.</param>
+    /// <returns>Lista de citas.</returns>
     [KernelFunction]
     [Description("Obtiene la lista de citas de un doctor en un rango de fechas.")]
     public async Task<IEnumerable<Appointment>?> GetAppointmentsByDoctorByRange(
@@ -94,14 +113,6 @@ public class ProgramationManagerPlugin : IPlugin
         [Description("Fecha de inicio del rango")] DateTime startDate,
         [Description("Fecha de fin del rango")] DateTime endDate)
     {
-        try
-        {
-            return await this.programations.GetAppointmentsListRange(doctorId, startDate, endDate);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            throw;
-        }
+        return await this.programations.GetAppointmentsListRange(doctorId, startDate, endDate);
     }
 }

@@ -1,6 +1,7 @@
 // Copyright (c) Olivia Inc.. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+namespace Olivia.Api.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,43 +16,138 @@ using Olivia.Shared.Dtos;
 using Olivia.Shared.Enums;
 using Olivia.Shared.Interfaces;
 
-namespace Olivia.Api.Controllers;
-
+/// <summary>
+/// DoctorsAsistenceController class.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class DoctorsAsistenceController : ControllerBase
 {
     private readonly IConfiguration config;
     private readonly ILogger<DoctorsAsistenceController> logger;
-    private readonly OpenAIAgent agent;
-    private readonly ChatService chats;
+    private readonly IAgent agent;
+    private readonly IChatService chats;
     private readonly OliviaDbContext context;
 
-    public DoctorsAsistenceController(IConfiguration configuration, ILogger<DoctorsAsistenceController> logger,
-                               OpenAIAgent asistence, ChatService chats, OliviaDbContext context)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DoctorsAsistenceController"/> class.
+    /// </summary>
+    /// <param name="configuration">Configuration.</param>
+    /// <param name="logger">Logger.</param>
+    /// <param name="chats">Chats.</param>
+    /// <param name="context">Context.</param>
+    /// <param name="agent">Agent.</param>
+    public DoctorsAsistenceController(IConfiguration configuration, ILogger<DoctorsAsistenceController> logger, IChatService chats, OliviaDbContext context, IAgent agent)
     {
         this.config = configuration;
         this.logger = logger;
         this.chats = chats;
         this.context = context;
-        this.agent = this.GetAgent();
+        this.agent = agent;
+
+        this.agent.AddScoped<ChatService>();
+        this.agent.AddScoped<DoctorService>();
+        this.agent.AddScoped<ProgramationService>();
+        this.agent.AddScoped<IDatabase, DatabaseService>();
+        this.agent.AddDbContext<DbContext, OliviaDbContext>(this.context);
+        this.agent.AddPlugin<ProgramationManagerPlugin>();
+
+        this.agent.Initialize(this.config.GetValue<string>("Agents:Reception:Model") !, this.config.GetValue<string>("Agents:Reception:Key") !, this.config.GetValue<int>("Agents:Reception:MaxTokens"), this.config.GetValue<double>("Agents:Reception:Temperature"), this.config.GetValue<double>("Agents:Reception:Penalty"));
     }
 
-    private OpenAIAgent GetAgent()
+    /// <summary>
+    /// Post method.
+    /// </summary>
+    /// <returns>Task.<IActionResult>.</returns>
+    [HttpPost("Initialize")]
+    public async Task<IActionResult> Post()
     {
-        OpenAIAgent agent = new OpenAIAgent();
-        agent.AddScoped<ChatService>();
-        agent.AddScoped<DoctorService>();
-        agent.AddScoped<ProgramationService>();
-        agent.AddScoped<IDatabase, DatabaseService>();
-        agent.AddDbContext<DbContext, OliviaDbContext>(this.context);
-        agent.AddPlugin<ProgramationManagerPlugin>();
+        try
+        {
+            var id = await this.chats.Create();
+            await this.chats.NewMessage(id, MessageTypeEnum.Prompt, string.Format(this.GetPrompt(), id));
+            var summary = await this.chats.GetSummary(id);
+            var response = await this.agent.Send(summary);
+            await this.chats.NewMessage(id, MessageTypeEnum.Agent, response);
 
-        agent.Initialize(this.config.GetValue<string>("Agents:Reception:Model") !, this.config.GetValue<string>("Agents:Reception:Key") !,
-            this.config.GetValue<int>("Agents:Reception:MaxTokens"), this.config.GetValue<double>("Agents:Reception:Temperature"),
-            this.config.GetValue<double>("Agents:Reception:Penalty"));
+            return this.Ok(new AgentMessageDto
+            {
+                Id = id,
+                Content = "DoctorAgent: " + response,
+            });
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, ex.Message);
+            return this.BadRequest(ex.Message);
+        }
+    }
 
-        return agent;
+    /// <summary>
+    /// Post method.
+    /// </summary>
+    /// <param name="dto">NewMessageDto.</param>
+    /// <returns>Task.<IActionResult>.</returns>
+    [HttpPost("NewMessage")]
+    public async Task<IActionResult> Post([FromBody] NewMessageDto dto)
+    {
+        try
+        {
+            string response = string.Empty;
+
+            var chat = await this.chats.Get(dto.ChatId);
+            if (chat == null)
+            {
+                return this.BadRequest("Chat not found");
+            }
+
+            await this.chats.NewMessage(dto.ChatId, MessageTypeEnum.User, dto.Content);
+            var summary = await this.chats.GetSummary(dto.ChatId);
+            response = await this.agent.Send(summary);
+
+            await this.chats.NewMessage(dto.ChatId, MessageTypeEnum.Agent, response);
+
+            return this.Ok(new AgentMessageDto
+            {
+                Id = dto.ChatId,
+                Content = "DoctorAgent: " + response,
+            });
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, ex.Message);
+            return this.BadRequest(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Post method.
+    /// </summary>
+    /// <param name="dto">IdDto.</param>
+    /// <returns>Task.<IActionResult>.</returns>
+    [HttpPost("Resume")]
+    public async Task<IActionResult> Post([FromBody] IdDto dto)
+    {
+        try
+        {
+            this.logger.LogInformation("Getting chat");
+            var chat = await this.chats.Get(dto.Id);
+
+            this.logger.LogInformation("Getting chat messages");
+            var messages = await this.chats.GetMessages(dto.Id);
+
+            return this.Ok(new ResumeDto
+            {
+                ChatId = chat.Id,
+                Chat = chat,
+                Messages = messages.OrderBy(x => x.CreatedAt),
+            });
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, ex.Message);
+            return this.BadRequest(ex.Message);
+        }
     }
 
     private string GetPrompt()
@@ -93,86 +189,5 @@ public class DoctorsAsistenceController : ControllerBase
             [FinishPrompt]
             A partir de esta línea, inicio la interacción con el usuario.
             ";
-    }
-
-    [HttpPost("Initialize")]
-    public async Task<IActionResult> Post()
-    {
-        try
-        {
-            var id = await this.chats.Create();
-            await this.chats.NewMessage(id, MessageTypeEnum.Prompt, string.Format(this.GetPrompt(), id));
-            var summary = await this.chats.GetSummary(id);
-            var response = await this.agent.Send(summary);
-            await this.chats.NewMessage(id, MessageTypeEnum.Agent, response);
-
-            return this.Ok(new AgentMessageDto
-            {
-                Id = id,
-                Content = "DoctorAgent: " + response,
-            });
-        }
-        catch (Exception ex)
-        {
-            this.logger.LogError(ex, ex.Message);
-            return this.BadRequest(ex.Message);
-        }
-    }
-
-    [HttpPost("NewMessage")]
-    public async Task<IActionResult> Post([FromBody] NewMessageDto dto)
-    {
-        try
-        {
-            string response = string.Empty;
-
-            var chat = await this.chats.Get(dto.ChatId);
-            if (chat == null)
-            {
-                return this.BadRequest("Chat not found");
-            }
-
-            await this.chats.NewMessage(dto.ChatId, MessageTypeEnum.User, dto.Content);
-            var summary = await this.chats.GetSummary(dto.ChatId);
-            response = await this.agent.Send(summary);
-
-            await this.chats.NewMessage(dto.ChatId, MessageTypeEnum.Agent, response);
-
-            return this.Ok(new AgentMessageDto
-            {
-                Id = dto.ChatId,
-                Content = "DoctorAgent: " + response,
-            });
-        }
-        catch (Exception ex)
-        {
-            this.logger.LogError(ex, ex.Message);
-            return this.BadRequest(ex.Message);
-        }
-    }
-
-    [HttpPost("Resume")]
-    public async Task<IActionResult> Post([FromBody] IdDto dto)
-    {
-        try
-        {
-            this.logger.LogInformation("Getting chat");
-            var chat = await this.chats.Get(dto.Id);
-
-            this.logger.LogInformation("Getting chat messages");
-            var messages = await this.chats.GetMessages(dto.Id);
-
-            return this.Ok(new ResumeDto
-            {
-                ChatId = chat.Id,
-                Chat = chat,
-                Messages = messages.OrderBy(x => x.CreatedAt),
-            });
-        }
-        catch (Exception ex)
-        {
-            this.logger.LogError(ex, ex.Message);
-            return this.BadRequest(ex.Message);
-        }
     }
 }

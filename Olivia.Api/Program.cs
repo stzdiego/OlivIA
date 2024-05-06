@@ -25,8 +25,8 @@ builder.Services.AddDbContext<DbContext, OliviaDbContext>(
 
 ////Services
 builder.Services.AddScoped<PatientService>();
-builder.Services.AddScoped<ChatService>();
-builder.Services.AddScoped<DoctorService>();
+builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<ProgramationService>();
 builder.Services.AddScoped<IDatabase, DatabaseService>();
 
