@@ -1,5 +1,6 @@
-dotnet test --collect:"XPlat Code Coverage"
-reportgenerator "-reports:TestResults/**/*.cobertura.xml" "-targetdir:coveragereport" -reporttypes:Html
+dotnet test Olivia.Tests --collect:"XPlat Code Coverage" --settings Olivia.Tests/coverlet.runsettings
+reportgenerator "-reports:Olivia.Tests/TestResults/**/*.cobertura.xml" "-targetdir:Olivia.Tests/coveragereport" -reporttypes:Html
+
 
 pre-commit run --all-files
 
