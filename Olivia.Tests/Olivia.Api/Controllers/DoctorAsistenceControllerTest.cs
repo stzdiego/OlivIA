@@ -37,7 +37,6 @@ namespace Olivia.Tests.Olivia.Api.Controllers
             mockMaxTokensSection.SetupGet(m => m.Value).Returns("100");
             mockTemperatureSection.SetupGet(m => m.Value).Returns("0.5");
             mockPenaltySection.SetupGet(m => m.Value).Returns("0.1");
-
             mockConfiguration.Setup(x => x.GetSection("Agents:Reception:Model")).Returns(mockModelSection.Object);
             mockConfiguration.Setup(x => x.GetSection("Agents:Reception:Key")).Returns(mockKeySection.Object);
             mockConfiguration.Setup(x => x.GetSection("Agents:Reception:MaxTokens")).Returns(mockMaxTokensSection.Object);

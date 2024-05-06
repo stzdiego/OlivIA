@@ -221,7 +221,7 @@ var assemblies = [
   {
     "name": "Olivia.AI",
     "classes": [
-      { "name": "Olivia.AI.Agents.OpenAIAgent", "rp": "Olivia.AI_OpenAIAgent.html", "cl": 119, "ucl": 56, "cal": 175, "tl": 176, "cb": 32, "tb": 32, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Olivia.AI.Agents.OpenAIAgent", "rp": "Olivia.AI_OpenAIAgent.html", "cl": 119, "ucl": 56, "cal": 175, "tl": 175, "cb": 42, "tb": 42, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.AI.Plugins.DoctorsManagerPlugin", "rp": "Olivia.AI_DoctorsManagerPlugin.html", "cl": 8, "ucl": 15, "cal": 23, "tl": 48, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.AI.Plugins.PatientsManagerPlugin", "rp": "Olivia.AI_PatientsManagerPlugin.html", "cl": 36, "ucl": 70, "cal": 106, "tl": 158, "cb": 12, "tb": 36, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.AI.Plugins.ProgramationManagerPlugin", "rp": "Olivia.AI_ProgramationManagerPlugin.html", "cl": 22, "ucl": 60, "cal": 82, "tl": 118, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
@@ -231,7 +231,7 @@ var assemblies = [
     "classes": [
       { "name": "Olivia.Api.Controllers.DoctorsAsistenceController", "rp": "Olivia.Api_DoctorsAsistenceController.html", "cl": 115, "ucl": 50, "cal": 165, "tl": 193, "cb": 2, "tb": 6, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Api.Controllers.DoctorsController", "rp": "Olivia.Api_DoctorsController.html", "cl": 47, "ucl": 41, "cal": 88, "tl": 143, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
-      { "name": "Olivia.Api.Controllers.PatientsAsistenceController", "rp": "Olivia.Api_PatientsAsistenceController.html", "cl": 0, "ucl": 141, "cal": 141, "tl": 214, "cb": 0, "tb": 6, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Olivia.Api.Controllers.PatientsAsistenceController", "rp": "Olivia.Api_PatientsAsistenceController.html", "cl": 101, "ucl": 78, "cal": 179, "tl": 221, "cb": 3, "tb": 12, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Api.Migrations.Appointment", "rp": "Olivia.Api_Appointment.html", "cl": 0, "ucl": 196, "cal": 196, "tl": 245, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Api.Migrations.DoctorsAvailable", "rp": "Olivia.Api_DoctorsAvailable.html", "cl": 0, "ucl": 196, "cal": 196, "tl": 244, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Api.Migrations.DoctorsStartEnd", "rp": "Olivia.Api_DoctorsStartEnd.html", "cl": 0, "ucl": 202, "cal": 202, "tl": 253, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
