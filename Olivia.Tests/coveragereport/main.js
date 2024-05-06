@@ -232,7 +232,6 @@ var assemblies = [
       { "name": "Olivia.Api.Controllers.DoctorsAsistenceController", "rp": "Olivia.Api_DoctorsAsistenceController.html", "cl": 108, "ucl": 1, "cal": 109, "tl": 193, "cb": 2, "tb": 2, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Api.Controllers.DoctorsController", "rp": "Olivia.Api_DoctorsController.html", "cl": 47, "ucl": 8, "cal": 55, "tl": 143, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Api.Controllers.PatientsAsistenceController", "rp": "Olivia.Api_PatientsAsistenceController.html", "cl": 96, "ucl": 32, "cal": 128, "tl": 221, "cb": 2, "tb": 6, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
-      { "name": "Program", "rp": "Olivia.Api_Program.html", "cl": 0, "ucl": 33, "cal": 33, "tl": 59, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
     ]},
   {
     "name": "Olivia.Data",
