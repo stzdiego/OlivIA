@@ -7,6 +7,7 @@ namespace Olivia.Services
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Google.Apis.Calendar.v3.Data;
     using Microsoft.Extensions.Logging;
     using Olivia.Shared.Entities;
     using Olivia.Shared.Interfaces;
@@ -18,16 +19,19 @@ namespace Olivia.Services
     {
         private readonly IDatabase database;
         private readonly ILogger<ProgramationService> logger;
+        private readonly ICalendarService calendarService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProgramationService"/> class.
         /// </summary>
         /// <param name="database">Database.</param>
         /// <param name="logger">Logger.</param>
-        public ProgramationService(IDatabase database, ILogger<ProgramationService> logger)
+        /// <param name="calendarService">Calendar service.</param>
+        public ProgramationService(IDatabase database, ILogger<ProgramationService> logger) // , ICalendarService calendarService)
         {
             this.database = database;
             this.logger = logger;
+            this.calendarService = this.calendarService;
         }
 
         /// <summary>
@@ -100,6 +104,8 @@ namespace Olivia.Services
         public virtual async Task<Guid> CreateAppointment(Guid doctorId, Guid patientId, DateTime date, string reason)
         {
             this.logger.LogInformation("Creating appointment");
+            var patient = await this.database.Find<Patient>(x => x.Id == patientId);
+
             var appointment = new Appointment
             {
                 DoctorId = doctorId,
@@ -108,8 +114,18 @@ namespace Olivia.Services
                 Reason = reason,
             };
 
+            var eventCalendar = new Event()
+            {
+                Summary = $"Cita médica ({patient!.Name} {patient!.LastName})",
+                Start = new EventDateTime() { DateTimeDateTimeOffset = new DateTimeOffset(date) },
+                End = new EventDateTime() { DateTimeDateTimeOffset = new DateTimeOffset(date.AddHours(1)) },
+            };
+
             await this.database.Add(appointment);
+
+            // await this.calendarService.AddEvent(eventCalendar);
             this.logger.LogInformation("Appointment created");
+
             return appointment.Id;
         }
 

@@ -29,6 +29,7 @@ builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<ProgramationService>();
 builder.Services.AddScoped<IDatabase, DatabaseService>();
+builder.Services.AddScoped<ICalendarService, GoogleCalendarService>();
 
 ////Plugins
 builder.Services.AddScoped<PatientsManagerPlugin>();

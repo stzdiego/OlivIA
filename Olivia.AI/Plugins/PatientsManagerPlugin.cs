@@ -20,8 +20,8 @@ namespace Olivia.AI.Plugins
     public class PatientsManagerPlugin : IPlugin
     {
         private readonly PatientService patients;
-        private readonly DoctorService doctors;
-        private readonly ChatService chats;
+        private readonly IDoctorService doctors;
+        private readonly IChatService chats;
         private readonly ProgramationService programations;
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace Olivia.AI.Plugins
         /// <param name="chats">Chat service.</param>
         /// <param name="programations">Programation service.</param>
         /// <param name="doctors">Doctor service.</param>
-        public PatientsManagerPlugin(PatientService patients, ChatService chats, ProgramationService programations, DoctorService doctors)
+        public PatientsManagerPlugin(PatientService patients, IChatService chats, ProgramationService programations, IDoctorService doctors)
         {
             this.patients = patients;
             this.chats = chats;
@@ -107,7 +107,7 @@ namespace Olivia.AI.Plugins
                 throw new Exception("Todos los campos son requeridos");
             }
 
-            var guid = await this.patients.Create(123456, name, lastName, email, phone, reason);
+            var guid = await this.patients.Create(patientId, name, lastName, email, phone, reason);
             await this.chats.AsociatePatient(chatId, guid);
             return guid;
         }

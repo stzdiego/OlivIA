@@ -18,8 +18,8 @@ using Olivia.Shared.Interfaces;
 public class ProgramationManagerPlugin : IPlugin
 {
     private readonly ProgramationService programations;
-    private readonly DoctorService doctors;
-    private readonly ChatService chats;
+    private readonly IDoctorService doctors;
+    private readonly IChatService chats;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProgramationManagerPlugin"/> class.
@@ -27,7 +27,7 @@ public class ProgramationManagerPlugin : IPlugin
     /// <param name="programations">ProgramationService.</param>
     /// <param name="chats">ChatService.</param>
     /// <param name="doctors">DoctorService.</param>
-    public ProgramationManagerPlugin(ProgramationService programations, ChatService chats, DoctorService doctors)
+    public ProgramationManagerPlugin(ProgramationService programations, IChatService chats, IDoctorService doctors)
     {
         this.programations = programations;
         this.chats = chats;

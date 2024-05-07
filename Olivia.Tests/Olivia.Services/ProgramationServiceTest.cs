@@ -25,9 +25,11 @@ public class ProgramationServiceTest
 
         _mockDatabase = new Mock<IDatabase>();
         var mockLoggerProgramationService = new Mock<ILogger<ProgramationService>>();
+        var mockCalendar = new Mock<ICalendarService>();
 
         serviceCollection.AddTransient(_ => _mockDatabase.Object);
         serviceCollection.AddTransient(_ => mockLoggerProgramationService.Object);
+        serviceCollection.AddTransient(_ => mockCalendar.Object);
 
         serviceProvider = serviceCollection.BuildServiceProvider();
     }
@@ -36,6 +38,7 @@ public class ProgramationServiceTest
     public async Task GetDoctorId_Should_Get_Doctor_Id()
     {
         // Arrange
+        //var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!, serviceProvider.GetService<ICalendarService>()!);
         var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!);
         _mockDatabase.Setup(x => x.Find<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(_doctor);
 
@@ -50,6 +53,7 @@ public class ProgramationServiceTest
     public async Task GetDoctorId_Should_Throw_Exception_When_Doctor_Not_Found()
     {
         // Arrange
+        //var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!, serviceProvider.GetService<ICalendarService>()!);
         var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!);
         _mockDatabase.Setup(x => x.Find<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync((Doctor?)null);
 
@@ -64,6 +68,7 @@ public class ProgramationServiceTest
     public async Task GetAvailableHours_Should_Get_Available_Hours()
     {
         // Arrange
+        //var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!, serviceProvider.GetService<ICalendarService>()!);
         var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!);
         _mockDatabase.Setup(x => x.Find<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(_doctor);
         _mockDatabase.Setup(x => x.Get<Appointment>(It.IsAny<Expression<Func<Appointment, bool>>>())).ReturnsAsync(new List<Appointment>());
@@ -79,6 +84,7 @@ public class ProgramationServiceTest
     public async Task GetAvailableHours_Should_Throw_Exception_When_Doctor_Not_Found()
     {
         // Arrange
+        //var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!, serviceProvider.GetService<ICalendarService>()!);
         var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!);
         _mockDatabase.Setup(x => x.Find<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync((Doctor?)null);
 
@@ -93,6 +99,7 @@ public class ProgramationServiceTest
     public async Task GetAvailableHours_Should_Throw_Exception_When_Appointments_Not_Found()
     {
         // Arrange
+        //var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!, serviceProvider.GetService<ICalendarService>()!);
         var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!);
         _mockDatabase.Setup(x => x.Find<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(_doctor);
 
@@ -107,6 +114,7 @@ public class ProgramationServiceTest
     public async Task CreateAppointment_Should_Create_Appointment()
     {
         // Arrange
+        //var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!, serviceProvider.GetService<ICalendarService>()!);
         var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!);
         _mockDatabase.Setup(x => x.Find<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(_doctor);
         _mockDatabase.Setup(x => x.Find<Patient>(It.IsAny<Expression<Func<Patient, bool>>>())).ReturnsAsync(_patient);
@@ -123,6 +131,7 @@ public class ProgramationServiceTest
     public async Task GetAppointmentsListDay_Should_Get_Appointments_List_Day()
     {
         // Arrange
+        //var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!, serviceProvider.GetService<ICalendarService>()!);
         var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!);
         _mockDatabase.Setup(x => x.Get<Appointment>(It.IsAny<Expression<Func<Appointment, bool>>>())).ReturnsAsync(new List<Appointment> { _appointment });
 
@@ -137,6 +146,7 @@ public class ProgramationServiceTest
     public async Task GetAppointmentsListDay_Should_Return_Empty_List_When_Appointments_Not_Found()
     {
         // Arrange
+        //var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!, serviceProvider.GetService<ICalendarService>()!);
         var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!);
         _mockDatabase.Setup(x => x.Get<Appointment>(It.IsAny<Expression<Func<Appointment, bool>>>())).ReturnsAsync(new List<Appointment>());
 
@@ -151,6 +161,7 @@ public class ProgramationServiceTest
     public async Task GetAppointmentsListRange_Should_Get_Appointments_List_Range()
     {
         // Arrange
+        //var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!, serviceProvider.GetService<ICalendarService>()!);
         var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!);
         _mockDatabase.Setup(x => x.Get<Appointment>(It.IsAny<Expression<Func<Appointment, bool>>>())).ReturnsAsync(new List<Appointment> { _appointment });
 
@@ -165,6 +176,7 @@ public class ProgramationServiceTest
     public async Task GetAppointmentsListRange_Should_Return_Empty_List_When_Appointments_Not_Found()
     {
         // Arrange
+        //var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!, serviceProvider.GetService<ICalendarService>()!);
         var programationService = new ProgramationService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<ProgramationService>>()!);
         _mockDatabase.Setup(x => x.Get<Appointment>(It.IsAny<Expression<Func<Appointment, bool>>>())).ReturnsAsync(new List<Appointment>());
 

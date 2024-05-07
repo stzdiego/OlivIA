@@ -19,15 +19,15 @@ namespace Olivia.AI.Plugins
     /// </summary>
     public class DoctorsManagerPlugin : IPlugin
     {
-        private readonly DoctorService doctors;
-        private readonly ChatService chats;
+        private readonly IDoctorService doctors;
+        private readonly IChatService chats;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DoctorsManagerPlugin"/> class.
         /// </summary>
         /// <param name="doctors">Doctor service.</param>
         /// <param name="chats">Chat service.</param>
-        public DoctorsManagerPlugin(DoctorService doctors, ChatService chats)
+        public DoctorsManagerPlugin(IDoctorService doctors, IChatService chats)
         {
             this.doctors = doctors;
             this.chats = chats;
