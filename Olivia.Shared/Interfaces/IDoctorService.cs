@@ -52,7 +52,7 @@ public interface IDoctorService
     Task<IEnumerable<Doctor>> Get();
 
     /// <summary>
-    /// Deletes a doctor.
+    /// Gets the available doctors.
     /// </summary>
     /// <returns>Task.</returns>
     Task<IEnumerable<Doctor>?> GetAvailable();
