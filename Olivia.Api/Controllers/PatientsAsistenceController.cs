@@ -49,19 +49,19 @@ namespace Olivia.Api.Controllers
             this.agentRegister = agent1;
             this.agentPlanner = agent2;
 
-            this.agentRegister.AddScoped<ChatService>();
-            this.agentRegister.AddScoped<PatientService>();
-            this.agentRegister.AddScoped<DoctorService>();
-            this.agentRegister.AddScoped<ProgramationService>();
+            this.agentRegister.AddScoped<IChatService, ChatService>();
+            this.agentRegister.AddScoped<IPatientService, PatientService>();
+            this.agentRegister.AddScoped<IDoctorService, DoctorService>();
+            this.agentRegister.AddScoped<IProgramationService, ProgramationService>();
             this.agentRegister.AddScoped<IDatabase, DatabaseService>();
             this.agentRegister.AddDbContext<DbContext, OliviaDbContext>(this.context);
             this.agentRegister.AddPlugin<PatientsManagerPlugin>();
             this.agentRegister.Initialize(this.config.GetValue<string>("Agents:Reception:Model") !, this.config.GetValue<string>("Agents:Reception:Key") !, this.config.GetValue<int>("Agents:Reception:MaxTokens"), this.config.GetValue<double>("Agents:Reception:Temperature"), this.config.GetValue<double>("Agents:Reception:Penalty"));
 
-            this.agentPlanner.AddScoped<ChatService>();
-            this.agentPlanner.AddScoped<PatientService>();
-            this.agentPlanner.AddScoped<DoctorService>();
-            this.agentPlanner.AddScoped<ProgramationService>();
+            this.agentPlanner.AddScoped<IChatService, IChatService>();
+            this.agentPlanner.AddScoped<IPatientService, PatientService>();
+            this.agentPlanner.AddScoped<IDoctorService, DoctorService>();
+            this.agentPlanner.AddScoped<IProgramationService, ProgramationService>();
             this.agentPlanner.AddScoped<IDatabase, DatabaseService>();
             this.agentPlanner.AddDbContext<DbContext, OliviaDbContext>(this.context);
             this.agentPlanner.AddPlugin<PatientsManagerPlugin>();

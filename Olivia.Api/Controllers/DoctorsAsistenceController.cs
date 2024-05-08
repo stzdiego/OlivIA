@@ -16,6 +16,7 @@ using Olivia.Shared.Dtos;
 using Olivia.Shared.Enums;
 using Olivia.Shared.Interfaces;
 using Google.Apis.Calendar.v3.Data;
+using Olivia.Shared.Settings;
 
 /// <summary>
 /// DoctorsAsistenceController class.
@@ -54,6 +55,7 @@ public class DoctorsAsistenceController : ControllerBase
         this.agent.AddScoped<IDoctorService, DoctorService>();
         this.agent.AddScoped<IProgramationService, ProgramationService>();
         this.agent.AddScoped<IDatabase, DatabaseService>();
+        this.agent.AddScoped<IGoogleCalendarSettings, GoogleCalendarSettings>();
         this.agent.AddScoped<ICalendarService, GoogleCalendarService>();
         this.agent.AddDbContext<DbContext, OliviaDbContext>(this.context);
         this.agent.AddPlugin<ProgramationManagerPlugin>();
