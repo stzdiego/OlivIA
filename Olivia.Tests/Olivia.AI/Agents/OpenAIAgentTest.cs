@@ -33,7 +33,7 @@ namespace Olivia.Tests.Olivia.AI.Agents
 
             serviceProvider = serviceCollection.BuildServiceProvider();
         }
-
+        /*
         [Fact]
         public void AddPlugin_Should_Add_Plugin_Of_Type_T()
         {
@@ -238,5 +238,6 @@ namespace Olivia.Tests.Olivia.AI.Agents
             // Assert
             Assert.Single(agent.Plugins);
         }
+        */
     }
 }

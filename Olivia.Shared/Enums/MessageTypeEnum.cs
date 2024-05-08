@@ -3,9 +3,23 @@
 
 namespace Olivia.Shared.Enums;
 
+/// <summary>
+/// Message type enum.
+/// </summary>
 public enum MessageTypeEnum
 {
+    /// <summary>
+    /// The prompt.
+    /// </summary>
     Prompt,
+
+    /// <summary>
+    /// The User.
+    /// </summary>
     User,
+
+    /// <summary>
+    /// The Agent.
+    /// </summary>
     Agent,
 }

@@ -12,6 +12,13 @@ public interface IPatientService
     /// <summary>
     /// Creates a patient.
     /// </summary>
+    /// <param name="patient">Patient.</param>
+    /// <returns>Patient id.</returns>
+    Task<Patient> Create(Patient patient);
+
+    /// <summary>
+    /// Creates a patient.
+    /// </summary>
     /// <param name="identification">Identification.</param>
     /// <param name="name">Name.</param>
     /// <param name="lastName">Last name.</param>

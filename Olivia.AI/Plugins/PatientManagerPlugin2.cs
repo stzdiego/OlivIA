@@ -11,7 +11,7 @@ using Olivia.Shared.Interfaces;
 /// <summary>
 /// Represents a plugin that manages the patient.
 /// </summary>
-public class PatientManagerPlugin2
+public class PatientManagerPlugin2 : IPlugin
 {
     /// <summary>
     /// Gets or sets the patient.
@@ -38,18 +38,17 @@ public class PatientManagerPlugin2
     }
 
     /// <summary>
-    /// Gets the doctors.
+    /// Registers a patient in the system.
     /// </summary>
-    /// <returns>The doctors.</returns>
-    [KernelFunction("GetDoctors")]
-    [Description("Gets the doctors available for appointments.")]
-    public async Task<IEnumerable<Doctor>?> GetDoctorsAsync()
+    /// <param name="kernel">Kernel.</param>
+    /// <param name="patient">The patient to register.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    [KernelFunction("RegisterPatient")]
+    [Description("Register a patient in the system.")]
+    public async Task RegisterPatientAsync(
+        Kernel kernel,
+        [Description("The patient to register.")] Patient patient)
     {
-        if (this.Doctors is null)
-        {
-            this.Doctors = await this.doctorService.GetAvailable();
-        }
-
-        return this.Doctors;
+        await this.patientService.Create(patient);
     }
 }

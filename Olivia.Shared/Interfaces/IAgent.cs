@@ -70,14 +70,9 @@ public interface IAgent
         where TContextImplementation : class, TContextService;
 
     /// <summary>
-    /// Initializes the specified model identifier.
+    /// Initializes this instance.
     /// </summary>
-    /// <param name="modelId">The model identifier.</param>
-    /// <param name="apiKey">The API key.</param>
-    /// <param name="maxTokens">The maximum tokens.</param>
-    /// <param name="temperature">The temperature.</param>
-    /// <param name="presencePenalty">The presence penalty.</param>
-    void Initialize(string modelId, string apiKey, int maxTokens, double temperature = 0.5, double presencePenalty = 0.0);
+    void Initialize();
 
     /// <summary>
     /// Sends the specified string builder.

@@ -1,5 +1,6 @@
 // Copyright (c) Olivia Inc.. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+
 namespace Olivia.AI.Agents;
 using System;
 using System.Collections.Generic;
@@ -32,16 +33,19 @@ public class OpenAIAgent : IAgent
     /// </summary>
     public List<Type> Services { get; } = new List<Type>();
 
-    private readonly IKernelBuilder? builder;
-    private OpenAIPromptExecutionSettings? settings;
+    private readonly IAgentSettings settings;
+    private readonly IKernelBuilder builder;
+    private OpenAIPromptExecutionSettings? prompSettings;
     private Kernel? kernel;
     private IChatCompletionService? chatCompletionService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OpenAIAgent"/> class.
     /// </summary>
-    public OpenAIAgent()
+    /// <param name="settings">The settings.</param>
+    public OpenAIAgent(IAgentSettings settings)
     {
+        this.settings = settings;
         this.builder = Kernel.CreateBuilder();
     }
 
@@ -162,18 +166,21 @@ public class OpenAIAgent : IAgent
     /// <param name="maxTokens">The maximum tokens.</param>
     /// <param name="temperature">The temperature.</param>
     /// <param name="presencePenalty">The presence penalty.</param>
-    public void Initialize(string modelId, string apiKey, int maxTokens, double temperature = 0.5, double presencePenalty = 0.0)
+    public void Initialize()
     {
         this.builder!.Services.AddLogging();
-        this.builder!.Services.AddOpenAIChatCompletion(modelId, apiKey);
+        this.builder!.Services.AddOpenAIChatCompletion(this.settings.Model, this.settings.Key);
         this.kernel = this.builder.Build();
         this.chatCompletionService = this.kernel.GetRequiredService<IChatCompletionService>();
-        this.settings = new OpenAIPromptExecutionSettings
+        this.prompSettings = new OpenAIPromptExecutionSettings
         {
             ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions,
-            MaxTokens = maxTokens,
-            Temperature = temperature,
-            PresencePenalty = presencePenalty,
+            MaxTokens = this.settings.MaxTokens,
+            Temperature = this.settings.Temperature,
+            PresencePenalty = this.settings.PresencePenalty,
+            FrequencyPenalty = this.settings.FrequencyPenalty,
+            StopSequences = this.settings.StopSequences,
+            TopP = this.settings.TopP,
         };
     }
 
@@ -186,7 +193,7 @@ public class OpenAIAgent : IAgent
     {
         var response = await this.chatCompletionService!.GetChatMessageContentAsync(
             stringBuilder.ToString(),
-            this.settings!,
+            this.prompSettings!,
             this.kernel!);
 
         return response.ToString();

@@ -39,7 +39,9 @@ builder.Services.AddScoped<PatientsManagerPlugin>();
 builder.Services.AddScoped<DoctorsManagerPlugin>();
 builder.Services.AddScoped<ProgramationManagerPlugin>();
 
-////Agents
+////OpenAI Agent
+builder.Services.Configure<OpenAISettings>(builder.Configuration.GetSection(nameof(OpenAISettings)));
+builder.Services.AddScoped<IAgentSettings>(s => s.GetRequiredService<IOptions<OpenAISettings>>().Value);
 builder.Services.AddScoped<IAgent, OpenAIAgent>();
 
 ////Google Calendar
