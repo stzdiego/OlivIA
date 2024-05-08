@@ -2,55 +2,76 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace Olivia.Services;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Calendar.v3;
-using Google.Apis.Calendar.v3.Data;
-using Google.Apis.Services;
 using Olivia.Shared.Interfaces;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
+using Google.Apis.Calendar.v3;
+using Google.Apis.Services;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Calendar.v3.Data;
 
 /// <summary>
 /// Google Calendar service.
 /// </summary>
 public class GoogleCalendarService : ICalendarService
 {
-    private readonly string[] scopes = { CalendarService.Scope.Calendar };
-    private readonly string applicationName = "Olivia";
-    private readonly string calendarId = "Olivia"; // Usa el ID del calendario que quieras
+    private const string TIMEZONE = "America/Bogota";
+    private readonly IGoogleCalendarSettings settings;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GoogleCalendarService"/> class.
     /// </summary>
-    public GoogleCalendarService()
+    /// <param name="settings">Settings.</param>
+    public GoogleCalendarService(IGoogleCalendarSettings settings)
     {
+        this.settings = settings;
     }
 
     /// <summary>
-    /// Adds an event to the calendar.
+    /// Creates an event.
     /// </summary>
-    /// <param name="newEvent">Event to add.</param>
+    /// <param name="summary">Summary.</param>
+    /// <param name="description">Description.</param>
+    /// <param name="start">Start.</param>
+    /// <param name="end">End.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Task.</returns>
-    public async Task AddEvent(Event newEvent)
+    public async Task CreateEvent(string summary, string description, DateTime start, DateTime end, CancellationToken cancellationToken = default)
     {
-        UserCredential credential;
-        using (var stream = new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
-        {
-            credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                GoogleClientSecrets.FromStream(stream).Secrets,
-                this.scopes,
-                "user",
-                CancellationToken.None).Result;
-        }
+        UserCredential credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+          new ClientSecrets()
+          {
+              ClientId = this.settings.ClientId,
+              ClientSecret = this.settings.ClientSecret,
+          },
+          this.settings.Scope,
+          this.settings.User,
+          cancellationToken);
 
-        var service = new CalendarService(new BaseClientService.Initializer()
+        var services = new CalendarService(new BaseClientService.Initializer()
         {
             HttpClientInitializer = credential,
-            ApplicationName = this.applicationName,
+            ApplicationName = this.settings.ApplicationName,
         });
 
-        EventsResource.InsertRequest request = service.Events.Insert(newEvent, this.calendarId);
-        Event createdEvent = await request.ExecuteAsync();
-        Console.WriteLine("Event created: " + createdEvent.HtmlLink);
+        Event newEvent = new Event()
+        {
+            Summary = summary,
+            Description = description,
+            Start = new EventDateTime()
+            {
+                DateTimeDateTimeOffset = start,
+                TimeZone = TIMEZONE,
+            },
+            End = new EventDateTime()
+            {
+                DateTimeDateTimeOffset = end,
+                TimeZone = TIMEZONE,
+            },
+        };
+
+        var eventRequest = services.Events.Insert(newEvent, this.settings.CalendarId);
+        var requestCreate = await eventRequest.ExecuteAsync(cancellationToken);
     }
 }

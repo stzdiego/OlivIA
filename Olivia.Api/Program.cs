@@ -2,13 +2,17 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 #pragma warning disable SA1200 // UsingDirectivesMustBePlacedWithinNamespace
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Calendar.v3;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Olivia.AI.Agents;
 using Olivia.AI.Plugins;
 using Olivia.Data;
 using Olivia.Services;
 using Olivia.Shared.Interfaces;
+using Olivia.Shared.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,12 +28,11 @@ builder.Services.AddDbContext<DbContext, OliviaDbContext>(
         b => b.MigrationsAssembly("Olivia.Api")));
 
 ////Services
-builder.Services.AddScoped<PatientService>();
+builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
-builder.Services.AddScoped<ProgramationService>();
+builder.Services.AddScoped<IProgramationService, ProgramationService>();
 builder.Services.AddScoped<IDatabase, DatabaseService>();
-builder.Services.AddScoped<ICalendarService, GoogleCalendarService>();
 
 ////Plugins
 builder.Services.AddScoped<PatientsManagerPlugin>();
@@ -37,7 +40,12 @@ builder.Services.AddScoped<DoctorsManagerPlugin>();
 builder.Services.AddScoped<ProgramationManagerPlugin>();
 
 ////Agents
-builder.Services.AddScoped<OpenAIAgent>();
+builder.Services.AddScoped<IAgent, OpenAIAgent>();
+
+////Google Calendar
+builder.Services.Configure<GoogleCalendarSettings>(builder.Configuration.GetSection(nameof(GoogleCalendarSettings)));
+builder.Services.AddSingleton<IGoogleCalendarSettings>(s => s.GetRequiredService<IOptions<GoogleCalendarSettings>>().Value);
+builder.Services.AddScoped<ICalendarService, GoogleCalendarService>();
 
 var app = builder.Build();
 

@@ -221,15 +221,15 @@ var assemblies = [
   {
     "name": "Olivia.AI",
     "classes": [
-      { "name": "Olivia.AI.Agents.OpenAIAgent", "rp": "Olivia.AI_OpenAIAgent.html", "cl": 62, "ucl": 2, "cal": 64, "tl": 175, "cb": 12, "tb": 12, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
-      { "name": "Olivia.AI.Plugins.DoctorsManagerPlugin", "rp": "Olivia.AI_DoctorsManagerPlugin.html", "cl": 8, "ucl": 0, "cal": 8, "tl": 48, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Olivia.AI.Agents.OpenAIAgent", "rp": "Olivia.AI_OpenAIAgent.html", "cl": 69, "ucl": 2, "cal": 71, "tl": 194, "cb": 14, "tb": 14, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Olivia.AI.Plugins.DoctorsManagerPlugin", "rp": "Olivia.AI_DoctorsManagerPlugin.html", "cl": 9, "ucl": 3, "cal": 12, "tl": 69, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.AI.Plugins.PatientsManagerPlugin", "rp": "Olivia.AI_PatientsManagerPlugin.html", "cl": 36, "ucl": 0, "cal": 36, "tl": 158, "cb": 12, "tb": 12, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.AI.Plugins.ProgramationManagerPlugin", "rp": "Olivia.AI_ProgramationManagerPlugin.html", "cl": 22, "ucl": 0, "cal": 22, "tl": 118, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
     ]},
   {
     "name": "Olivia.Api",
     "classes": [
-      { "name": "Olivia.Api.Controllers.DoctorsAsistenceController", "rp": "Olivia.Api_DoctorsAsistenceController.html", "cl": 108, "ucl": 1, "cal": 109, "tl": 193, "cb": 2, "tb": 2, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Olivia.Api.Controllers.DoctorsAsistenceController", "rp": "Olivia.Api_DoctorsAsistenceController.html", "cl": 111, "ucl": 10, "cal": 121, "tl": 220, "cb": 2, "tb": 2, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Api.Controllers.DoctorsController", "rp": "Olivia.Api_DoctorsController.html", "cl": 47, "ucl": 8, "cal": 55, "tl": 143, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Api.Controllers.PatientsAsistenceController", "rp": "Olivia.Api_PatientsAsistenceController.html", "cl": 96, "ucl": 32, "cal": 128, "tl": 221, "cb": 2, "tb": 6, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
     ]},
@@ -244,8 +244,9 @@ var assemblies = [
       { "name": "Olivia.Services.ChatService", "rp": "Olivia.Services_ChatService.html", "cl": 65, "ucl": 0, "cal": 65, "tl": 156, "cb": 9, "tb": 10, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Services.DatabaseService", "rp": "Olivia.Services_DatabaseService.html", "cl": 30, "ucl": 0, "cal": 30, "tl": 116, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Services.DoctorService", "rp": "Olivia.Services_DoctorService.html", "cl": 86, "ucl": 0, "cal": 86, "tl": 195, "cb": 10, "tb": 10, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Olivia.Services.GoogleCalendarService", "rp": "Olivia.Services_GoogleCalendarService.html", "cl": 4, "ucl": 33, "cal": 37, "tl": 77, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Services.PatientService", "rp": "Olivia.Services_PatientService.html", "cl": 41, "ucl": 0, "cal": 41, "tl": 105, "cb": 1, "tb": 2, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
-      { "name": "Olivia.Services.ProgramationService", "rp": "Olivia.Services_ProgramationService.html", "cl": 66, "ucl": 9, "cal": 75, "tl": 160, "cb": 11, "tb": 14, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Olivia.Services.ProgramationService", "rp": "Olivia.Services_ProgramationService.html", "cl": 73, "ucl": 9, "cal": 82, "tl": 173, "cb": 11, "tb": 14, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
     ]},
   {
     "name": "Olivia.Shared",
@@ -260,6 +261,7 @@ var assemblies = [
       { "name": "Olivia.Shared.Entities.Doctor", "rp": "Olivia.Shared_Doctor.html", "cl": 11, "ucl": 0, "cal": 11, "tl": 37, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Shared.Entities.Message", "rp": "Olivia.Shared_Message.html", "cl": 6, "ucl": 1, "cal": 7, "tl": 25, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Shared.Entities.Patient", "rp": "Olivia.Shared_Patient.html", "cl": 8, "ucl": 0, "cal": 8, "tl": 32, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Olivia.Shared.Settings.GoogleCalendarSettings", "rp": "Olivia.Shared_GoogleCalendarSettings.html", "cl": 0, "ucl": 6, "cal": 6, "tl": 41, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
     ]},
 ];
 

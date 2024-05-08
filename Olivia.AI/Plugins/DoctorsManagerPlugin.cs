@@ -21,16 +21,19 @@ namespace Olivia.AI.Plugins
     {
         private readonly IDoctorService doctors;
         private readonly IChatService chats;
+        private readonly ICalendarService calendarService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DoctorsManagerPlugin"/> class.
         /// </summary>
         /// <param name="doctors">Doctor service.</param>
         /// <param name="chats">Chat service.</param>
-        public DoctorsManagerPlugin(IDoctorService doctors, IChatService chats)
+        /// <param name="calendarService">Calendar service.</param>
+        public DoctorsManagerPlugin(IDoctorService doctors, IChatService chats, ICalendarService calendarService)
         {
             this.doctors = doctors;
             this.chats = chats;
+            this.calendarService = calendarService;
         }
 
         /// <summary>
@@ -43,6 +46,23 @@ namespace Olivia.AI.Plugins
         public async Task<IEnumerable<Doctor>> GetInformation(Kernel kernel)
         {
             return await this.doctors.Get();
+        }
+
+        /// <summary>
+        /// Creates a doctor.
+        /// </summary>
+        /// <param name="patientName">Patient name.</param>
+        /// <param name="patientLastName">Patient last name.</param>
+        /// <param name="reason">Reason for the appointment.</param>
+        /// <param name="date">Date of the appointment.</param>
+        /// <returns>Task.</returns>
+        public async Task CreateEventCalendar(
+            [Description("Patient name")] string patientName,
+            [Description("Patient last name")] string patientLastName,
+            [Description("Reason for the appointment")] string reason,
+            [Description("Date of the appointment")] DateTime date)
+        {
+            await this.calendarService.CreateEvent($"{patientName} {patientLastName}", reason, date, date.AddHours(1));
         }
     }
 }

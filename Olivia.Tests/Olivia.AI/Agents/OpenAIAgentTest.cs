@@ -211,5 +211,32 @@ namespace Olivia.Tests.Olivia.AI.Agents
             // Assert
             Assert.NotNull(response);
         }
+
+        [Fact]
+        public void AddPlugin_Should_Add_Plugin_With_Interface()
+        {
+            // Arrange
+            var agent = new OpenAIAgent();
+
+            // Act
+            agent.AddPlugin<IPlugin, DoctorsManagerPlugin>();
+
+            // Assert
+            Assert.Single(agent.Plugins);
+        }
+
+        [Fact]
+        public void AddPlugin_Should_Not_Add_Plugin_With_Interface_If_Already_Exists()
+        {
+            // Arrange
+            var agent = new OpenAIAgent();
+
+            // Act
+            agent.AddPlugin<IPlugin, DoctorsManagerPlugin>();
+            agent.AddPlugin<IPlugin, DoctorsManagerPlugin>();
+
+            // Assert
+            Assert.Single(agent.Plugins);
+        }
     }
 }

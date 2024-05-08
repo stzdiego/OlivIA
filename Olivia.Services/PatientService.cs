@@ -9,7 +9,7 @@ using Olivia.Shared.Interfaces;
 /// <summary>
 /// Patient service.
 /// </summary>
-public class PatientService
+public class PatientService : IPatientService
 {
     private readonly IDatabase database;
     private readonly ILogger<PatientService> logger;

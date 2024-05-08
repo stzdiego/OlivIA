@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Olivia.Shared\Olivia.Shared.csproj" />
+    <ProjectReference Include="..\Olivia.Services\Olivia.Services.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

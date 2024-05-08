@@ -10,9 +10,13 @@ using Google.Apis.Calendar.v3.Data;
 public interface ICalendarService
 {
     /// <summary>
-    /// Adds an event to the calendar.
+    /// Creates an event.
     /// </summary>
-    /// <param name="newEvent">Event to add.</param>
+    /// <param name="summary">Summary.</param>
+    /// <param name="description">Description.</param>
+    /// <param name="start">Start.</param>
+    /// <param name="end">End.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Task.</returns>
-    Task AddEvent(Event newEvent);
+    Task CreateEvent(string summary, string description, DateTime start, DateTime end, CancellationToken cancellationToken = default);
 }

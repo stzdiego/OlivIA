@@ -15,23 +15,20 @@ namespace Olivia.Services
     /// <summary>
     /// Service for programation.
     /// </summary>
-    public class ProgramationService
+    public class ProgramationService : IProgramationService
     {
         private readonly IDatabase database;
         private readonly ILogger<ProgramationService> logger;
-        private readonly ICalendarService calendarService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProgramationService"/> class.
         /// </summary>
         /// <param name="database">Database.</param>
         /// <param name="logger">Logger.</param>
-        /// <param name="calendarService">Calendar service.</param>
         public ProgramationService(IDatabase database, ILogger<ProgramationService> logger) // , ICalendarService calendarService)
         {
             this.database = database;
             this.logger = logger;
-            this.calendarService = this.calendarService;
         }
 
         /// <summary>

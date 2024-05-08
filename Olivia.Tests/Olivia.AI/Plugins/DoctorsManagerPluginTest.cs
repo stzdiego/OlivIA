@@ -18,18 +18,16 @@ public class DoctorsManagerPluginTest
         var serviceCollection = new ServiceCollection();
 
         var mockDatabase = new Mock<IDatabase>();
-        var mockLoggerDoctorService = new Mock<ILogger<DoctorService>>();
-        var mockLoggerChatService = new Mock<ILogger<ChatService>>();
-        var mockDoctorService = new Mock<DoctorService>(mockDatabase.Object, mockLoggerDoctorService.Object);
-        var mockChatService = new Mock<ChatService>(mockDatabase.Object, mockLoggerChatService.Object);
+        var mockDoctorService = new Mock<IDoctorService>();
+        var mockChatService = new Mock<IChatService>();
+        var mockCalendarService = new Mock<ICalendarService>();
 
         mockDoctorService.Setup(x => x.Get()).ReturnsAsync(new List<Doctor>());
 
         serviceCollection.AddTransient(_ => mockDatabase.Object);
-        serviceCollection.AddTransient(_ => mockLoggerDoctorService.Object);
-        serviceCollection.AddTransient(_ => mockLoggerChatService.Object);
         serviceCollection.AddTransient(_ => mockDoctorService.Object);
         serviceCollection.AddTransient(_ => mockChatService.Object);
+        serviceCollection.AddTransient(_ => mockCalendarService.Object);
 
         serviceProvider = serviceCollection.BuildServiceProvider();
     }
@@ -39,8 +37,7 @@ public class DoctorsManagerPluginTest
     {
         // Arrange
         var kernel = new Kernel();
-        var doctorService = serviceProvider.GetService<DoctorService>()!;
-        var plugin = new DoctorsManagerPlugin(serviceProvider.GetService<DoctorService>()!, serviceProvider.GetService<ChatService>()!);
+        var plugin = new DoctorsManagerPlugin(serviceProvider.GetService<IDoctorService>()!, serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<ICalendarService>()!);
 
         // Act
         var doctors = await plugin.GetInformation(kernel);

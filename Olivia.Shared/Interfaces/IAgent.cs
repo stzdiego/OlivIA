@@ -28,6 +28,15 @@ public interface IAgent
         where T : class;
 
     /// <summary>
+    /// Adds the plugin.
+    /// </summary>
+    /// <typeparam name="TInterface">Interface type.</typeparam>
+    /// <typeparam name="TClass">Class type.</typeparam>
+    void AddPlugin<TInterface, TClass>()
+        where TInterface : class
+        where TClass : class, TInterface;
+
+    /// <summary>
     /// Adds the singleton.
     /// </summary>
     /// <typeparam name="T">The singleton type.</typeparam>

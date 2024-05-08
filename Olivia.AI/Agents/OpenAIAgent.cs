@@ -25,12 +25,12 @@ public class OpenAIAgent : IAgent
     /// <summary>
     /// Gets the plugins.
     /// </summary>
-    public List<Type> Plugins { get; } =[];
+    public List<Type> Plugins { get; } = new List<Type>();
 
     /// <summary>
     /// Gets the services.
     /// </summary>
-    public List<Type> Services { get; } =[];
+    public List<Type> Services { get; } = new List<Type>();
 
     private readonly IKernelBuilder? builder;
     private OpenAIPromptExecutionSettings? settings;
@@ -64,6 +64,25 @@ public class OpenAIAgent : IAgent
 
         this.builder!.Plugins.AddFromType<T>();
         this.Plugins.Add(typeof(T));
+    }
+
+    /// <summary>
+    /// Adds the plugin.
+    /// </summary>
+    /// <typeparam name="TInterface">TIhe interface type.</typeparam>
+    /// <typeparam name="TClass">The class type.</typeparam>
+    /// <exception cref="Exception">T is not a plugin.</exception>
+    public void AddPlugin<TInterface, TClass>()
+        where TInterface : class
+        where TClass : class, TInterface
+    {
+        if (this.Plugins.Contains(typeof(TInterface)))
+        {
+            return;
+        }
+
+        this.builder!.Plugins.AddFromType<TInterface>().AddFromType<TClass>();
+        this.Plugins.Add(typeof(TInterface));
     }
 
     /// <summary>

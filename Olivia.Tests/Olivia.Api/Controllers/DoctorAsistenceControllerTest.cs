@@ -31,6 +31,7 @@ namespace Olivia.Tests.Olivia.Api.Controllers
             var mockTemperatureSection = new Mock<IConfigurationSection>();
             var mockPenaltySection = new Mock<IConfigurationSection>();
             var mockAgent = new Mock<IAgent>();
+            var mockCalendarService = new Mock<ICalendarService>();
 
             mockModelSection.SetupGet(m => m.Value).Returns("model");
             mockKeySection.SetupGet(m => m.Value).Returns("key");
@@ -53,6 +54,7 @@ namespace Olivia.Tests.Olivia.Api.Controllers
             serviceCollection.AddTransient(_ => mockContext.Object);
             serviceCollection.AddTransient(_ => mockChatService.Object);
             serviceCollection.AddTransient(_ => mockAgent.Object);
+            serviceCollection.AddTransient(_ => mockCalendarService.Object);
 
 
             serviceProvider = serviceCollection.BuildServiceProvider();
@@ -62,7 +64,7 @@ namespace Olivia.Tests.Olivia.Api.Controllers
         public async Task Post_Initialize_Should_Return_Ok()
         {
             // Arrange
-            var doctorAsistenceController = new DoctorsAsistenceController(serviceProvider.GetService<IConfiguration>()!, serviceProvider.GetService<ILogger<DoctorsAsistenceController>>()!, serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<OliviaDbContext>()!, serviceProvider.GetService<IAgent>()!);
+            var doctorAsistenceController = new DoctorsAsistenceController(serviceProvider.GetService<IConfiguration>()!, serviceProvider.GetService<ILogger<DoctorsAsistenceController>>()!, serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<OliviaDbContext>()!, serviceProvider.GetService<IAgent>()!, serviceProvider.GetService<ICalendarService>()!);
 
             // Act
             var result = await doctorAsistenceController.Post();
@@ -77,7 +79,7 @@ namespace Olivia.Tests.Olivia.Api.Controllers
             // Arrange
             var mockAgent = new Mock<IAgent>();
             mockAgent.Setup(x => x.Send(It.IsAny<StringBuilder>())).Throws(new Exception("Exception"));
-            var doctorAsistenceController = new DoctorsAsistenceController(serviceProvider.GetService<IConfiguration>()!, serviceProvider.GetService<ILogger<DoctorsAsistenceController>>()!, serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<OliviaDbContext>()!, mockAgent.Object);
+            var doctorAsistenceController = new DoctorsAsistenceController(serviceProvider.GetService<IConfiguration>()!, serviceProvider.GetService<ILogger<DoctorsAsistenceController>>()!, serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<OliviaDbContext>()!, mockAgent.Object!, serviceProvider.GetService<ICalendarService>()!);
 
             // Act
             var result = await doctorAsistenceController.Post();
@@ -90,7 +92,7 @@ namespace Olivia.Tests.Olivia.Api.Controllers
         public async Task Post_NewMessage_Should_Return_Ok()
         {
             // Arrange
-            var doctorAsistenceController = new DoctorsAsistenceController(serviceProvider.GetService<IConfiguration>()!, serviceProvider.GetService<ILogger<DoctorsAsistenceController>>()!, serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<OliviaDbContext>()!, serviceProvider.GetService<IAgent>()!);
+            var doctorAsistenceController = new DoctorsAsistenceController(serviceProvider.GetService<IConfiguration>()!, serviceProvider.GetService<ILogger<DoctorsAsistenceController>>()!, serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<OliviaDbContext>()!, serviceProvider.GetService<IAgent>()!, serviceProvider.GetService<ICalendarService>()!);
             var newMessageDto = new NewMessageDto() { ChatId = Guid.NewGuid(), Content = "Content" };
 
             // Act
@@ -106,7 +108,7 @@ namespace Olivia.Tests.Olivia.Api.Controllers
             // Arrange
             var mockChatService = new Mock<IChatService>();
             mockChatService.Setup(x => x.Get(It.IsAny<Guid>())).Returns(Task.FromResult<Chat>(null));
-            var doctorAsistenceController = new DoctorsAsistenceController(serviceProvider.GetService<IConfiguration>()!, serviceProvider.GetService<ILogger<DoctorsAsistenceController>>()!, mockChatService.Object, serviceProvider.GetService<OliviaDbContext>()!, serviceProvider.GetService<IAgent>()!);
+            var doctorAsistenceController = new DoctorsAsistenceController(serviceProvider.GetService<IConfiguration>()!, serviceProvider.GetService<ILogger<DoctorsAsistenceController>>()!, mockChatService.Object!, serviceProvider.GetService<OliviaDbContext>()!, serviceProvider.GetService<IAgent>()!, serviceProvider.GetService<ICalendarService>()!);
             var newMessageDto = new NewMessageDto() { ChatId = Guid.NewGuid(), Content = "Content" };
 
             // Act
@@ -122,7 +124,7 @@ namespace Olivia.Tests.Olivia.Api.Controllers
             // Arrange
             var mockChatService = new Mock<IChatService>();
             mockChatService.Setup(x => x.Get(It.IsAny<Guid>())).Throws(new Exception("Exception"));
-            var doctorAsistenceController = new DoctorsAsistenceController(serviceProvider.GetService<IConfiguration>()!, serviceProvider.GetService<ILogger<DoctorsAsistenceController>>()!, mockChatService.Object, serviceProvider.GetService<OliviaDbContext>()!, serviceProvider.GetService<IAgent>()!);
+            var doctorAsistenceController = new DoctorsAsistenceController(serviceProvider.GetService<IConfiguration>()!, serviceProvider.GetService<ILogger<DoctorsAsistenceController>>()!, mockChatService.Object!, serviceProvider.GetService<OliviaDbContext>()!, serviceProvider.GetService<IAgent>()!, serviceProvider.GetService<ICalendarService>()!);
             var newMessageDto = new NewMessageDto() { ChatId = Guid.NewGuid(), Content = "Content" };
 
             // Act
@@ -136,7 +138,7 @@ namespace Olivia.Tests.Olivia.Api.Controllers
         public async Task Post_Resume_Should_Return_Ok()
         {
             // Arrange
-            var doctorAsistenceController = new DoctorsAsistenceController(serviceProvider.GetService<IConfiguration>()!, serviceProvider.GetService<ILogger<DoctorsAsistenceController>>()!, serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<OliviaDbContext>()!, serviceProvider.GetService<IAgent>()!);
+            var doctorAsistenceController = new DoctorsAsistenceController(serviceProvider.GetService<IConfiguration>()!, serviceProvider.GetService<ILogger<DoctorsAsistenceController>>()!, serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<OliviaDbContext>()!, serviceProvider.GetService<IAgent>()!, serviceProvider.GetService<ICalendarService>()!);
             var idDto = new IdDto() { Id = Guid.NewGuid() };
 
             // Act
@@ -152,7 +154,7 @@ namespace Olivia.Tests.Olivia.Api.Controllers
             // Arrange
             var mockChatService = new Mock<IChatService>();
             mockChatService.Setup(x => x.GetSummary(It.IsAny<Guid>())).Throws(new Exception("Exception"));
-            var doctorAsistenceController = new DoctorsAsistenceController(serviceProvider.GetService<IConfiguration>()!, serviceProvider.GetService<ILogger<DoctorsAsistenceController>>()!, mockChatService.Object, serviceProvider.GetService<OliviaDbContext>()!, serviceProvider.GetService<IAgent>()!);
+            var doctorAsistenceController = new DoctorsAsistenceController(serviceProvider.GetService<IConfiguration>()!, serviceProvider.GetService<ILogger<DoctorsAsistenceController>>()!, mockChatService.Object!, serviceProvider.GetService<OliviaDbContext>()!, serviceProvider.GetService<IAgent>()!, serviceProvider.GetService<ICalendarService>()!);
             var idDto = new IdDto() { Id = Guid.NewGuid() };
 
             // Act

@@ -1,5 +1,9 @@
 ﻿using System.Net.Http.Json;
 using Olivia.Shared.Dtos;
+using Olivia.Services;
+using Olivia.Shared.Interfaces;
+using Google.Apis.Calendar.v3.Data;
+
 
 HttpClient client = new HttpClient()
 {
@@ -39,5 +43,3 @@ while (true)
 
     Console.WriteLine(agentMessage!.Content);
 }
-
-

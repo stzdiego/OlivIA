@@ -15,6 +15,7 @@ using Olivia.Services;
 using Olivia.Shared.Dtos;
 using Olivia.Shared.Enums;
 using Olivia.Shared.Interfaces;
+using Google.Apis.Calendar.v3.Data;
 
 /// <summary>
 /// DoctorsAsistenceController class.
@@ -29,6 +30,8 @@ public class DoctorsAsistenceController : ControllerBase
     private readonly IChatService chats;
     private readonly OliviaDbContext context;
 
+    private readonly ICalendarService calendarService;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DoctorsAsistenceController"/> class.
     /// </summary>
@@ -37,20 +40,24 @@ public class DoctorsAsistenceController : ControllerBase
     /// <param name="chats">Chats.</param>
     /// <param name="context">Context.</param>
     /// <param name="agent">Agent.</param>
-    public DoctorsAsistenceController(IConfiguration configuration, ILogger<DoctorsAsistenceController> logger, IChatService chats, OliviaDbContext context, IAgent agent)
+    /// <param name="calendarService">Calendar service.</param>
+    public DoctorsAsistenceController(IConfiguration configuration, ILogger<DoctorsAsistenceController> logger, IChatService chats, OliviaDbContext context, IAgent agent, ICalendarService calendarService)
     {
         this.config = configuration;
         this.logger = logger;
         this.chats = chats;
         this.context = context;
         this.agent = agent;
+        this.calendarService = calendarService;
 
-        this.agent.AddScoped<ChatService>();
-        this.agent.AddScoped<DoctorService>();
-        this.agent.AddScoped<ProgramationService>();
+        this.agent.AddScoped<IChatService, ChatService>();
+        this.agent.AddScoped<IDoctorService, DoctorService>();
+        this.agent.AddScoped<IProgramationService, ProgramationService>();
         this.agent.AddScoped<IDatabase, DatabaseService>();
+        this.agent.AddScoped<ICalendarService, GoogleCalendarService>();
         this.agent.AddDbContext<DbContext, OliviaDbContext>(this.context);
         this.agent.AddPlugin<ProgramationManagerPlugin>();
+        this.agent.AddPlugin<DoctorsManagerPlugin>();
 
         this.agent.Initialize(this.config.GetValue<string>("Agents:Reception:Model") !, this.config.GetValue<string>("Agents:Reception:Key") !, this.config.GetValue<int>("Agents:Reception:MaxTokens"), this.config.GetValue<double>("Agents:Reception:Temperature"), this.config.GetValue<double>("Agents:Reception:Penalty"));
     }
@@ -142,6 +149,26 @@ public class DoctorsAsistenceController : ControllerBase
                 Chat = chat,
                 Messages = messages.OrderBy(x => x.CreatedAt),
             });
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, ex.Message);
+            return this.BadRequest(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Post method.
+    /// </summary>
+    /// <returns>Task.<IActionResult>.</returns>
+    [HttpPost("CalendarTest")]
+    public async Task<IActionResult> PostCalendarTest()
+    {
+        try
+        {
+            await this.calendarService.CreateEvent("Test", "Test", DateTime.Now, DateTime.Now.AddHours(1));
+
+            return this.Ok();
         }
         catch (Exception ex)
         {
