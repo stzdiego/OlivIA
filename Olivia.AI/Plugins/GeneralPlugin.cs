@@ -4,11 +4,12 @@
 namespace Olivia.AI.Plugins;
 using System.ComponentModel;
 using Microsoft.SemanticKernel;
+using Olivia.Shared.Interfaces;
 
 /// <summary>
 /// Represents a general plugin.
 /// </summary>
-public sealed class GeneralPlugin
+public sealed class GeneralPlugin : IPlugin
 {
     /// <summary>
     /// Gets the current time.

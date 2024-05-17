@@ -17,15 +17,15 @@ namespace Olivia.Shared.Entities
 
         public long Identification { get; set; }
 
-        public required string Name { get; set; }
+        public string Name { get; set; }
 
-        public required string LastName { get; set; }
+        public string LastName { get; set; }
 
-        public required string Email { get; set; }
+        public string Email { get; set; }
 
-        public required long Phone { get; set; }
+        public long Phone { get; set; }
 
-        public required string Reason { get; set; }
+        public string Reason { get; set; }
 
         public PatientStatusEnum Status { get; set; } = PatientStatusEnum.Created;
     }

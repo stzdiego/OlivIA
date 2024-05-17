@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
+using Olivia.Shared.Entities;
 using Olivia.Shared.Interfaces;
 
 /// <summary>
@@ -187,15 +188,38 @@ public class OpenAIAgent : IAgent
     /// <summary>
     /// Sends the specified string builder.
     /// </summary>
-    /// <param name="stringBuilder">The string builder.</param>
+    /// <param name="summary">The string builder.</param>
     /// <returns>The response.</returns>
-    public async Task<string> Send(StringBuilder stringBuilder)
+    public async Task<string> Send(List<Message> summary)
     {
         var response = await this.chatCompletionService!.GetChatMessageContentAsync(
-            stringBuilder.ToString(),
+            this.ConvertToChatHistory(summary),
             this.prompSettings!,
             this.kernel!);
 
         return response.ToString();
+    }
+
+    private ChatHistory ConvertToChatHistory(List<Message> messages)
+    {
+        var chatHistory = new ChatHistory();
+
+        foreach (var message in messages)
+        {
+            if (message.Type is Shared.Enums.MessageTypeEnum.Prompt)
+            {
+                chatHistory.AddSystemMessage(message.Content);
+            }
+            else if (message.Type is Shared.Enums.MessageTypeEnum.User)
+            {
+                chatHistory.AddUserMessage(message.Content);
+            }
+            else if (message.Type is Shared.Enums.MessageTypeEnum.Agent)
+            {
+                chatHistory.AddAssistantMessage(message.Content);
+            }
+        }
+
+        return chatHistory;
     }
 }

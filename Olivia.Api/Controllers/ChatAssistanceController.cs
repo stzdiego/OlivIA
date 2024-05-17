@@ -22,29 +22,30 @@ using Olivia.Shared.Interfaces;
 public class ChatAssistanceController : ControllerBase
 {
     private readonly IChatService chatService;
-    private readonly IAgent agent;
+    private readonly IAgent agentRegisterPatient;
     private readonly OliviaDbContext context;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ChatAssistanceController"/> class.
     /// </summary>
     /// <param name="chatService">Chat service.</param>
-    /// <param name="agent">Agent.</param>
+    /// <param name="agentRegisterPatient">Agent.</param>
     /// <param name="context">Context.</param>
-    public ChatAssistanceController(IChatService chatService, IAgent agent, OliviaDbContext context)
+    public ChatAssistanceController(IChatService chatService, IAgent agentRegisterPatient, OliviaDbContext context)
     {
         this.chatService = chatService;
-        this.agent = agent;
+        this.agentRegisterPatient = agentRegisterPatient;
         this.context = context;
 
-        this.agent.AddDbContext<DbContext, OliviaDbContext>(this.context);
-        this.agent.AddScoped<IDatabase, DatabaseService>();
-        this.agent.AddScoped<IPatientService, PatientService>();
-        this.agent.AddScoped<IDoctorService, DoctorService>();
-        this.agent.AddPlugin<GeneralPlugin>();
-        this.agent.AddPlugin<RegisterPatientPlanner>();
-        this.agent.AddPlugin<PatientManagerPlugin2>();
-        this.agent.Initialize();
+        this.agentRegisterPatient.AddDbContext<DbContext, OliviaDbContext>(this.context);
+        this.agentRegisterPatient.AddScoped<IDatabase, DatabaseService>();
+        this.agentRegisterPatient.AddScoped<IChatService, ChatService>();
+        this.agentRegisterPatient.AddScoped<IPatientService, PatientService>();
+        this.agentRegisterPatient.AddScoped<IDoctorService, DoctorService>();
+        this.agentRegisterPatient.AddPlugin<GeneralPlugin>();
+        ////this.agentRegisterPatient.AddPlugin<RegisterPatientPlanner>();
+        this.agentRegisterPatient.AddPlugin<PatientManagerPlugin>();
+        this.agentRegisterPatient.Initialize();
     }
 
     /// <summary>
@@ -82,15 +83,22 @@ public class ChatAssistanceController : ControllerBase
             {
                 return this.NotFound("Chat not found.");
             }
-            else if (messages.Length == 0)
+            else if (messages.Count == 0)
             {
-                await this.chatService.NewMessage(chatMessage.ChatId, Shared.Enums.MessageTypeEnum.Prompt, this.GetPersonality());
+                var prompt = string.Format(this.GetRegisterPersonality(), chatMessage.ChatId);
+                await this.chatService.NewMessage(chatMessage.ChatId, Shared.Enums.MessageTypeEnum.Prompt, prompt);
             }
 
             await this.chatService.NewMessage(chatMessage.ChatId, Shared.Enums.MessageTypeEnum.User, chatMessage.Content);
             messages = await this.chatService.GetSummary(chatMessage.ChatId);
-            AgentMessageDto response = new AgentMessageDto() { Id = chatMessage.ChatId, Content = await this.agent.Send(messages) };
+            AgentMessageDto response = new AgentMessageDto() { Id = chatMessage.ChatId, Content = await this.agentRegisterPatient.Send(messages) };
             await this.chatService.NewMessage(chatMessage.ChatId, Shared.Enums.MessageTypeEnum.Agent, response.Content);
+
+            var chat = await this.chatService.Get(chatMessage.ChatId);
+            if (chat.SenderId.HasValue)
+            {
+                response.SenderId = chat.SenderId.Value;
+            }
 
             return this.Ok(response);
         }
@@ -100,16 +108,25 @@ public class ChatAssistanceController : ControllerBase
         }
     }
 
-    private string GetPersonality()
+    private string GetRegisterPersonality()
     {
-        StringBuilder strBuilder = new StringBuilder();
-        strBuilder.Append("""
-        You are a friendly assistant who likes to follow the rules. You will complete required steps
-        and request approval before taking any consequential actions. If the user doesn't provide
-        enough information for you to complete a task, you will keep asking questions until you have
-        enough information to complete the task. You will respond in Spanish.
-        """);
+        return """
+        Eres un asistente amigable al que le gusta seguir las reglas. Completarás los pasos requeridos
+        y solicitaras aprobación antes de tomar cualquier acción consiguiente. Si el usuario no proporciona
+        suficiente información para completar una tarea, seguirá haciendo preguntas hasta que haya
+        suficiente información para completar la tarea.
+        La tarea principal es programar una cita con un médico.
+        Tu te encargarás de recopilar la información necesaria para registrar al paciente en el sistema.
+        Una vez registres el paciente exitosamente, responde con un mensaje de confirmación de registro.
+        ChatId: {0}
 
-        return strBuilder.ToString();
+        [Patient]
+        - Identificación
+        - Nombre
+        - Apellido
+        - Correo electrónico
+        - Teléfono
+        - Razón de la cita
+        """;
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System.Net.Http.Json;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using Olivia.Shared.Dtos;
 
 HttpClient client = new HttpClient()
@@ -15,6 +17,7 @@ if (response.IsSuccessStatusCode == false)
 }
 
 var idChat = await response.Content.ReadFromJsonAsync<IdDto>();
+Guid? idSender = null;
 
 while (true)
 {
@@ -24,10 +27,12 @@ while (true)
     var messageResponse = await client.PostAsJsonAsync("NewMessage", new NewMessageDto
     {
         ChatId = idChat!.Id,
-        Content = message!
+        Content = message!,
+        SenderId = idSender
     });
 
     var agentMessageDto = await messageResponse.Content.ReadFromJsonAsync<AgentMessageDto>();
+    idSender = agentMessageDto.SenderId;
 
     Console.WriteLine(agentMessageDto!.Content);
 }

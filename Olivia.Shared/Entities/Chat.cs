@@ -21,9 +21,6 @@ namespace Olivia.Shared.Entities
 
         public bool IsDeleted { get; set; } = false;
 
-        [ForeignKey("Patient")]
-        public Guid? PatientId { get; set; }
-
-        public virtual Patient? Patient { get; set; }
+        public Guid? SenderId { get; set; }
     }
 }

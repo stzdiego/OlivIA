@@ -38,7 +38,7 @@ public interface IChatService
     /// </summary>
     /// <param name="chatId">Chat id.</param>
     /// <returns>Chat summary.</returns>
-    Task<StringBuilder> GetSummary(Guid chatId);
+    Task<List<Message>> GetSummary(Guid chatId);
 
     /// <summary>
     /// Update chat.
@@ -67,5 +67,5 @@ public interface IChatService
     /// <param name="chatId">Chat id.</param>
     /// <param name="patientId">Patient id.</param>
     /// <returns>Task.</returns>
-    Task AsociatePatient(Guid chatId, Guid patientId);
+    Task AsociateSender(Guid chatId, Guid patientId);
 }

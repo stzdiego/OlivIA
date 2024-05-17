@@ -4,6 +4,7 @@
 namespace Olivia.Shared.Interfaces;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Olivia.Shared.Entities;
 
 /// <summary>
 /// IAgent interface.
@@ -77,7 +78,7 @@ public interface IAgent
     /// <summary>
     /// Sends the specified string builder.
     /// </summary>
-    /// <param name="stringBuilder">The string builder.</param>
+    /// <param name="summary">The string builder.</param>
     /// <returns>Task.</returns>
-    Task<string> Send(StringBuilder stringBuilder);
+    Task<string> Send(List<Message> summary);
 }
