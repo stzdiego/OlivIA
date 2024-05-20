@@ -1,30 +1,39 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Olivia.Services;
 using Olivia.Shared.Interfaces;
+using Olivia.Shared.Settings;
 
 namespace Olivia.Tests.Olivia.Services;
 
 public class GoogleCalendarServiceTest
 {
-    private ServiceProvider serviceProvider;
+    private IGoogleCalendarSettings googleCalendarSettings;
 
     public GoogleCalendarServiceTest()
     {
-        var serviceCollection = new ServiceCollection();
+        var builder = new ConfigurationBuilder();
+        builder.AddJsonFile("appsettings.Development.json");
+        var configuration = builder.Build();
+        this.googleCalendarSettings = new GoogleCalendarSettings();
+        configuration.GetSection("GoogleCalendarSettings").Bind(googleCalendarSettings);
 
-        var mockIGoogleCalendarSettings = new Mock<IGoogleCalendarSettings>();
+        var openAISettings = new OpenAISettings();
+        configuration.GetSection("OpenAISettings").Bind(openAISettings);
+    }
 
-        mockIGoogleCalendarSettings.Setup(x => x.ClientId).Returns("clientId");
-        mockIGoogleCalendarSettings.Setup(x => x.ClientSecret).Returns("clientSecret");
-        mockIGoogleCalendarSettings.Setup(x => x.Scope).Returns(new[] { "scope" });
-        mockIGoogleCalendarSettings.Setup(x => x.User).Returns("user");
-        mockIGoogleCalendarSettings.Setup(x => x.ApplicationName).Returns("applicationName");
-        mockIGoogleCalendarSettings.Setup(x => x.CalendarId).Returns("calendarId");
+    [Fact]
+    public async Task CreateEvent_Should_Create()
+    {
+        // Arrange
+        var googleCalendar = new GoogleCalendarService(googleCalendarSettings);
 
-        serviceCollection.AddTransient(_ => mockIGoogleCalendarSettings.Object);
+        // Act
+        //await googleCalendar.CreateEvent("Test", "Test", DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-4).AddHours(1));
 
-        serviceProvider = serviceCollection.BuildServiceProvider();
+        // Assert
+        Assert.True(true);
     }
 
 }

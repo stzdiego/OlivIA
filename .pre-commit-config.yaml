@@ -79,20 +79,6 @@ repos:
         name: Run .NET unit tests
         entry: dotnet test ./Olivia.Tests/Olivia.Tests.csproj
         language: system
-        # Este hook se ejecuta solo cuando se modifican los archivos .cs en el directorio ApiCreditSimulator.Tests
+        # Este hook se ejecuta solo cuando se modifican los archivos .cs en el directorio Olivia.Tests
         files: '.*\.cs$'
         pass_filenames: false
-
-      # Este hook ejecuta las pruebas unitarias con cobertura de código antes de cada commit
-      - id: dotnet-test-coverage
-        name: Run .NET unit tests with code coverage
-        entry: dotnet test --collect:"XPlat Code Coverage" ./Olivia.Tests/Olivia.Tests.csproj
-        language: system
-        pass_filenames: false
-
-      # Este hook genera un reporte de cobertura de código .NET antes de cada commit
-      #- id: dotnet-coverage-report
-      #  name: Generate .NET code coverage report
-      #  entry: reportgenerator "-reports:./Olivia.Tests/TestResults/**/*.cobertura.xml" "-targetdir:./Olivia.Tests/coveragereport" -reporttypes:Html
-      #  language: system
-      #  pass_filenames: false

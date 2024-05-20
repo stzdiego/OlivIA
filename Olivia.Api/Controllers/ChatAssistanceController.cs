@@ -7,7 +7,6 @@ using System.Text;
 using Google.Apis.Calendar.v3;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Olivia.AI.Planners;
 using Olivia.AI.Plugins;
 using Olivia.Data;
 using Olivia.Services;
@@ -25,11 +24,11 @@ using Olivia.Shared.Settings;
 public class ChatAssistanceController : ControllerBase
 {
     private readonly IMailSettings mailSettings;
+    private readonly IGoogleCalendarSettings calendarSettings;
     private readonly IChatService chatService;
     private readonly IDoctorService doctorService;
     private readonly IPatientService patientService;
-    private readonly IAgent agentRegisterPatient;
-    private readonly IAgent agentDoctor;
+    private readonly IAgent agent;
     private readonly OliviaDbContext context;
 
     /// <summary>
@@ -39,45 +38,18 @@ public class ChatAssistanceController : ControllerBase
     /// <param name="calendarSettings">Calendar settings.</param>
     /// <param name="chatService">Chat service.</param>
     /// <param name="doctorService">Doctor service.</param>
-    /// <param name="agentRegisterPatient">Agent patient.</param>
-    /// <param name="agentDoctor">Agent doctor.</param>
+    /// <param name="agent">Agent patient.</param>
     /// <param name="patientService">Patient service.</param>
     /// <param name="context">Context.</param>
-    public ChatAssistanceController(IMailSettings mailSettings, IGoogleCalendarSettings calendarSettings, IChatService chatService, IDoctorService doctorService, IPatientService patientService, IAgent agentRegisterPatient, IAgent agentDoctor, OliviaDbContext context)
+    public ChatAssistanceController(IMailSettings mailSettings, IGoogleCalendarSettings calendarSettings, IChatService chatService, IDoctorService doctorService, IPatientService patientService, IAgent agent, OliviaDbContext context)
     {
         this.mailSettings = mailSettings;
+        this.calendarSettings = calendarSettings;
         this.chatService = chatService;
         this.doctorService = doctorService;
         this.patientService = patientService;
-        this.agentRegisterPatient = agentRegisterPatient;
-        this.agentDoctor = agentDoctor;
+        this.agent = agent;
         this.context = context;
-
-        this.agentRegisterPatient.AddDbContext<DbContext, OliviaDbContext>(this.context);
-        this.agentRegisterPatient.AddSingleton<IMailSettings>(this.mailSettings);
-        this.agentRegisterPatient.AddScoped<IDatabase, DatabaseService>();
-        this.agentRegisterPatient.AddScoped<IChatService, ChatService>();
-        this.agentRegisterPatient.AddScoped<IPatientService, PatientService>();
-        this.agentRegisterPatient.AddScoped<IDoctorService, DoctorService>();
-        this.agentRegisterPatient.AddScoped<IProgramationService, ProgramationService>();
-        this.agentRegisterPatient.AddScoped<IMailService, SendGridService>();
-        this.agentRegisterPatient.AddPlugin<GeneralPlugin>();
-        this.agentRegisterPatient.AddPlugin<PatientManagerPlugin>();
-        this.agentRegisterPatient.Initialize();
-
-        this.agentDoctor.AddDbContext<DbContext, OliviaDbContext>(this.context);
-        this.agentDoctor.AddSingleton<IMailSettings>(this.mailSettings);
-        this.agentDoctor.AddSingleton<IGoogleCalendarSettings>(calendarSettings);
-        this.agentDoctor.AddScoped<IDatabase, DatabaseService>();
-        this.agentDoctor.AddScoped<IChatService, ChatService>();
-        this.agentDoctor.AddScoped<IPatientService, PatientService>();
-        this.agentDoctor.AddScoped<IDoctorService, DoctorService>();
-        this.agentDoctor.AddScoped<IProgramationService, ProgramationService>();
-        this.agentDoctor.AddScoped<IMailService, SendGridService>();
-        this.agentDoctor.AddScoped<ICalendarService, GoogleCalendarService>();
-        this.agentDoctor.AddPlugin<GeneralPlugin>();
-        this.agentDoctor.AddPlugin<DoctorsManagerPlugin>();
-        this.agentDoctor.Initialize();
     }
 
     /// <summary>
@@ -109,6 +81,7 @@ public class ChatAssistanceController : ControllerBase
     {
         try
         {
+            this.InizializateAgentPatient();
             var messages = await this.chatService.GetSummary(chatMessage.ChatId);
 
             if (messages is null)
@@ -123,7 +96,7 @@ public class ChatAssistanceController : ControllerBase
 
             await this.chatService.NewMessage(chatMessage.ChatId, MessageTypeEnum.User, chatMessage.Content);
             messages = await this.chatService.GetSummary(chatMessage.ChatId);
-            AgentMessageDto response = new AgentMessageDto() { Id = chatMessage.ChatId, Content = await this.agentRegisterPatient!.Send(messages) };
+            AgentMessageDto response = new AgentMessageDto() { Id = chatMessage.ChatId, Content = await this.agent!.Send(messages) };
             await this.chatService.NewMessage(chatMessage.ChatId, MessageTypeEnum.Agent, response.Content);
 
             return this.Ok(response);
@@ -144,6 +117,7 @@ public class ChatAssistanceController : ControllerBase
     {
         try
         {
+            this.InizializateAgentDoctor();
             var messages = await this.chatService.GetSummary(chatMessage.ChatId);
 
             if (messages is null)
@@ -159,7 +133,7 @@ public class ChatAssistanceController : ControllerBase
 
             await this.chatService.NewMessage(chatMessage.ChatId, MessageTypeEnum.User, chatMessage.Content);
             messages = await this.chatService.GetSummary(chatMessage.ChatId);
-            AgentMessageDto response = new AgentMessageDto() { Id = chatMessage.ChatId, Content = await this.agentDoctor!.Send(messages) };
+            AgentMessageDto response = new AgentMessageDto() { Id = chatMessage.ChatId, Content = await this.agent!.Send(messages) };
             await this.chatService.NewMessage(chatMessage.ChatId, MessageTypeEnum.Agent, response.Content);
 
             return this.Ok(response);
@@ -197,8 +171,8 @@ public class ChatAssistanceController : ControllerBase
         [Tareas]
         1. Registrarás al paciente en el sistema. (Deberás solicitar la información requerida y utilizar la función RegisterPatientAsync).
         2. Mostrarás la lista de doctores disponibles (Utilizaras la funcion GetAvailableAsync) en el formato [DoctorInformationFormat].
-        3. Brindaras la proxima cita disponible para el doctor seleccionado (Utilizaras la función GetMostRecentAvailableAppointmentAsync).
-        4. Registraras la cita. (Utilizaras la función RegisterAppointmentAsync).
+        3. Brindaras la proxima cita disponible para el doctor seleccionado (Utilizaras la función GetMostRecentAvailableAppointmentAsync), si esta cita no es la deseada, solicitarás la fecha de la cita y valida disponibilidad (Utiliza la funcion GetAvailableAppointmentByDate).
+        4. Registraras la cita. (Utilizaras la función RegisterAppointment).
         5. Finalizarás la conversación con un mensaje de despedida e indicando que el profesional de la salud revisara y confirmara la cita. Esta información será enviada al correo electrónico del paciente.
 
 
@@ -251,6 +225,8 @@ public class ChatAssistanceController : ControllerBase
         - Solicitar aprobación antes de tomar cualquier acción consiguiente.
         - Si el usuario no proporciona suficiente información, seguir haciendo preguntas hasta que haya suficiente información para completar la tarea.
         - No responderas a mensajes que no estén relacionados con las tareas asignadas.
+        - No inventaras funcionalidades o simularas ejecuciones de tareas ya que todas tus tareas deben realizarse con las funciones proporcionadas.
+        - Si el doctor te pide que listes todo filtra desde la fecha actual hasta un año después.
 
         [ParametrosIniciales]
         - chatId: {0}
@@ -267,7 +243,7 @@ public class ChatAssistanceController : ControllerBase
         [Lista de pacientes pendientes por pago]
         - Solicitarás la fecha de inicio y fin para filtrar la lista (Utilizarás la función GetPatientsPendingByPayment).
         - Mostrarás la lista de pacientes pendientes por pago en el formato [PatientInformationFormat].
-        - Permitiras aprobar o rechazar la cita de un paciente (Utilizarás la función PayPatient o RefusedPatient).
+        - Permitiras aprobar la cita de un paciente (Utilizarás la función PayPatient).
 
         [[Fin]]
 
@@ -279,5 +255,37 @@ public class ChatAssistanceController : ControllerBase
         - Razón: (Reason)
 
         """;
+    }
+
+    private void InizializateAgentPatient()
+    {
+        this.agent.AddDbContext<DbContext, OliviaDbContext>(this.context);
+        this.agent.AddSingleton<IMailSettings>(this.mailSettings);
+        this.agent.AddScoped<IDatabase, DatabaseService>();
+        this.agent.AddScoped<IChatService, ChatService>();
+        this.agent.AddScoped<IPatientService, PatientService>();
+        this.agent.AddScoped<IDoctorService, DoctorService>();
+        this.agent.AddScoped<IProgramationService, ProgramationService>();
+        this.agent.AddScoped<IMailService, SendGridService>();
+        this.agent.AddPlugin<GeneralPlugin>();
+        this.agent.AddPlugin<PatientManagerPlugin>();
+        this.agent.Initialize();
+    }
+
+    private void InizializateAgentDoctor()
+    {
+        this.agent.AddDbContext<DbContext, OliviaDbContext>(this.context);
+        this.agent.AddSingleton<IMailSettings>(this.mailSettings);
+        this.agent.AddSingleton<IGoogleCalendarSettings>(this.calendarSettings);
+        this.agent.AddScoped<IDatabase, DatabaseService>();
+        this.agent.AddScoped<IChatService, ChatService>();
+        this.agent.AddScoped<IPatientService, PatientService>();
+        this.agent.AddScoped<IDoctorService, DoctorService>();
+        this.agent.AddScoped<IProgramationService, ProgramationService>();
+        this.agent.AddScoped<IMailService, SendGridService>();
+        this.agent.AddScoped<ICalendarService, GoogleCalendarService>();
+        this.agent.AddPlugin<GeneralPlugin>();
+        this.agent.AddPlugin<DoctorsManagerPlugin>();
+        this.agent.Initialize();
     }
 }

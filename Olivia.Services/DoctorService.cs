@@ -202,43 +202,31 @@ public class DoctorService : IDoctorService
     /// <returns>Task.</returns>
     public virtual async Task<DateTime> GetMostRecentAvailableAppointmentAsync(Guid doctorId)
     {
-        var appointments = await this.database.Get<Appointment>(x => x.DoctorId == doctorId);
+        var appointments = (await this.database.Get<Appointment>(x => x.DoctorId == doctorId))
+            .Select(a => a.Date)
+            .ToHashSet();
         var doctor = await this.Find(doctorId);
 
-        var now = DateTime.Now;
+        var now = DateTime.UtcNow;
         var start = new DateTime(now.Year, now.Month, now.Day, doctor!.Start.Hours, doctor.Start.Minutes, doctor.Start.Seconds);
         var end = new DateTime(now.Year, now.Month, now.Day, doctor.End.Hours, doctor.End.Minutes, doctor.End.Seconds);
 
-        if (now < start)
+        for (var nextAppointment = start; nextAppointment <= end; nextAppointment = nextAppointment.AddHours(1))
         {
-            return start;
-        }
-
-        if (now > end)
-        {
-            start = start.AddDays(1);
-            return start;
-        }
-
-        var nextAppointment = start;
-
-        while (true)
-        {
-            nextAppointment = nextAppointment.AddHours(1);
-
-            if (nextAppointment > end)
+            if (nextAppointment.DayOfWeek == DayOfWeek.Sunday || nextAppointment >= end)
             {
                 start = start.AddDays(1);
-                nextAppointment = new DateTime(start.Year, start.Month, start.Day, doctor.Start.Hours, doctor.Start.Minutes, doctor.Start.Seconds);
+                end = end.AddDays(1);
+                nextAppointment = start;
             }
 
-            if (appointments.Any(x => x.Date == nextAppointment))
+            if (!appointments.Contains(nextAppointment))
             {
-                continue;
+                return nextAppointment;
             }
-
-            return nextAppointment;
         }
+
+        throw new InvalidOperationException("No available appointment found.");
     }
 
     /// <summary>
@@ -249,8 +237,15 @@ public class DoctorService : IDoctorService
     /// <returns>Task.</returns>
     public virtual async Task<IList<DateTime>> GetAvailableAppointmentsByDate(Guid id, DateTime date)
     {
+        if (date.DayOfWeek == DayOfWeek.Sunday)
+        {
+            return new List<DateTime>();
+        }
+
         var doctor = await this.Find(id);
-        var appointments = await this.database.Get<Appointment>(x => x.DoctorId == id && x.Date.Date == date.Date);
+        var appointments = (await this.database.Get<Appointment>(x => x.DoctorId == id && x.Date.Date == date.Date))
+            .Select(a => a.Date)
+            .ToHashSet();
         var availableAppointments = new List<DateTime>();
 
         var start = new DateTime(date.Year, date.Month, date.Day, doctor!.Start.Hours, doctor.Start.Minutes, doctor.Start.Seconds);
@@ -258,7 +253,7 @@ public class DoctorService : IDoctorService
 
         for (var i = start; i < end; i = i.AddHours(1))
         {
-            if (!appointments.Any(x => x.Date == i))
+            if (!appointments.Contains(i))
             {
                 availableAppointments.Add(i);
             }

@@ -19,16 +19,6 @@ using Olivia.Shared.Interfaces;
 /// </summary>
 public class PatientManagerPlugin : IPlugin
 {
-    /// <summary>
-    /// Gets or sets the patient.
-    /// </summary>
-    public Patient? Patient { get; set; }
-
-    /// <summary>
-    /// Gets or sets the doctors.
-    /// </summary>
-    public IEnumerable<Doctor>? Doctors { get; set; }
-
     private readonly IChatService chatService;
     private readonly IPatientService patientService;
     private readonly IDoctorService doctorService;
@@ -226,7 +216,7 @@ public class PatientManagerPlugin : IPlugin
     /// <param name="dateTime">Date time.</param>
     /// <param name="reason">Reason.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    [KernelFunction("RegisterAppointmentAsync")]
+    [KernelFunction("RegisterAppointment")]
     [Description("Register an appointment.")]
     public async Task<bool> RegisterAppointmentAsync(
         Kernel kernel,

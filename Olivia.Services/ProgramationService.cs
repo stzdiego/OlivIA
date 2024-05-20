@@ -70,58 +70,8 @@ namespace Olivia.Services
             var appointments = await this.database.Get<Appointment>(x => x.PatientId == patientId && x.DoctorId == doctorId);
             var appointment = appointments?.First();
 
-            if (appointment == null)
-            {
-                this.logger.LogInformation("Appointment not found");
-                throw new Exception("Appointment not found");
-            }
-
             this.logger.LogInformation("Appointment found");
-            return appointment;
-        }
-
-        /// <summary>
-        /// Get the appointments list by doctor.
-        /// </summary>
-        /// <param name="doctorId">Doctor id.</param>
-        /// <param name="date">Date.</param>
-        /// <returns>Appointments list.</returns>
-        public virtual async Task<IEnumerable<Appointment>?> GetAppointmentsListDay(Guid doctorId, DateTime date)
-        {
-            this.logger.LogInformation("Getting appointment");
-            var appointments = await this.database
-            .Get<Appointment>(x => x.DoctorId == doctorId && x.Date.Year == date.Year && x.Date.Month == date.Month && x.Date.Day == date.Day);
-
-            if (appointments == null)
-            {
-                this.logger.LogInformation("Appointment not found");
-                return null;
-            }
-
-            this.logger.LogInformation("Appointment found");
-            return appointments;
-        }
-
-        /// <summary>
-        /// Get the appointments list by doctor.
-        /// </summary>
-        /// <param name="doctorId">Doctor id.</param>
-        /// <param name="startDate">Start date.</param>
-        /// <param name="endDate">End date.</param>
-        /// <returns>Appointments list.</returns>
-        public virtual async Task<IEnumerable<Appointment>?> GetAppointmentsListRange(Guid doctorId, DateTime startDate, DateTime endDate)
-        {
-            this.logger.LogInformation("Getting appointment");
-            var appointments = await this.database.Get<Appointment>(x => x.DoctorId == doctorId && x.Date >= startDate && x.Date <= endDate);
-
-            if (appointments == null)
-            {
-                this.logger.LogInformation("Appointment not found");
-                return null;
-            }
-
-            this.logger.LogInformation("Appointment found");
-            return appointments;
+            return appointment!;
         }
     }
 }

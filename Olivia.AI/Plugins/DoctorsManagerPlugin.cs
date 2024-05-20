@@ -68,11 +68,11 @@ namespace Olivia.AI.Plugins
         {
             try
             {
-                var patient = await this.doctorService.GetPatientsPendingByDoctorByDate(Guid.Parse(doctorId), DateTime.Parse(start), DateTime.Parse(end), AppointmentStateEnum.PendingApproval);
+                var patients = await this.doctorService.GetPatientsPendingByDoctorByDate(Guid.Parse(doctorId), DateTime.Parse(start), DateTime.Parse(end), AppointmentStateEnum.PendingApproval);
                 StringBuilder sbPatient = new StringBuilder();
                 sbPatient.AppendLine("[PatientsPendingByApproval]");
 
-                foreach (var item in patient)
+                foreach (var item in patients)
                 {
                     sbPatient.AppendLine($"Id: {item.PatientId}");
                     sbPatient.AppendLine($"Name: {item.FullName}");
@@ -83,7 +83,7 @@ namespace Olivia.AI.Plugins
 
                 await this.chatService.NewMessage(Guid.Parse(chatId), MessageTypeEnum.Prompt, sbPatient.ToString());
 
-                return patient;
+                return patients;
             }
             catch (Exception ex)
             {
@@ -155,7 +155,7 @@ namespace Olivia.AI.Plugins
                 var patient = await this.patientService.Find(Guid.Parse(patientId));
                 var doctor = await this.doctorService.Find(Guid.Parse(doctorId));
 
-                await this.doctorService.ApprovePatient(Guid.Parse(patientId));
+                await this.doctorService.ApprovePatient(appointment.Id);
 
                 await this.mailService.SendEmailTemplateAsync(
                     "d-803d4f775cfd46bca6dbf81d38fc2605",
@@ -202,7 +202,7 @@ namespace Olivia.AI.Plugins
                     return false;
                 }
 
-                await this.doctorService.RefusedPatient(Guid.Parse(patientId));
+                await this.doctorService.RefusedPatient(appointment.Id);
 
                 await this.mailService.SendEmailTemplateAsync(
                     "d-1995c1af0601487ba5abf97d3fe94b48",
@@ -243,7 +243,7 @@ namespace Olivia.AI.Plugins
                 var patient = await this.patientService.Find(Guid.Parse(patientId));
                 var doctor = await this.doctorService.Find(Guid.Parse(doctorId));
 
-                if (await this.doctorService.PayPatient(Guid.Parse(patientId)))
+                if (await this.doctorService.PayPatient(appointment.Id))
                 {
                     await this.calendarService.CreateEvent(
                         "Cita: " + patient!.Name + " " + patient!.LastName,
