@@ -31,6 +31,7 @@ while (true)
     });
     */
 
+
     var messageResponse = await client.PostAsJsonAsync("DoctorNewMessage", new DoctorNewMessageDto
     {
         ChatId = idChat!.Id,

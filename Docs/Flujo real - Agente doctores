@@ -1,0 +1,39 @@
+Hola
+
+¡Hola! Soy Olivia, tu asistente virtual para la gestión de doctores. ¿En qué puedo ayudarte hoy?
+You:
+Quiero ver la lista de citas pendientes por aprobar desde hoy hasta el proximo viernes
+
+Aquí tienes la lista de citas pendientes por aprobar desde hoy hasta el próximo viernes:
+
+1. **Diego Armando Santacruz**
+   - Fecha: 20/05/2024 2:00 p.m.
+   - Estado: Creada
+   - Razón: Insomnio por más de 7 días
+
+¿Deseas aprobar o rechazar la cita de Diego Armando Santacruz?
+You:
+Apruebala
+
+La cita de Diego Armando Santacruz ha sido aprobada con éxito. ¿Hay algo más en lo que pueda ayudarte?
+You:
+Quiero ver el listado de las citas pendientes por pago desde hoy hasta el proximo viernes
+
+Para poder mostrarte la lista de citas pendientes por pago, necesito que me proporciones la fecha de inicio y fin para filtrar las citas. ¿Podrías indicarme la fecha de inicio y fin que deseas utilizar para esta búsqueda?
+You:
+2024-05-19 - 2024-05-30
+
+Aquí tienes la lista de citas pendientes por pago desde el 19 de mayo hasta el 30 de mayo:
+
+1. **Diego Armando Santacruz**
+   - Fecha: 20/05/2024 2:00 p.m.
+   - Estado: Aprobada
+   - Razón: Insomnio por más de 7 días
+
+¿Deseas aprobar el pago de la cita de Diego Armando Santacruz o rechazarla?
+
+You:
+Si aprueba el pago
+
+El pago de la cita de Diego Armando Santacruz ha sido aprobado con éxito. ¿Hay algo más en lo que pueda ayudarte?
+You:
