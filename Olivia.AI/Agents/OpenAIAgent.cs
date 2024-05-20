@@ -143,6 +143,23 @@ public class OpenAIAgent : IAgent
     /// <summary>
     /// Adds the singleton.
     /// </summary>
+    /// <typeparam name="TInterface">The interface type.</typeparam>
+    /// <param name="implementation">The implementation.</param>
+    public void AddSingleton<TInterface>(TInterface implementation)
+        where TInterface : class
+    {
+        if (this.Services.Contains(typeof(TInterface)))
+        {
+            return;
+        }
+
+        this.builder!.Services.AddSingleton(implementation);
+        this.Services.Add(typeof(TInterface));
+    }
+
+    /// <summary>
+    /// Adds the singleton.
+    /// </summary>
     /// <typeparam name="TContextService">The context service type.</typeparam>
     /// <typeparam name="TContextImplementation">The context implementation type.</typeparam>
     /// <param name="context">Context instance.</param>

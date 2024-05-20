@@ -17,22 +17,28 @@ if (response.IsSuccessStatusCode == false)
 }
 
 var idChat = await response.Content.ReadFromJsonAsync<IdDto>();
-Guid? idSender = null;
 
 while (true)
 {
     Console.Write("You: ");
     var message = Console.ReadLine();
 
-    var messageResponse = await client.PostAsJsonAsync("NewMessage", new NewMessageDto
+    /*
+    var messageResponse = await client.PostAsJsonAsync("PatientNewMessage", new PatientNewMessageDto
+    {
+        ChatId = idChat!.Id,
+        Content = message!
+    });
+    */
+
+    var messageResponse = await client.PostAsJsonAsync("DoctorNewMessage", new DoctorNewMessageDto
     {
         ChatId = idChat!.Id,
         Content = message!,
-        SenderId = idSender
+        DoctorId = Guid.Parse("97268A44-FCC9-4A9D-8139-87AEA8E2CB95")
     });
 
     var agentMessageDto = await messageResponse.Content.ReadFromJsonAsync<AgentMessageDto>();
-    idSender = agentMessageDto.SenderId;
 
     Console.WriteLine(agentMessageDto!.Content);
 }

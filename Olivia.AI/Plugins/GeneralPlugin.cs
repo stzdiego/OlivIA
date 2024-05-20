@@ -16,7 +16,7 @@ public sealed class GeneralPlugin : IPlugin
     /// </summary>
     /// <returns>The current time.</returns>
     [KernelFunction("GetTime")]
-    [Description("Get the current time.")]
+    [Description("Obtiene la fecha y hora actual.")]
     public static string GetTime()
     {
         return DateTime.Now.ToString("HH:mm:ss");

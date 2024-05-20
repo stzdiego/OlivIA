@@ -45,6 +45,14 @@ public interface IAgent
         where T : class;
 
     /// <summary>
+    /// Adds the singleton.
+    /// </summary>
+    /// <typeparam name="TInterface">The interface type.</typeparam>
+    /// <param name="implementation">The implementation.</param>
+    void AddSingleton<TInterface>(TInterface implementation)
+        where TInterface : class;
+
+    /// <summary>
     /// Adds the scoped.
     /// </summary>
     /// <typeparam name="T">The scoped type.</typeparam>

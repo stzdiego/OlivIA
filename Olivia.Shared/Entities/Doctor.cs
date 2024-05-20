@@ -14,24 +14,24 @@ namespace Olivia.Shared.Entities
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        public required long Identification { get; set; }
+        public long Identification { get; set; }
 
-        public required string Name { get; set; }
+        public string Name { get; set; }
 
-        public required string LastName { get; set; }
+        public string LastName { get; set; }
 
-        public required string Email { get; set; }
+        public string Email { get; set; }
 
-        public required long Phone { get; set; }
+        public long Phone { get; set; }
 
-        public required string Speciality { get; set; }
+        public string Speciality { get; set; }
 
-        public required string Information { get; set; }
+        public string Information { get; set; }
 
-        public required TimeSpan Start { get; set; } = new TimeSpan(8, 0, 0);
+        public TimeSpan Start { get; set; } = new TimeSpan(8, 0, 0);
 
-        public required TimeSpan End { get; set; } = new TimeSpan(18, 0, 0);
+        public TimeSpan End { get; set; } = new TimeSpan(18, 0, 0);
 
-        public required bool Available { get; set; } = true;
+        public bool Available { get; set; } = true;
     }
 }

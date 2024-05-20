@@ -32,65 +32,6 @@ namespace Olivia.Services
         }
 
         /// <summary>
-        /// Get the doctor id by name.
-        /// </summary>
-        /// <param name="name">Doctor name.</param>
-        /// <returns>Id of the doctor.</returns>
-        public virtual async Task<Guid> GetDoctorId(string name)
-        {
-            this.logger.LogInformation("Getting doctor id");
-            var doctor = await this.database.Find<Doctor>(x => x.Name == name);
-
-            if (doctor == null)
-            {
-                this.logger.LogInformation("Doctor not found");
-                throw new Exception("Doctor not found");
-            }
-
-            this.logger.LogInformation("Doctor found");
-            return doctor.Id;
-        }
-
-        /// <summary>
-        /// Get the available hours for a doctor.
-        /// </summary>
-        /// <param name="doctorId">Doctor id.</param>
-        /// <param name="date">Date.</param>
-        /// <returns>Available hours.</returns>
-        public virtual async Task<IEnumerable<TimeSpan>> GetAvailableHours(Guid doctorId, DateTime date)
-        {
-            this.logger.LogInformation("Getting available hours");
-            var doctor = await this.database.Find<Doctor>(x => x.Id == doctorId);
-            if (doctor == null)
-            {
-                this.logger.LogInformation("Doctor not found");
-                throw new Exception("Doctor not found");
-            }
-
-            var appointments = await this.database
-            .Get<Appointment>(x => x.DoctorId == doctorId && x.Date.Year == date.Year && x.Date.Month == date.Month && x.Date.Day == date.Day);
-
-            var hours = new List<TimeSpan>();
-            var current = doctor.Start;
-            while (current < doctor.End)
-            {
-                hours.Add(current);
-                current = current.Add(TimeSpan.FromHours(1));
-            }
-
-            if (appointments != null)
-            {
-                foreach (var appointment in appointments)
-                {
-                    hours.Remove(appointment.Date.TimeOfDay);
-                }
-            }
-
-            this.logger.LogInformation("Available hours found");
-            return hours;
-        }
-
-        /// <summary>
         /// Create an appointment.
         /// </summary>
         /// <param name="doctorId">Doctor id.</param>
@@ -101,7 +42,6 @@ namespace Olivia.Services
         public virtual async Task<Guid> CreateAppointment(Guid doctorId, Guid patientId, DateTime date, string reason)
         {
             this.logger.LogInformation("Creating appointment");
-            var patient = await this.database.Find<Patient>(x => x.Id == patientId);
 
             var appointment = new Appointment
             {
@@ -111,19 +51,33 @@ namespace Olivia.Services
                 Reason = reason,
             };
 
-            var eventCalendar = new Event()
-            {
-                Summary = $"Cita médica ({patient!.Name} {patient!.LastName})",
-                Start = new EventDateTime() { DateTimeDateTimeOffset = new DateTimeOffset(date) },
-                End = new EventDateTime() { DateTimeDateTimeOffset = new DateTimeOffset(date.AddHours(1)) },
-            };
-
             await this.database.Add(appointment);
-
-            // await this.calendarService.AddEvent(eventCalendar);
             this.logger.LogInformation("Appointment created");
 
             return appointment.Id;
+        }
+
+        /// <summary>
+        /// Update an appointment.
+        /// </summary>
+        /// <param name="patientId">Patient id.</param>
+        /// <param name="doctorId">Doctor id.</param>
+        /// <returns>Appointment.</returns>
+        public virtual async Task<Appointment> Find(Guid patientId, Guid doctorId)
+        {
+            this.logger.LogInformation("Finding appointment");
+
+            var appointments = await this.database.Get<Appointment>(x => x.PatientId == patientId && x.DoctorId == doctorId);
+            var appointment = appointments?.First();
+
+            if (appointment == null)
+            {
+                this.logger.LogInformation("Appointment not found");
+                throw new Exception("Appointment not found");
+            }
+
+            this.logger.LogInformation("Appointment found");
+            return appointment;
         }
 
         /// <summary>

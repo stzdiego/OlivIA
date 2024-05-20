@@ -10,21 +10,6 @@ using Olivia.Shared.Entities;
 public interface IProgramationService
 {
     /// <summary>
-    /// Get the doctor id by name.
-    /// </summary>
-    /// <param name="name">Doctor name.</param>
-    /// <returns>Id of the doctor.</returns>
-    Task<Guid> GetDoctorId(string name);
-
-    /// <summary>
-    /// Get the available hours for a doctor.
-    /// </summary>
-    /// <param name="doctorId">Doctor id.</param>
-    /// <param name="date">Date.</param>
-    /// <returns>Available hours.</returns>
-    Task<IEnumerable<TimeSpan>> GetAvailableHours(Guid doctorId, DateTime date);
-
-    /// <summary>
     /// Create an appointment.
     /// </summary>
     /// <param name="doctorId">Doctor id.</param>
@@ -50,4 +35,12 @@ public interface IProgramationService
     /// <param name="endDate">End date.</param>
     /// <returns>Appointments list.</returns>
     Task<IEnumerable<Appointment>?> GetAppointmentsListRange(Guid doctorId, DateTime startDate, DateTime endDate);
+
+    /// <summary>
+    /// Update an appointment.
+    /// </summary>
+    /// <param name="patientId">Patient id.</param>
+    /// <param name="doctorId">Doctor id.</param>
+    /// <returns>Appointment.</returns>
+    Task<Appointment> Find(Guid patientId, Guid doctorId);
 }

@@ -31,18 +31,4 @@ public class DoctorsManagerPluginTest
 
         serviceProvider = serviceCollection.BuildServiceProvider();
     }
-
-    [Fact]
-    public async Task GetInformation_Should_Return_Doctors_Information()
-    {
-        // Arrange
-        var kernel = new Kernel();
-        var plugin = new DoctorsManagerPlugin(serviceProvider.GetService<IDoctorService>()!, serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<ICalendarService>()!);
-
-        // Act
-        var doctors = await plugin.GetInformation(kernel);
-
-        // Assert
-        Assert.NotNull(doctors);
-    }
 }

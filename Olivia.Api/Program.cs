@@ -47,7 +47,6 @@ builder.Services.AddScoped<IDatabase, DatabaseService>();
 ////Plugins
 builder.Services.AddScoped<PatientManagerPlugin>();
 builder.Services.AddScoped<DoctorsManagerPlugin>();
-builder.Services.AddScoped<ProgramationManagerPlugin>();
 
 ////OpenAI Agent
 builder.Services.Configure<OpenAISettings>(builder.Configuration.GetSection(nameof(OpenAISettings)));
@@ -58,6 +57,12 @@ builder.Services.AddScoped<IAgent, OpenAIAgent>();
 builder.Services.Configure<GoogleCalendarSettings>(builder.Configuration.GetSection(nameof(GoogleCalendarSettings)));
 builder.Services.AddSingleton<IGoogleCalendarSettings>(s => s.GetRequiredService<IOptions<GoogleCalendarSettings>>().Value);
 builder.Services.AddScoped<ICalendarService, GoogleCalendarService>();
+
+////Mail
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection(nameof(MailSettings)));
+builder.Services.AddScoped<IMailSettings>(s => s.GetRequiredService<IOptions<MailSettings>>().Value);
+builder.Services.AddScoped<IMailService, SendGridService>();
+builder.Services.AddScoped<SendGridService>();
 
 var app = builder.Build();
 

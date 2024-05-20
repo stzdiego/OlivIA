@@ -8,6 +8,7 @@ namespace Olivia.Shared.Entities
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using System.Threading.Tasks;
+    using Olivia.Shared.Enums;
 
     public class Appointment
     {
@@ -20,10 +21,10 @@ namespace Olivia.Shared.Entities
 
         public DateTime Date { get; set; }
 
-        public TimeSpan Time { get; set; }
-
         public string Reason { get; set; } = string.Empty;
 
         public string Observations { get; set; } = string.Empty;
+
+        public AppointmentStateEnum State { get; set; } = AppointmentStateEnum.PendingApproval;
     }
 }

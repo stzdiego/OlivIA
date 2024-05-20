@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Olivia.Data;
 
@@ -10,9 +11,11 @@ using Olivia.Data;
 namespace Olivia.Api.Migrations
 {
     [DbContext(typeof(OliviaDbContext))]
-    partial class OliviaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240519234039_TimeSpanDelete")]
+    partial class TimeSpanDelete
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.4");
