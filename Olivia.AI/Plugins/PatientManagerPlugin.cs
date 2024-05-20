@@ -1,7 +1,8 @@
 // Copyright (c) Olivia Inc.. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 #pragma warning disable SA1116 // SplitParametersMustStartOnLineAfterDeclaration
-#pragma warning disable SA1118 // ParameterMustNotSpanMultipleLines
+#pragma warning disable SA1201 // ElementsMustAppearInTheCorrectOrder
+
 namespace Olivia.AI.Plugins;
 
 using System.ComponentModel;
@@ -84,7 +85,6 @@ public class PatientManagerPlugin : IPlugin
             Email = email,
             Phone = phone,
             Reason = reason,
-            Status = PatientStatusEnum.Created,
         };
 
         await this.patientService.Create(patient);
@@ -102,6 +102,7 @@ public class PatientManagerPlugin : IPlugin
     /// Gets the doctors information.
     /// </summary>
     /// <param name="kernel">Kernel.</param>
+    /// <param name="chatId">Chat identifier.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
     [KernelFunction("GetDoctorsInfo")]
     [Description("Get the doctors information.")]
@@ -276,4 +277,4 @@ public class PatientManagerPlugin : IPlugin
 }
 
 #pragma warning restore SA1116 // SplitParametersMustStartOnLineAfterDeclaration
-#pragma warning restore SA1118 // ParameterMustNotSpanMultipleLines
+#pragma warning restore SA1201 // ElementsMustAppearInTheCorrectOrder

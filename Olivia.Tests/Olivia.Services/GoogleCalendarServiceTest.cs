@@ -27,16 +27,4 @@ public class GoogleCalendarServiceTest
         serviceProvider = serviceCollection.BuildServiceProvider();
     }
 
-    [Fact]
-    public async Task CreateEvent_Should_Create_Event()
-    {
-        // Arrange
-        var googleCalendarService = new GoogleCalendarService(serviceProvider.GetService<IGoogleCalendarSettings>()!);
-
-        // Act
-        //var ex = await Record.ExceptionAsync(async () => await googleCalendarService.CreateEvent("summary", "description", DateTime.Now, DateTime.Now.AddHours(1)));
-
-        // Assert
-        Assert.True(true);
-    }
 }

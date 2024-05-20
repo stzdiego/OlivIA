@@ -1,9 +1,8 @@
 // Copyright (c) Olivia Inc.. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using Olivia.Shared.Enums;
-
 namespace Olivia.Shared.Dtos;
+using Olivia.Shared.Enums;
 
 /// <summary>
 /// Represents a new message data transfer object.

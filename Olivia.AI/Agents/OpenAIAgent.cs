@@ -1,18 +1,13 @@
 // Copyright (c) Olivia Inc.. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#pragma warning disable SA1201 // ElementsMustAppearInTheCorrectOrder
 namespace Olivia.AI.Agents;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
@@ -177,13 +172,8 @@ public class OpenAIAgent : IAgent
     }
 
     /// <summary>
-    /// Initializes the OpenAI agent.
+    /// Initializes this instance.
     /// </summary>
-    /// <param name="modelId">The model identifier.</param>
-    /// <param name="apiKey">The API key.</param>
-    /// <param name="maxTokens">The maximum tokens.</param>
-    /// <param name="temperature">The temperature.</param>
-    /// <param name="presencePenalty">The presence penalty.</param>
     public void Initialize()
     {
         this.builder!.Services.AddLogging();
@@ -240,3 +230,4 @@ public class OpenAIAgent : IAgent
         return chatHistory;
     }
 }
+#pragma warning restore SA1201 // ElementsMustAppearInTheCorrectOrder

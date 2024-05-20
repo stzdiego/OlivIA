@@ -142,7 +142,7 @@ public class DoctorService : IDoctorService
     /// </summary>
     /// <param name="id">Doctor id.</param>
     /// <returns>Doctor.</returns>
-    public virtual async Task<Doctor> Find(Guid id)
+    public virtual async Task<Doctor?> Find(Guid id)
     {
         this.logger.LogInformation("Finding doctor");
         var doctor = await this.database.Find<Doctor>(x => x.Id == id);
@@ -206,7 +206,7 @@ public class DoctorService : IDoctorService
         var doctor = await this.Find(doctorId);
 
         var now = DateTime.Now;
-        var start = new DateTime(now.Year, now.Month, now.Day, doctor.Start.Hours, doctor.Start.Minutes, doctor.Start.Seconds);
+        var start = new DateTime(now.Year, now.Month, now.Day, doctor!.Start.Hours, doctor.Start.Minutes, doctor.Start.Seconds);
         var end = new DateTime(now.Year, now.Month, now.Day, doctor.End.Hours, doctor.End.Minutes, doctor.End.Seconds);
 
         if (now < start)
@@ -253,7 +253,7 @@ public class DoctorService : IDoctorService
         var appointments = await this.database.Get<Appointment>(x => x.DoctorId == id && x.Date.Date == date.Date);
         var availableAppointments = new List<DateTime>();
 
-        var start = new DateTime(date.Year, date.Month, date.Day, doctor.Start.Hours, doctor.Start.Minutes, doctor.Start.Seconds);
+        var start = new DateTime(date.Year, date.Month, date.Day, doctor!.Start.Hours, doctor.Start.Minutes, doctor.Start.Seconds);
         var end = new DateTime(date.Year, date.Month, date.Day, doctor.End.Hours, doctor.End.Minutes, doctor.End.Seconds);
 
         for (var i = start; i < end; i = i.AddHours(1))
@@ -275,7 +275,7 @@ public class DoctorService : IDoctorService
     /// <param name="end">End date.</param>
     /// <param name="status">Status.</param>
     /// <returns>Task.</returns>
-    public virtual async Task<IEnumerable<PatientAppointmentDto>> GetPatientsPendingByDoctorByDate(Guid doctorId, DateTime start, DateTime end, PatientStatusEnum status)
+    public virtual async Task<IEnumerable<PatientAppointmentDto>> GetPatientsPendingByDoctorByDate(Guid doctorId, DateTime start, DateTime end, AppointmentStateEnum status)
     {
         if (start > end)
         {
@@ -289,14 +289,14 @@ public class DoctorService : IDoctorService
         {
             var patient = await this.database.Find<Patient>(x => x.Id == appointment.PatientId);
 
-            if (patient!.Status == status)
+            if (appointment!.State == status)
             {
                 patients.Add(new PatientAppointmentDto
                 {
-                    PatientId = patient.Id.ToString(),
+                    PatientId = patient!.Id.ToString(),
                     FullName = patient.Name + " " + patient.LastName,
                     Datetime = appointment.Date.ToString(),
-                    Status = patient.Status.ToString(),
+                    Status = appointment!.State.ToString(),
                     Reason = appointment.Reason,
                 });
             }
@@ -308,25 +308,25 @@ public class DoctorService : IDoctorService
     /// <summary>
     /// Approves a patient.
     /// </summary>
-    /// <param name="patientId">Patient id.</param>
+    /// <param name="appointmentId">Appintment id.</param>
     /// <returns>Task.</returns>
     /// <exception cref="Exception">Patient not found.</exception>
-    public virtual async Task<bool> ApprovePatient(Guid patientId)
+    public virtual async Task<bool> ApprovePatient(Guid appointmentId)
     {
-        var patient = await this.database.Find<Patient>(x => x.Id == patientId);
+        var appointment = await this.database.Find<Appointment>(x => x.Id == appointmentId);
 
-        if (patient == null)
+        if (appointment == null)
         {
-            throw new Exception("Patient not found.");
+            throw new Exception("Appointment not found.");
         }
 
-        if (patient.Status != PatientStatusEnum.Created)
+        if (appointment!.State != AppointmentStateEnum.PendingApproval)
         {
-            throw new Exception("Patient is not pending.");
+            throw new Exception("Appointment is not approval pending.");
         }
 
-        patient.Status = PatientStatusEnum.Approved;
-        await this.database.Update(patient);
+        appointment.State = AppointmentStateEnum.PendingPayment;
+        await this.database.Update(appointment);
 
         return true;
     }
@@ -334,19 +334,19 @@ public class DoctorService : IDoctorService
     /// <summary>
     /// Refuses a patient.
     /// </summary>
-    /// <param name="patientId">Patient id.</param>
+    /// <param name="appointmentId">Appointment id.</param>
     /// <returns>Task.</returns>
-    public async Task<bool> RefusedPatient(Guid patientId)
+    public async Task<bool> RefusedPatient(Guid appointmentId)
     {
-        var patient = await this.database.Find<Patient>(x => x.Id == patientId);
+        var appointment = await this.database.Find<Appointment>(x => x.Id == appointmentId);
 
-        if (patient == null)
+        if (appointment == null)
         {
-            throw new Exception("Patient not found.");
+            throw new Exception("Appointment not found.");
         }
 
-        patient.Status = PatientStatusEnum.Refused;
-        await this.database.Update(patient);
+        appointment!.State = AppointmentStateEnum.Rejected;
+        await this.database.Update(appointment);
 
         return true;
     }
@@ -354,25 +354,25 @@ public class DoctorService : IDoctorService
     /// <summary>
     /// Refuses a patient.
     /// </summary>
-    /// <param name="patientId">Patient id.</param>
+    /// <param name="appointmentId">Patient id.</param>
     /// <returns>Task.</returns>
     /// <exception cref="Exception">Patient not found.</exception>
-    public virtual async Task<bool> PayPatient(Guid patientId)
+    public virtual async Task<bool> PayPatient(Guid appointmentId)
     {
-        var patient = await this.database.Find<Patient>(x => x.Id == patientId);
+        var appointment = await this.database.Find<Appointment>(x => x.Id == appointmentId);
 
-        if (patient == null)
+        if (appointment == null)
         {
-            throw new Exception("Patient not found.");
+            throw new Exception("Appointment not found.");
         }
 
-        if (patient.Status != PatientStatusEnum.Approved)
+        if (appointment!.State != AppointmentStateEnum.PendingPayment)
         {
-            throw new Exception("Patient is not pending.");
+            throw new Exception("Appointment is not pending.");
         }
 
-        patient.Status = PatientStatusEnum.PayCompleted;
-        await this.database.Update(patient);
+        appointment!.State = AppointmentStateEnum.Confirmed;
+        await this.database.Update(appointment);
 
         return true;
     }

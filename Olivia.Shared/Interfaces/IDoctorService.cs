@@ -104,28 +104,28 @@ public interface IDoctorService
     /// <param name="end">End date.</param>
     /// <param name="status">Status.</param>
     /// <returns>Task.</returns>
-    Task<IEnumerable<PatientAppointmentDto>> GetPatientsPendingByDoctorByDate(Guid doctorId, DateTime start, DateTime end, PatientStatusEnum status);
+    Task<IEnumerable<PatientAppointmentDto>> GetPatientsPendingByDoctorByDate(Guid doctorId, DateTime start, DateTime end, AppointmentStateEnum status);
 
     /// <summary>
-    /// Approves a patient.
+    /// Approves a Appointment.
     /// </summary>
-    /// <param name="patientId">Patient id.</param>
+    /// <param name="appointmentId">Appointment id.</param>
     /// <returns>Task.</returns>
-    /// <exception cref="Exception">Patient not found.</exception>
-    Task<bool> ApprovePatient(Guid patientId);
+    /// <exception cref="Exception">Appointment not found.</exception>
+    Task<bool> ApprovePatient(Guid appointmentId);
 
     /// <summary>
-    /// Refuses a patient.
+    /// Refuses a Appointment.
     /// </summary>
-    /// <param name="patientId">Patient id.</param>
+    /// <param name="appointmentId">Appointment id.</param>
     /// <returns>Task.</returns>
-    Task<bool> RefusedPatient(Guid patientId);
+    Task<bool> RefusedPatient(Guid appointmentId);
 
     /// <summary>
-    /// Refuses a patient.
+    /// Refuses a Appointment.
     /// </summary>
-    /// <param name="patientId">Patient id.</param>
+    /// <param name="appointmentId">Appointment id.</param>
     /// <returns>Task.</returns>
-    /// <exception cref="Exception">Patient not found.</exception>
-    Task<bool> PayPatient(Guid patientId);
+    /// <exception cref="Exception">Appointment not found.</exception>
+    Task<bool> PayPatient(Guid appointmentId);
 }

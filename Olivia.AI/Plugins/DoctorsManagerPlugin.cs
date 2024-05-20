@@ -68,7 +68,7 @@ namespace Olivia.AI.Plugins
         {
             try
             {
-                var patient = await this.doctorService.GetPatientsPendingByDoctorByDate(Guid.Parse(doctorId), DateTime.Parse(start), DateTime.Parse(end), Shared.Enums.PatientStatusEnum.Created);
+                var patient = await this.doctorService.GetPatientsPendingByDoctorByDate(Guid.Parse(doctorId), DateTime.Parse(start), DateTime.Parse(end), AppointmentStateEnum.PendingApproval);
                 StringBuilder sbPatient = new StringBuilder();
                 sbPatient.AppendLine("[PatientsPendingByApproval]");
 
@@ -112,7 +112,7 @@ namespace Olivia.AI.Plugins
         {
             try
             {
-                var patients = await this.doctorService.GetPatientsPendingByDoctorByDate(Guid.Parse(doctorId), DateTime.Parse(start), DateTime.Parse(end), Shared.Enums.PatientStatusEnum.Approved);
+                var patients = await this.doctorService.GetPatientsPendingByDoctorByDate(Guid.Parse(doctorId), DateTime.Parse(start), DateTime.Parse(end), AppointmentStateEnum.PendingPayment);
                 StringBuilder sbPatient = new StringBuilder();
                 sbPatient.AppendLine("[PatientsPendingByPayment]");
 

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Olivia.Services;
 using Olivia.Shared.Entities;
+using Olivia.Shared.Enums;
 using Olivia.Shared.Interfaces;
 
 namespace Olivia.Tests.Olivia.Services;
@@ -19,7 +20,7 @@ public class ProgramationServiceTest
     public ProgramationServiceTest()
     {
         _doctor = new Doctor() { Id = Guid.NewGuid(), Name = "Mike", LastName = "Wazowski", Email = "email@email.com", Phone = 123456, Available = true, Start = new TimeSpan(8, 0, 0), End = new TimeSpan(18, 0, 0), Identification = 123456, Information = "Information", Speciality = "Speciality" };
-        _patient = new Patient() { Identification = 123456, Name = "John", LastName = "Doe", Email = "email@email.com", Phone = 123456, Reason = "Reason", Status = Shared.Enums.PatientStatusEnum.Approved, Id = Guid.NewGuid() };
+        _patient = new Patient() { Identification = 123456, Name = "John", LastName = "Doe", Email = "email@email.com", Phone = 123456, Reason = "Reason", Id = Guid.NewGuid() };
         _appointment = new Appointment() { Id = Guid.NewGuid(), Date = DateTime.Now, Observations = "Observations", DoctorId = _doctor.Id, PatientId = _patient.Id, Reason = "Reason" };
         var serviceCollection = new ServiceCollection();
 

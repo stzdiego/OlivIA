@@ -1,9 +1,8 @@
 // Copyright (c) Olivia Inc.. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using System.ComponentModel;
-
 namespace Olivia.Shared.Enums;
+using System.ComponentModel;
 
 /// <summary>
 /// Represents the state of an appointment.
@@ -27,4 +26,10 @@ public enum AppointmentStateEnum
     /// </summary>
     [Description("Confirmed")]
     Confirmed = 3,
+
+    /// <summary>
+    /// Rejected.
+    /// </summary>
+    /// [Description("Rejected")]
+    Rejected = 4,
 }

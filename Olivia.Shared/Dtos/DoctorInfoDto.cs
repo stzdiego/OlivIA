@@ -3,13 +3,28 @@
 
 namespace Olivia.Shared.Dtos;
 
+/// <summary>
+/// Doctor info DTO.
+/// </summary>
 public class DoctorInfoDto
 {
-    public string Id { get; set; }
+    /// <summary>
+    /// Gets or sets the doctor's ID.
+    /// </summary>
+    public string Id { get; set; } = null!;
 
-    public string Name { get; set; }
+    /// <summary>
+    /// Gets or sets the doctor's name.
+    /// </summary>
+    public string Name { get; set; } = null!;
 
-    public string Speciality { get; set; }
+    /// <summary>
+    /// Gets or sets the doctor's speciality.
+    /// </summary>
+    public string Speciality { get; set; } = string.Empty;
 
-    public string Information { get; set; }
+    /// <summary>
+    /// Gets or sets the doctor's information.
+    /// </summary>
+    public string Information { get; set; } = string.Empty;
 }

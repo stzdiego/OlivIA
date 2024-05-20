@@ -10,23 +10,45 @@ namespace Olivia.Shared.Entities
     using System.Threading.Tasks;
     using Olivia.Shared.Enums;
 
+    /// <summary>
+    /// Represents an appointment entity.
+    /// </summary>
     public class Patient
     {
+        /// <summary>
+        /// Gets or sets the identifier.
+        /// </summary>
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
 
+        /// <summary>
+        /// Gets or sets the identification.
+        /// </summary>
         public long Identification { get; set; }
 
-        public string Name { get; set; }
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        public string Name { get; set; } = null!;
 
-        public string LastName { get; set; }
+        /// <summary>
+        /// Gets or sets the last name.
+        /// </summary>
+        public string LastName { get; set; } = null!;
 
-        public string Email { get; set; }
+        /// <summary>
+        /// Gets or sets the email.
+        /// </summary>
+        public string Email { get; set; } = null!;
 
+        /// <summary>
+        /// Gets or sets the phone.
+        /// </summary>
         public long Phone { get; set; }
 
-        public string Reason { get; set; }
-
-        public PatientStatusEnum Status { get; set; } = PatientStatusEnum.Created;
+        /// <summary>
+        /// Gets or sets the address.
+        /// </summary>
+        public string Reason { get; set; } = null!;
     }
 }
