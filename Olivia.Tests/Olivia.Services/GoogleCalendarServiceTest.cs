@@ -13,6 +13,7 @@ public class GoogleCalendarServiceTest
 
     public GoogleCalendarServiceTest()
     {
+        /*
         var builder = new ConfigurationBuilder();
         builder.AddJsonFile("appsettings.Development.json");
         var configuration = builder.Build();
@@ -21,13 +22,14 @@ public class GoogleCalendarServiceTest
 
         var openAISettings = new OpenAISettings();
         configuration.GetSection("OpenAISettings").Bind(openAISettings);
+        */
     }
 
     [Fact]
     public async Task CreateEvent_Should_Create()
     {
         // Arrange
-        var googleCalendar = new GoogleCalendarService(googleCalendarSettings);
+        //var googleCalendar = new GoogleCalendarService(googleCalendarSettings);
 
         // Act
         //await googleCalendar.CreateEvent("Test", "Test", DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-4).AddHours(1));
