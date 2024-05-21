@@ -5,13 +5,16 @@
 using System.Security.Cryptography.X509Certificates;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Olivia.AI.Agents;
 using Olivia.AI.Plugins;
+using Olivia.Api.Extensions;
 using Olivia.Data;
 using Olivia.Services;
+using Olivia.Shared.Entities;
 using Olivia.Shared.Interfaces;
 using Olivia.Shared.Settings;
 
@@ -26,16 +29,20 @@ builder.WebHost.ConfigureKestrel(options =>
     });
 });
 
+////IdentityManager
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication().AddCookie(IdentityConstants.ApplicationScheme);
+builder.Services.AddIdentityCore<User>()
+                .AddEntityFrameworkStores<OliviaDbContext>()
+                .AddApiEndpoints();
+
+////Swagger
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Olivia API", Version = "v0.1" });
 });
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<DbContext, OliviaDbContext>(
-    options => options.UseSqlite(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        b => b.MigrationsAssembly("Olivia.Api")));
 
 ////Services
 builder.Services.AddScoped<IPatientService, PatientService>();
@@ -64,16 +71,16 @@ builder.Services.AddScoped<IMailSettings>(s => s.GetRequiredService<IOptions<Mai
 builder.Services.AddScoped<IMailService, SendGridService>();
 builder.Services.AddScoped<SendGridService>();
 
+////Database
+builder.Services.AddDbContext<DbContext, OliviaDbContext>(
+    options => options.UseSqlite(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        b => b.MigrationsAssembly("Olivia.Api")));
+
 var app = builder.Build();
 
 ////Execute migrations
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<OliviaDbContext>();
-    context.Database.Migrate();
-}
-
+app.ApplyMigrations<OliviaDbContext>();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -81,5 +88,10 @@ app.UseSwaggerUI(c =>
 });
 
 app.MapControllers();
-
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseAuthorization();
+app.UseAuthentication();
+app.MapIdentityApi<User>();
 app.Run();

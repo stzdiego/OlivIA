@@ -9,7 +9,7 @@ namespace Olivia.Tests.Olivia.Services;
 
 public class GoogleCalendarServiceTest
 {
-    private IGoogleCalendarSettings googleCalendarSettings;
+    private IGoogleCalendarSettings? googleCalendarSettings;
 
     public GoogleCalendarServiceTest()
     {
@@ -26,7 +26,7 @@ public class GoogleCalendarServiceTest
     }
 
     [Fact]
-    public async Task CreateEvent_Should_Create()
+    public void CreateEvent_Should_Create()
     {
         // Arrange
         //var googleCalendar = new GoogleCalendarService(googleCalendarSettings);

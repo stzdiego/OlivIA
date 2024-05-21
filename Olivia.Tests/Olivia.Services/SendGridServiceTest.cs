@@ -7,7 +7,7 @@ namespace Olivia.Tests.Olivia.Services;
 
 public class SendGridServiceTest
 {
-    private IMailSettings mailSettings;
+    private IMailSettings? mailSettings;
 
     public SendGridServiceTest()
     {
@@ -21,7 +21,7 @@ public class SendGridServiceTest
     }
 
     [Fact]
-    public async Task SendEmailTemplateAsync_Should_Send()
+    public void SendEmailTemplateAsync_Should_Send()
     {
         // Arrange
         //mailSettings.Key = "SG.";

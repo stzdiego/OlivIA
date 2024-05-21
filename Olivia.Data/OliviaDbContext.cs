@@ -3,6 +3,8 @@
 
 #pragma warning disable SA1201 // ElementsMustAppearInTheCorrectOrder
 namespace Olivia.Data;
+
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Olivia.Shared.Entities;
 using Olivia.Shared.Interfaces;
@@ -10,7 +12,7 @@ using Olivia.Shared.Interfaces;
 /// <summary>
 /// OliviaDbContext class.
 /// </summary>
-public class OliviaDbContext : DbContext, IOliviaDbContext
+public class OliviaDbContext : IdentityDbContext<User>
 {
     /// <summary>
     /// Gets or sets the Doctors DbSet.
