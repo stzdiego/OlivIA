@@ -15,7 +15,7 @@ namespace Olivia.Api.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.4");
 
             modelBuilder.Entity("Olivia.Shared.Entities.Appointment", b =>
                 {
@@ -40,8 +40,8 @@ namespace Olivia.Api.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<TimeSpan>("Time")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("State")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -60,15 +60,13 @@ namespace Olivia.Api.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid?>("PatientId")
+                    b.Property<Guid?>("SenderId")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PatientId");
 
                     b.ToTable("Chats");
                 });
@@ -176,21 +174,9 @@ namespace Olivia.Api.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
                     b.ToTable("Patients");
-                });
-
-            modelBuilder.Entity("Olivia.Shared.Entities.Chat", b =>
-                {
-                    b.HasOne("Olivia.Shared.Entities.Patient", "Patient")
-                        .WithMany()
-                        .HasForeignKey("PatientId");
-
-                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("Olivia.Shared.Entities.Message", b =>

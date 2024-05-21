@@ -79,20 +79,16 @@ namespace Olivia.Services
         /// </summary>
         /// <param name="chatId">Chat id.</param>
         /// <returns>Chat summary.</returns>
-        public async Task<StringBuilder> GetSummary(Guid chatId)
+        public async Task<List<Message>> GetSummary(Guid chatId)
         {
             this.logger.LogInformation("Getting chat summary");
             Chat chat = await this.database.Find<Chat>(x => x.Id == chatId)
                 ?? throw new Exception("Chat service not found");
 
-            List<Message> messages = await this.database.Get<Message>(x => x.ChatId == chatId);
-            StringBuilder summary = new StringBuilder();
-            foreach (var message in messages)
-            {
-                summary.AppendLine($"{message.Type.ToString()}> {message.Content}");
-            }
+            List<Message> summary = await this.database.Get<Message>(x => x.ChatId == chatId);
 
             this.logger.LogInformation("Chat summary retrieved");
+
             return summary;
         }
 
@@ -140,15 +136,15 @@ namespace Olivia.Services
         /// Asociates a patient to a chat.
         /// </summary>
         /// <param name="chatId">Chat id.</param>
-        /// <param name="patientId">Patient id.</param>
+        /// <param name="senderId">Patient id.</param>
         /// <returns>Task.</returns>
-        public async Task AsociatePatient(Guid chatId, Guid patientId)
+        public async Task AsociateSender(Guid chatId, Guid senderId)
         {
             this.logger.LogInformation("Asociating patient to chat");
             Chat chat = await this.database.Find<Chat>(x => x.Id == chatId)
                 ?? throw new Exception("Chat service not found");
 
-            chat.PatientId = patientId;
+            chat.SenderId = senderId;
             await this.database.Update(chat);
             this.logger.LogInformation("Patient asociated to chat");
         }

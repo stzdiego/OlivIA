@@ -1,6 +1,7 @@
 // Copyright (c) Olivia Inc.. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#pragma warning disable SA1201 // ElementsMustAppearInTheCorrectOrder
 namespace Olivia.Data;
 using Microsoft.EntityFrameworkCore;
 using Olivia.Shared.Entities;
@@ -54,3 +55,4 @@ public class OliviaDbContext : DbContext, IOliviaDbContext
         base.OnModelCreating(builder);
     }
 }
+#pragma warning restore SA1201 // ElementsMustAppearInTheCorrectOrder

@@ -28,6 +28,20 @@ public class PatientService : IPatientService
     /// <summary>
     /// Creates a patient.
     /// </summary>
+    /// <param name="patient">Patient.</param>
+    /// <returns>Patient id.</returns>
+    public virtual async Task<Patient> Create(Patient patient)
+    {
+        this.logger.LogInformation("Creating chat service");
+        await this.database.Add(patient);
+        this.logger.LogInformation("Patient created");
+
+        return patient;
+    }
+
+    /// <summary>
+    /// Creates a patient.
+    /// </summary>
     /// /// <param name="identification">Identification.</param>
     /// <param name="name">Name.</param>
     /// <param name="lastName">Last name.</param>

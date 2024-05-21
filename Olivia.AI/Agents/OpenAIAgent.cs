@@ -1,20 +1,17 @@
 // Copyright (c) Olivia Inc.. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#pragma warning disable SA1201 // ElementsMustAppearInTheCorrectOrder
 namespace Olivia.AI.Agents;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
+using Olivia.Shared.Entities;
 using Olivia.Shared.Interfaces;
 
 /// <summary>
@@ -32,16 +29,19 @@ public class OpenAIAgent : IAgent
     /// </summary>
     public List<Type> Services { get; } = new List<Type>();
 
-    private readonly IKernelBuilder? builder;
-    private OpenAIPromptExecutionSettings? settings;
+    private readonly IAgentSettings settings;
+    private readonly IKernelBuilder builder;
+    private OpenAIPromptExecutionSettings? prompSettings;
     private Kernel? kernel;
     private IChatCompletionService? chatCompletionService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OpenAIAgent"/> class.
     /// </summary>
-    public OpenAIAgent()
+    /// <param name="settings">The settings.</param>
+    public OpenAIAgent(IAgentSettings settings)
     {
+        this.settings = settings;
         this.builder = Kernel.CreateBuilder();
     }
 
@@ -138,6 +138,23 @@ public class OpenAIAgent : IAgent
     /// <summary>
     /// Adds the singleton.
     /// </summary>
+    /// <typeparam name="TInterface">The interface type.</typeparam>
+    /// <param name="implementation">The implementation.</param>
+    public void AddSingleton<TInterface>(TInterface implementation)
+        where TInterface : class
+    {
+        if (this.Services.Contains(typeof(TInterface)))
+        {
+            return;
+        }
+
+        this.builder!.Services.AddSingleton(implementation);
+        this.Services.Add(typeof(TInterface));
+    }
+
+    /// <summary>
+    /// Adds the singleton.
+    /// </summary>
     /// <typeparam name="TContextService">The context service type.</typeparam>
     /// <typeparam name="TContextImplementation">The context implementation type.</typeparam>
     /// <param name="context">Context instance.</param>
@@ -155,40 +172,62 @@ public class OpenAIAgent : IAgent
     }
 
     /// <summary>
-    /// Initializes the OpenAI agent.
+    /// Initializes this instance.
     /// </summary>
-    /// <param name="modelId">The model identifier.</param>
-    /// <param name="apiKey">The API key.</param>
-    /// <param name="maxTokens">The maximum tokens.</param>
-    /// <param name="temperature">The temperature.</param>
-    /// <param name="presencePenalty">The presence penalty.</param>
-    public void Initialize(string modelId, string apiKey, int maxTokens, double temperature = 0.5, double presencePenalty = 0.0)
+    public void Initialize()
     {
         this.builder!.Services.AddLogging();
-        this.builder!.Services.AddOpenAIChatCompletion(modelId, apiKey);
+        this.builder!.Services.AddOpenAIChatCompletion(this.settings.Model, this.settings.Key);
         this.kernel = this.builder.Build();
         this.chatCompletionService = this.kernel.GetRequiredService<IChatCompletionService>();
-        this.settings = new OpenAIPromptExecutionSettings
+        this.prompSettings = new OpenAIPromptExecutionSettings
         {
             ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions,
-            MaxTokens = maxTokens,
-            Temperature = temperature,
-            PresencePenalty = presencePenalty,
+            MaxTokens = this.settings.MaxTokens,
+            Temperature = this.settings.Temperature,
+            PresencePenalty = this.settings.PresencePenalty,
+            FrequencyPenalty = this.settings.FrequencyPenalty,
+            StopSequences = this.settings.StopSequences,
+            TopP = this.settings.TopP,
         };
     }
 
     /// <summary>
     /// Sends the specified string builder.
     /// </summary>
-    /// <param name="stringBuilder">The string builder.</param>
+    /// <param name="summary">The string builder.</param>
     /// <returns>The response.</returns>
-    public async Task<string> Send(StringBuilder stringBuilder)
+    public async Task<string> Send(List<Message> summary)
     {
         var response = await this.chatCompletionService!.GetChatMessageContentAsync(
-            stringBuilder.ToString(),
-            this.settings!,
+            this.ConvertToChatHistory(summary),
+            this.prompSettings!,
             this.kernel!);
 
         return response.ToString();
     }
+
+    private ChatHistory ConvertToChatHistory(List<Message> messages)
+    {
+        var chatHistory = new ChatHistory();
+
+        foreach (var message in messages)
+        {
+            if (message.Type is Shared.Enums.MessageTypeEnum.Prompt)
+            {
+                chatHistory.AddSystemMessage(message.Content);
+            }
+            else if (message.Type is Shared.Enums.MessageTypeEnum.User)
+            {
+                chatHistory.AddUserMessage(message.Content);
+            }
+            else if (message.Type is Shared.Enums.MessageTypeEnum.Agent)
+            {
+                chatHistory.AddAssistantMessage(message.Content);
+            }
+        }
+
+        return chatHistory;
+    }
 }
+#pragma warning restore SA1201 // ElementsMustAppearInTheCorrectOrder

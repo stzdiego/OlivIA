@@ -1,5 +1,11 @@
+##Certificates
+Certificates/*
+
 #AppSettings
-Olivia.Api/appsettings.json
+Olivia.Api/appsettings.Development.json
+
+#Database
+Olivia.Api/Data/*
 
 # Created by https://www.toptal.com/developers/gitignore/api/aspnetcore,windows,macos,linux,visualstudiocode,visualstudio,rider
 # Edit at https://www.toptal.com/developers/gitignore?templates=aspnetcore,windows,macos,linux,visualstudiocode,visualstudio,rider
@@ -693,3 +699,6 @@ FodyWeavers.xsd
 Olivia.Api/appsettings.json
 Olivia.Api/appsettings.json
 Olivia.Api/appsettings.json
+Olivia.Api/Data/Olivia.db-shm
+Olivia.Api/Data/Olivia.db-shm
+Olivia.Tests/appsettings.Development.json

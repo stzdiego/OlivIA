@@ -3,7 +3,13 @@
 
 namespace Olivia.Shared.Dtos;
 
+/// <summary>
+/// Represents an identifier data transfer object.
+/// </summary>
 public class IdDto
 {
+    /// <summary>
+    /// Gets or sets the identifier.
+    /// </summary>
     public Guid Id { get; set; }
 }

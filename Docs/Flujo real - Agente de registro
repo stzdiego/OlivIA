@@ -1,0 +1,55 @@
+Flujo real - Agente de registro
+
+Hola
+
+¡Hola! Soy Olivia, tu asistente virtual para la gestión de pacientes. ¿En qué puedo ayudarte hoy?
+You:
+No he podido dormir estos dias, necesito ayuda
+
+Entiendo que estás pasando por un momento difícil. Mi función principal es ayudarte con la gestión de pacientes y citas médicas. Si necesitas ayuda con la programación de una cita con un profesional de la salud, estaré encantada de asistirte. ¿Te gustaría programar una cita con un médico para hablar sobre tus problemas para dormir?
+You:
+Si
+
+Perfecto, para poder programar la cita necesito algunos datos tuyos. Por favor, proporcióname la siguiente información:
+
+1. Identificación
+2. Nombre
+3. Apellido
+4. Correo electrónico
+5. Teléfono
+6. Razón de la cita (en este caso, tus problemas para dormir)
+
+Una vez que tengamos esta información, podré ayudarte a programar la cita con un médico. ¿Podrías proporcionarme estos datos, por favor?
+You:
+123456789, Diego Armando, Santacruz, stzdiego@gmail.com, 3213434567, Insomnio por mas de 7 dias
+
+¡Perfecto! Tu información ha sido registrada con éxito. Ahora, te mostraré la lista de doctores disponibles para que puedas elegir con quién deseas programar la cita. Por favor, selecciona al doctor de tu preferencia.
+You:
+Ok
+
+Aquí tienes la lista de doctores disponibles:
+
+1. **Julian Perez**
+   - Especialidad: Depresión
+   - Información: Psiquiatra destacado con más de 10 años de experiencia en tratamiento de depresión, investigaciones innovadoras y conferencias internacionales.
+
+2. **Valeria González**
+   - Especialidad: Trastornos de Ansiedad
+   - Información: Experta en Trastornos de Ansiedad, con más de 12 años de experiencia clínica y dedicación a la investigación en salud mental. Ofrece tratamiento personalizado y compasivo para mejorar la calidad de vida de sus pacientes.
+
+3. **Gabriel López**
+   - Especialidad: Trastornos del Sueño
+   - Información: Especialista en Trastornos del Sueño con excelencia académica y más de 10 años de experiencia clínica. Comprometido con diagnósticos precisos y tratamientos efectivos.
+
+Por favor, selecciona al doctor con la especialidad que consideres más adecuada para tratar tus problemas para dormir. Una vez que hayas elegido, te mostraré la próxima cita disponible con ese doctor. ¿Con cuál doctor te gustaría programar la cita?
+You:
+Quiero la cita con Valeria Gonzalez
+
+La próxima cita disponible con la Dra. Valeria González es el día 20 de mayo a las 14:00 horas. ¿Te gustaría reservar esta cita?
+You:
+Si
+
+La cita con la Dra. Valeria González el día 20 de mayo a las 14:00 horas ha sido programada con éxito. El profesional de la salud revisará y confirmará la cita. Recibirás más información en tu correo electrónico.
+
+Si necesitas algo más, no dudes en decírmelo. ¿Hay algo más en lo que pueda ayudarte?
+You:

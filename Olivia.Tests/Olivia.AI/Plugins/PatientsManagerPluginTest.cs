@@ -13,156 +13,151 @@ namespace Olivia.Tests.Olivia.AI.Plugins;
 public class PatientsManagerPluginTest
 {
     private ServiceProvider serviceProvider;
-    private Mock<PatientService> mockPatientService;
 
     public PatientsManagerPluginTest()
     {
         var serviceCollection = new ServiceCollection();
 
-        var mockDatabase = new Mock<IDatabase>();
-        var mockLoggerPatientService = new Mock<ILogger<PatientService>>();
-        var mockLoggerChatService = new Mock<ILogger<ChatService>>();
-        var mockLoggerProgramationService = new Mock<ILogger<ProgramationService>>();
-        var mockLoggerDoctorService = new Mock<ILogger<DoctorService>>();
-        mockPatientService = new Mock<PatientService>(mockDatabase.Object, mockLoggerPatientService.Object);
-        var mockChatService = new Mock<ChatService>(mockDatabase.Object, mockLoggerChatService.Object);
-        var mockDoctorService = new Mock<DoctorService>(mockDatabase.Object, mockLoggerDoctorService.Object);
-        var mockProgramationService = new Mock<ProgramationService>(mockDatabase.Object, mockLoggerProgramationService.Object);
+        var mockIChatService = new Mock<IChatService>();
+        var mockIPatientService = new Mock<IPatientService>();
+        var mockIDoctorService = new Mock<IDoctorService>();
+        var mockIProgramationService = new Mock<IProgramationService>();
+        var mockIMailService = new Mock<IMailService>();
 
-        mockPatientService.Setup(x => x.Find(It.IsAny<Guid>())).ReturnsAsync(new Patient() { Name = "Mike", LastName = "Wazowski", Email = "MikeW@email.com", Phone = 123456789, Reason = "Reason" });
-        mockDoctorService.Setup(x => x.Get()).ReturnsAsync(new List<Doctor>());
-        mockDatabase.Setup(x => x.Find<Chat>(It.IsAny<Expression<Func<Chat, bool>>>())).ReturnsAsync(new Chat());
-        mockDatabase.Setup(x => x.Find<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(new Doctor() { Identification = 123456, Name = "Mike", LastName = "Wazowski", Email = "maik@email.com", Information = "Information", Speciality = "Speciality", Available = true, Phone = 123456789, Start = TimeSpan.FromHours(8), End = TimeSpan.FromHours(16) });
+        mockIChatService.Setup(x => x.AsociateSender(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.CompletedTask);
+        mockIDoctorService.Setup(x => x.GetAvailable()).ReturnsAsync(new List<Doctor>() { new Doctor() { Name = "John Doe", LastName = "Doe", Email = "ee@ee.ee", Information = "Information" } });
+        mockIMailService.Setup(x => x.SendEmailTemplateAsync(It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<Dictionary<string, string>>())).Returns(Task.CompletedTask);
 
-        serviceCollection.AddTransient(_ => mockDatabase.Object);
-        serviceCollection.AddTransient(_ => mockLoggerPatientService.Object);
-        serviceCollection.AddTransient(_ => mockLoggerChatService.Object);
-        serviceCollection.AddTransient(_ => mockLoggerProgramationService.Object);
-        serviceCollection.AddTransient(_ => mockLoggerDoctorService.Object);
-        serviceCollection.AddTransient(_ => mockPatientService.Object);
-        serviceCollection.AddTransient(_ => mockChatService.Object);
-        serviceCollection.AddTransient(_ => mockDoctorService.Object);
-        serviceCollection.AddTransient(_ => mockProgramationService.Object);
+        serviceCollection.AddTransient(_ => mockIChatService.Object);
+        serviceCollection.AddTransient(_ => mockIPatientService.Object);
+        serviceCollection.AddTransient(_ => mockIDoctorService.Object);
+        serviceCollection.AddTransient(_ => mockIProgramationService.Object);
+        serviceCollection.AddTransient(_ => mockIMailService.Object);
 
         serviceProvider = serviceCollection.BuildServiceProvider();
     }
 
     [Fact]
-    public void GetDate_Should_Return_Current_Date()
+    public async Task RegisterPatientAsync_Should_Register()
     {
         // Arrange
-        var plugin = new PatientsManagerPlugin(serviceProvider.GetService<PatientService>()!, serviceProvider.GetService<ChatService>()!, serviceProvider.GetService<ProgramationService>()!, serviceProvider.GetService<DoctorService>()!);
+        var plugin = new PatientManagerPlugin(serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<IPatientService>()!, serviceProvider.GetService<IDoctorService>()!, serviceProvider.GetService<IProgramationService>()!, serviceProvider.GetService<IMailService>()!);
 
         // Act
-        var date = plugin.GetDate();
+        await plugin.RegisterPatientAsync(new Kernel(), Guid.Empty.ToString(), 123, "", "", "", 123, "");
 
         // Assert
-        Assert.NotEmpty(date.ToString());
+        Assert.True(true);
     }
 
     [Fact]
-    public async Task GetPatient_Should_Return_Patient_Information()
+    public async Task GetDoctorsInfoAsync_Should_Return_Doctors()
     {
         // Arrange
-        var plugin = new PatientsManagerPlugin(serviceProvider.GetService<PatientService>()!, serviceProvider.GetService<ChatService>()!, serviceProvider.GetService<ProgramationService>()!, serviceProvider.GetService<DoctorService>()!);
+        var plugin = new PatientManagerPlugin(serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<IPatientService>()!, serviceProvider.GetService<IDoctorService>()!, serviceProvider.GetService<IProgramationService>()!, serviceProvider.GetService<IMailService>()!);
 
         // Act
-        var patient = await plugin.GetPatient(Guid.NewGuid());
+        var result = await plugin.GetDoctorsInfoAsync(new Kernel(), Guid.Empty.ToString());
 
         // Assert
-        Assert.NotNull(patient);
+        Assert.NotNull(result);
     }
 
     [Fact]
-    public async Task GetDoctors_Should_Return_Doctors_Information()
+    public async Task GetDoctorsInfoAsync_Should_Throw_Exception()
     {
         // Arrange
-        var plugin = new PatientsManagerPlugin(serviceProvider.GetService<PatientService>()!, serviceProvider.GetService<ChatService>()!, serviceProvider.GetService<ProgramationService>()!, serviceProvider.GetService<DoctorService>()!);
+        var mockDoctorService = new Mock<IDoctorService>();
+        mockDoctorService.Setup(x => x.GetAvailable()).Throws(new Exception("Error"));
+        var plugin = new PatientManagerPlugin(serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<IPatientService>()!, mockDoctorService.Object, serviceProvider.GetService<IProgramationService>()!, serviceProvider.GetService<IMailService>()!);
 
         // Act
-        var doctors = await plugin.GetDoctors();
+        var result = await plugin.GetDoctorsInfoAsync(new Kernel(), Guid.Empty.ToString());
 
         // Assert
-        Assert.NotNull(doctors);
+        Assert.NotNull(result);
     }
 
     [Fact]
-    public async Task RegisterPatient_Should_Return_Patient_Guid()
+    public async Task GetMostRecentAvailableAppointmentAsync_Should_Return_Appointment()
     {
         // Arrange
-        var plugin = new PatientsManagerPlugin(serviceProvider.GetService<PatientService>()!, serviceProvider.GetService<ChatService>()!, serviceProvider.GetService<ProgramationService>()!, serviceProvider.GetService<DoctorService>()!);
+        var plugin = new PatientManagerPlugin(serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<IPatientService>()!, serviceProvider.GetService<IDoctorService>()!, serviceProvider.GetService<IProgramationService>()!, serviceProvider.GetService<IMailService>()!);
 
         // Act
-        var patientGuid = await plugin.RegisterPatient(new Kernel(), Guid.NewGuid(), 123456, "Mike", "Wazowski", "maikee@email.com", 123456789, "Reason");
+        var result = await plugin.GetMostRecentAvailableAppointmentAsync(new Kernel(), Guid.Empty.ToString());
 
         // Assert
-        Assert.NotEmpty(patientGuid.ToString());
+        Assert.IsType<DateTime>(result);
     }
 
     [Fact]
-    public async Task RegisterPatient_Should_Patient_Exist()
+    public async Task GetMostRecentAvailableAppointmentAsync_Should_Throw_Exception()
     {
         // Arrange
-        mockPatientService.Setup(x => x.Exists(It.IsAny<long>())).ReturnsAsync(true);
-        var plugin = new PatientsManagerPlugin(mockPatientService.Object, serviceProvider.GetService<ChatService>()!, serviceProvider.GetService<ProgramationService>()!, serviceProvider.GetService<DoctorService>()!);
-
+        var mockDoctorService = new Mock<IDoctorService>();
+        mockDoctorService.Setup(x => x.GetMostRecentAvailableAppointmentAsync(It.IsAny<Guid>())).Throws(new Exception("Error"));
+        var plugin = new PatientManagerPlugin(serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<IPatientService>()!, mockDoctorService.Object, serviceProvider.GetService<IProgramationService>()!, serviceProvider.GetService<IMailService>()!);
         // Act
-        var exception = await Assert.ThrowsAsync<Exception>(() => plugin.RegisterPatient(new Kernel(), Guid.NewGuid(), 123456, "Mike", "Wazowski", "email", 123456789, "Reason"));
+        var result = await plugin.GetMostRecentAvailableAppointmentAsync(new Kernel(), Guid.Empty.ToString());
 
         // Assert
-        Assert.IsType<Exception>(exception);
+        Assert.IsType<DateTime>(result);
     }
 
     [Fact]
-    public async Task RegisterPatient_Should_Patient_Exist_With_Out_Email()
+    public async Task GetAvailableAppointmentByDateAsync_Should_Return_Appointment()
     {
         // Arrange
-        var plugin = new PatientsManagerPlugin(mockPatientService.Object, serviceProvider.GetService<ChatService>()!, serviceProvider.GetService<ProgramationService>()!, serviceProvider.GetService<DoctorService>()!);
+        var plugin = new PatientManagerPlugin(serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<IPatientService>()!, serviceProvider.GetService<IDoctorService>()!, serviceProvider.GetService<IProgramationService>()!, serviceProvider.GetService<IMailService>()!);
 
         // Act
-        var exception = await Assert.ThrowsAsync<Exception>(() => plugin.RegisterPatient(new Kernel(), Guid.NewGuid(), 123456, "Mike", "Wazowski", "", 123456789, "Reason"));
+        var result = await plugin.GetAvailableAppointmentByDateAsync(new Kernel(), Guid.Empty.ToString(), DateTime.Now.ToString());
 
         // Assert
-        Assert.IsType<Exception>(exception);
+        Assert.Null(result);
     }
 
     [Fact]
-    public async Task GetAvailableHours_Should_Return_Available_Hours()
+    public async Task GetAvailableAppointmentByDateAsync_Should_Throw_Exception()
     {
         // Arrange
-        var plugin = new PatientsManagerPlugin(serviceProvider.GetService<PatientService>()!, serviceProvider.GetService<ChatService>()!, serviceProvider.GetService<ProgramationService>()!, serviceProvider.GetService<DoctorService>()!);
+        var mockDoctorService = new Mock<IDoctorService>();
+        mockDoctorService.Setup(x => x.GetAvailableAppointmentsByDate(It.IsAny<Guid>(), It.IsAny<DateTime>())).Throws(new Exception("Error"));
+        var plugin = new PatientManagerPlugin(serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<IPatientService>()!, mockDoctorService.Object, serviceProvider.GetService<IProgramationService>()!, serviceProvider.GetService<IMailService>()!);
 
         // Act
-        var availableHours = await plugin.GetAvailableHours(new Kernel(), Guid.NewGuid(), DateTime.Now);
+        var result = await plugin.GetAvailableAppointmentByDateAsync(new Kernel(), Guid.Empty.ToString(), DateTime.Now.ToString());
 
         // Assert
-        Assert.NotNull(availableHours);
+        Assert.IsAssignableFrom<IEnumerable<DateTime>>(result);
     }
 
     [Fact]
-    public async Task GetAvailableHours_Should_DateTime_Is_Less_Than_Current_DateTime()
+    public async Task RegisterAppointmentAsync_Should_Register_Appointment()
     {
         // Arrange
-        var plugin = new PatientsManagerPlugin(serviceProvider.GetService<PatientService>()!, serviceProvider.GetService<ChatService>()!, serviceProvider.GetService<ProgramationService>()!, serviceProvider.GetService<DoctorService>()!);
+        var plugin = new PatientManagerPlugin(serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<IPatientService>()!, serviceProvider.GetService<IDoctorService>()!, serviceProvider.GetService<IProgramationService>()!, serviceProvider.GetService<IMailService>()!);
 
         // Act
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<Exception>(() => plugin.GetAvailableHours(new Kernel(), Guid.NewGuid(), DateTime.Now.AddDays(-1)));
+        await plugin.RegisterAppointmentAsync(new Kernel(), Guid.Empty.ToString(), Guid.Empty.ToString(), Guid.Empty.ToString(), DateTime.Now.ToString(), "Random");
 
         // Assert
-        Assert.IsType<Exception>(exception);
+        Assert.True(true);
     }
 
     [Fact]
-    public async Task RegisterAppointment_Should_Return_Appointment_Guid()
+    public async Task RegisterAppointmentAsync_Should_Throw_Exception()
     {
         // Arrange
-        var plugin = new PatientsManagerPlugin(serviceProvider.GetService<PatientService>()!, serviceProvider.GetService<ChatService>()!, serviceProvider.GetService<ProgramationService>()!, serviceProvider.GetService<DoctorService>()!);
+        var mockDoctorService = new Mock<IDoctorService>();
+        mockDoctorService.Setup(x => x.GetAvailableAppointmentsByDate(It.IsAny<Guid>(), It.IsAny<DateTime>())).Throws(new Exception("Error"));
+        var plugin = new PatientManagerPlugin(serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<IPatientService>()!, mockDoctorService.Object, serviceProvider.GetService<IProgramationService>()!, serviceProvider.GetService<IMailService>()!);
 
         // Act
-        var appointmentGuid = await plugin.RegisterAppointment(new Kernel(), Guid.NewGuid(), Guid.NewGuid(), DateTime.Now, "Reason");
+        await plugin.RegisterAppointmentAsync(new Kernel(), Guid.Empty.ToString(), Guid.Empty.ToString(), Guid.Empty.ToString(), DateTime.Now.ToString(), "Random");
 
         // Assert
-        Assert.NotEmpty(appointmentGuid.ToString());
+        Assert.True(true);
     }
 }

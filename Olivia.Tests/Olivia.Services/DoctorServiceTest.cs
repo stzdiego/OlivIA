@@ -55,7 +55,7 @@ public class DoctorServiceTest
         var doctorUpdated = await doctorService.Find(doctorId);
 
         // Assert
-        Assert.Equal(654321, doctorUpdated.Identification);
+        Assert.Equal(654321, doctorUpdated!.Identification);
     }
 
     [Fact]

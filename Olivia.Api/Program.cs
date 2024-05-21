@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 #pragma warning disable SA1200 // UsingDirectivesMustBePlacedWithinNamespace
+using System.Security.Cryptography.X509Certificates;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,15 @@ using Olivia.Shared.Interfaces;
 using Olivia.Shared.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var certificate = new X509Certificate2(builder.Configuration["Kestrel:Certificates:Default:Path"] !, builder.Configuration["Kestrel:Certificates:Default:Password"]);
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ConfigureHttpsDefaults(httpsOptions =>
+    {
+        httpsOptions.ServerCertificate = certificate;
+    });
+});
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -35,17 +45,24 @@ builder.Services.AddScoped<IProgramationService, ProgramationService>();
 builder.Services.AddScoped<IDatabase, DatabaseService>();
 
 ////Plugins
-builder.Services.AddScoped<PatientsManagerPlugin>();
+builder.Services.AddScoped<PatientManagerPlugin>();
 builder.Services.AddScoped<DoctorsManagerPlugin>();
-builder.Services.AddScoped<ProgramationManagerPlugin>();
 
-////Agents
+////OpenAI Agent
+builder.Services.Configure<OpenAISettings>(builder.Configuration.GetSection(nameof(OpenAISettings)));
+builder.Services.AddScoped<IAgentSettings>(s => s.GetRequiredService<IOptions<OpenAISettings>>().Value);
 builder.Services.AddScoped<IAgent, OpenAIAgent>();
 
 ////Google Calendar
 builder.Services.Configure<GoogleCalendarSettings>(builder.Configuration.GetSection(nameof(GoogleCalendarSettings)));
 builder.Services.AddSingleton<IGoogleCalendarSettings>(s => s.GetRequiredService<IOptions<GoogleCalendarSettings>>().Value);
 builder.Services.AddScoped<ICalendarService, GoogleCalendarService>();
+
+////Mail
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection(nameof(MailSettings)));
+builder.Services.AddScoped<IMailSettings>(s => s.GetRequiredService<IOptions<MailSettings>>().Value);
+builder.Services.AddScoped<IMailService, SendGridService>();
+builder.Services.AddScoped<SendGridService>();
 
 var app = builder.Build();
 

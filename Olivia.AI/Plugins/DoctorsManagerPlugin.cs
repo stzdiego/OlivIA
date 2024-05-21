@@ -7,11 +7,14 @@ namespace Olivia.AI.Plugins
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Logging;
     using Microsoft.SemanticKernel;
     using Olivia.Services;
+    using Olivia.Shared.Dtos;
     using Olivia.Shared.Entities;
+    using Olivia.Shared.Enums;
     using Olivia.Shared.Interfaces;
 
     /// <summary>
@@ -19,50 +22,254 @@ namespace Olivia.AI.Plugins
     /// </summary>
     public class DoctorsManagerPlugin : IPlugin
     {
-        private readonly IDoctorService doctors;
-        private readonly IChatService chats;
+        private readonly IPatientService patientService;
+        private readonly IDoctorService doctorService;
+        private readonly IChatService chatService;
         private readonly ICalendarService calendarService;
+        private readonly IProgramationService programationService;
+        private readonly IMailService mailService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DoctorsManagerPlugin"/> class.
         /// </summary>
-        /// <param name="doctors">Doctor service.</param>
-        /// <param name="chats">Chat service.</param>
+        /// <param name="patientService">Patient service.</param>
+        /// <param name="doctorService">Doctor service.</param>
+        /// <param name="chatService">Chat service.</param>
         /// <param name="calendarService">Calendar service.</param>
-        public DoctorsManagerPlugin(IDoctorService doctors, IChatService chats, ICalendarService calendarService)
+        /// <param name="programationService">Programation service.</param>
+        /// <param name="mailService">Mail service.</param>
+        public DoctorsManagerPlugin(IPatientService patientService, IDoctorService doctorService, IChatService chatService, ICalendarService calendarService, IProgramationService programationService, IMailService mailService)
         {
-            this.doctors = doctors;
-            this.chats = chats;
+            this.patientService = patientService;
+            this.doctorService = doctorService;
+            this.chatService = chatService;
             this.calendarService = calendarService;
+            this.programationService = programationService;
+            this.mailService = mailService;
         }
 
         /// <summary>
-        /// Gets the information of the doctors.
+        /// Gets pending patients by approval.
         /// </summary>
         /// <param name="kernel">Kernel.</param>
-        /// <returns>Doctors information.</returns>
-        [KernelFunction]
-        [Description("Obtiene la información de los doctores")]
-        public async Task<IEnumerable<Doctor>> GetInformation(Kernel kernel)
+        /// <param name="chatId">Chat id.</param>
+        /// <param name="doctorId">Doctor id.</param>
+        /// <param name="start">Start date.</param>
+        /// <param name="end">End date.</param>
+        /// <returns>Doctor.</returns>
+        [KernelFunction("GetPatientsPendingByApproval")]
+        [Description("Get patients pending by approval")]
+        public async Task<IEnumerable<PatientAppointmentDto>> GetPatientsPendingByApproval(
+            Kernel kernel,
+            [Description("Chat id")] string chatId,
+            [Description("Doctor id")] string doctorId,
+            [Description("Date start")] string start,
+            [Description("Date end")] string end)
         {
-            return await this.doctors.Get();
+            try
+            {
+                var patients = await this.doctorService.GetPatientsPendingByDoctorByDate(Guid.Parse(doctorId), DateTime.Parse(start), DateTime.Parse(end), AppointmentStateEnum.PendingApproval);
+                StringBuilder sbPatient = new StringBuilder();
+                sbPatient.AppendLine("[PatientsPendingByApproval]");
+
+                foreach (var item in patients)
+                {
+                    sbPatient.AppendLine($"Id: {item.PatientId}");
+                    sbPatient.AppendLine($"Name: {item.FullName}");
+                    sbPatient.AppendLine($"Status: {item.Status}");
+                    sbPatient.AppendLine($"Datetime: {item.Datetime}");
+                    sbPatient.AppendLine();
+                }
+
+                await this.chatService.NewMessage(Guid.Parse(chatId), MessageTypeEnum.Prompt, sbPatient.ToString());
+
+                return patients;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Array.Empty<PatientAppointmentDto>();
+            }
         }
 
         /// <summary>
-        /// Creates a doctor.
+        /// Gets patients pending by payment.
         /// </summary>
-        /// <param name="patientName">Patient name.</param>
-        /// <param name="patientLastName">Patient last name.</param>
-        /// <param name="reason">Reason for the appointment.</param>
-        /// <param name="date">Date of the appointment.</param>
-        /// <returns>Task.</returns>
-        public async Task CreateEventCalendar(
-            [Description("Patient name")] string patientName,
-            [Description("Patient last name")] string patientLastName,
-            [Description("Reason for the appointment")] string reason,
-            [Description("Date of the appointment")] DateTime date)
+        /// <param name="kernel">Kernel.</param>
+        /// <param name="chatId">Chat id.</param>
+        /// <param name="doctorId">Doctor id.</param>
+        /// <param name="start">Start date.</param>
+        /// <param name="end">End date.</param>
+        /// <returns>Doctor.</returns>
+        [KernelFunction("GetPatientsPendingByPayment")]
+        [Description("Get patients pending by payment")]
+        public async Task<IEnumerable<PatientAppointmentDto>> GetPatientsPendingByPayment(
+            Kernel kernel,
+            [Description("Chat id")] string chatId,
+            [Description("Doctor id")] string doctorId,
+            [Description("Date start")] string start,
+            [Description("Date end")] string end)
         {
-            await this.calendarService.CreateEvent($"{patientName} {patientLastName}", reason, date, date.AddHours(1));
+            try
+            {
+                var patients = await this.doctorService.GetPatientsPendingByDoctorByDate(Guid.Parse(doctorId), DateTime.Parse(start), DateTime.Parse(end), AppointmentStateEnum.PendingPayment);
+                StringBuilder sbPatient = new StringBuilder();
+                sbPatient.AppendLine("[PatientsPendingByPayment]");
+
+                foreach (var item in patients)
+                {
+                    sbPatient.AppendLine($"Id: {item.PatientId}");
+                    sbPatient.AppendLine($"Name: {item.FullName}");
+                    sbPatient.AppendLine($"Status: {item.Status}");
+                    sbPatient.AppendLine($"Datetime: {item.Datetime}");
+                    sbPatient.AppendLine();
+                }
+
+                await this.chatService.NewMessage(Guid.Parse(chatId), MessageTypeEnum.Prompt, sbPatient.ToString());
+                return patients;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Array.Empty<PatientAppointmentDto>();
+            }
+        }
+
+        /// <summary>
+        /// Approves a patient.
+        /// </summary>
+        /// <param name="kernel">Kernel.</param>
+        /// <param name="patientId">Patient id.</param>
+        /// <param name="doctorId">Doctor id.</param>
+        /// <returns>Doctor.</returns>
+        [KernelFunction("ApprovePatient")]
+        [Description("Approve patient")]
+        public async Task<bool> ApprovePatient(
+            Kernel kernel,
+            [Description("Patient id")] string patientId,
+            [Description("Doctor id")] string doctorId)
+        {
+            try
+            {
+                var appointment = await this.programationService.Find(Guid.Parse(patientId), Guid.Parse(doctorId));
+                var patient = await this.patientService.Find(Guid.Parse(patientId));
+                var doctor = await this.doctorService.Find(Guid.Parse(doctorId));
+
+                await this.doctorService.ApprovePatient(appointment.Id);
+
+                await this.mailService.SendEmailTemplateAsync(
+                    "d-803d4f775cfd46bca6dbf81d38fc2605",
+                    new List<string> { patient!.Email },
+                    new Dictionary<string, string>
+                {
+                    { "Patient_Name", patient!.Name },
+                    { "Doctor_Full_Name", doctor!.Name + " " + doctor!.LastName },
+                    { "Fecha", appointment.Date.ToString("yyyy/MM/dd hh:mm") },
+                    { "Doctor_Mail", doctor!.Email },
+                });
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Refused a patient.
+        /// </summary>
+        /// <param name="kernel">Kernel.</param>
+        /// <param name="patientId">Patient id.</param>
+        /// <param name="doctorId">Doctor id.</param>
+        /// <returns>Doctor.</returns>
+        [KernelFunction("RefusedPatient")]
+        [Description("Refused patient")]
+        public async Task<bool> RefusedPatient(
+            Kernel kernel,
+            [Description("Patient id")] string patientId,
+            [Description("Doctor id")] string doctorId)
+        {
+            try
+            {
+                var patient = await this.patientService.Find(Guid.Parse(patientId));
+                var doctor = await this.doctorService.Find(Guid.Parse(doctorId));
+                var appointment = await this.programationService.Find(Guid.Parse(patientId), Guid.Parse(doctorId));
+
+                if (patient is null)
+                {
+                    return false;
+                }
+
+                await this.doctorService.RefusedPatient(appointment.Id);
+
+                await this.mailService.SendEmailTemplateAsync(
+                    "d-1995c1af0601487ba5abf97d3fe94b48",
+                    new List<string> { patient!.Email },
+                    new Dictionary<string, string>
+                {
+                    { "Patient_Name", patient!.Name },
+                    { "Doctor_Full_Name", doctor!.Name + " " + doctor!.LastName },
+                    { "Fecha", appointment.Date.ToString("yyyy/MM/dd hh:mm") },
+                });
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Approves a patient.
+        /// </summary>
+        /// <param name="kernel">Kernel.</param>
+        /// <param name="patientId">Patient id.</param>
+        /// <param name="doctorId">Doctor id.</param>
+        /// <returns>Doctor.</returns>
+        [KernelFunction("PayPatient")]
+        [Description("Pay patient")]
+        public async Task<bool> PayPatient(
+            Kernel kernel,
+            [Description("Patient id")] string patientId,
+            [Description("Doctor id")] string doctorId)
+        {
+            try
+            {
+                var appointment = await this.programationService.Find(Guid.Parse(patientId), Guid.Parse(doctorId));
+                var patient = await this.patientService.Find(Guid.Parse(patientId));
+                var doctor = await this.doctorService.Find(Guid.Parse(doctorId));
+
+                if (await this.doctorService.PayPatient(appointment.Id))
+                {
+                    await this.calendarService.CreateEvent(
+                        "Cita: " + patient!.Name + " " + patient!.LastName,
+                        "Razón: " + appointment.Reason,
+                        appointment.Date,
+                        appointment.Date.AddHours(1),
+                        CancellationToken.None);
+
+                    await this.mailService.SendEmailTemplateAsync(
+                        "d-d841b30d479247f8981b3544712a281e",
+                        new List<string> { patient!.Email },
+                        new Dictionary<string, string>
+                    {
+                        { "Patient_Name", patient!.Name },
+                        { "Doctor_Full_Name", doctor!.Name + " " + doctor!.LastName },
+                        { "Fecha", appointment.Date.ToString("yyyy/MM/dd hh:mm") },
+                    });
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
         }
     }
 }
