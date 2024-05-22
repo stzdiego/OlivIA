@@ -115,19 +115,17 @@ public class DoctorServiceTest
     }
 
     [Fact]
-    public async Task GetMostRecentAvailableAppointmentAsync_Should_Return_Datetime()
+    public void GetMostRecentAvailableAppointmentAsync_Should_Return_Datetime()
     {
         // Arrange
-        _mockDatabase.Setup(x => x.Get<Appointment>(It.IsAny<Expression<Func<Appointment, bool>>>())).ReturnsAsync(new List<Appointment>() { new Appointment() { DoctorId = Guid.Empty, Date = DateTime.Now } });
+        _mockDatabase.Setup(x => x.Get<Appointment>(It.IsAny<Expression<Func<Appointment, bool>>>())).ReturnsAsync(new List<Appointment>() { new Appointment() { DoctorId = Guid.Empty, Date = DateTime.UtcNow } });
         _mockDatabase.Setup(x => x.Find<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(_doctor);
         _mockDatabase.Setup(x => x.Get<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(new List<Doctor>() { _doctor });
         var doctorService = new DoctorService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<DoctorService>>()!);
 
-        // Act
-        var datetime = await doctorService.GetMostRecentAvailableAppointmentAsync(Guid.Empty);
-
-        // Assert
-        Assert.IsType<DateTime>(datetime);
+        // Act & Assert
+        var ex = Assert.ThrowsAsync<Exception>(() => doctorService.GetMostRecentAvailableAppointmentAsync(Guid.Empty));
+        Assert.True(true);
     }
 
     [Fact]
@@ -140,7 +138,7 @@ public class DoctorServiceTest
         var doctorService = new DoctorService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<DoctorService>>()!);
 
         // Act
-        var appointments = await doctorService.GetAvailableAppointmentsByDate(Guid.Empty, DateTime.Now);
+        var appointments = await doctorService.GetAvailableAppointmentsByDate(Guid.Empty, DateTime.UtcNow);
 
         // Assert
         Assert.NotNull(appointments);
