@@ -18,10 +18,12 @@ This project involves the development of an AI-powered assistant designed to man
 
 - **Programming Language:** C#
 - **Web Application Development Framework:** Blazor
-- **Database:** PostgreSQL
+- **Database:** SQLite
 - **AI Integration:** OpenAI API
 - **Frontend:** C# with Blazor
 - **Deployment:** Docker
+- **Calendar:** Google Calendar API
+- **Mails:** SendGrid API
 
 ## License
 
