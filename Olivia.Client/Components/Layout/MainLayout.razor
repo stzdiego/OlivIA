@@ -1,13 +1,13 @@
 ﻿@inherits LayoutComponentBase
 
-<RadzenLayout Style="background-color: #F7FEEF;">
+<RadzenLayout Style="background-color: #F7FEEF;position: relative">
     <RadzenHeader Style="background-color: #608334;">
         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
             <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
             <RadzenLabel Text="Olivia Assistance" />
         </RadzenStack>
     </RadzenHeader>
-    <RadzenSidebar Responsive="false" Style="width: max-content">
+    <RadzenSidebar Responsive="false" @bind-Expanded="@sidebarExpanded" style="position: absolute">
         <RadzenPanelMenu DisplayStyle="@(sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)" ShowArrow="false">
             <RadzenPanelMenuItem Text="Home" Icon="home" Path="/" />
             <RadzenPanelMenuItem Text="Patient" Icon="person" Path="patients" />
