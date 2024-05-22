@@ -24,11 +24,11 @@ jobs:
         context: .
         file: ./Olivia.Api/Dockerfile
         push: true
-        tags: stzdiego/olivia.api:lastest
+        tags: stzdiego/olivia.api:latest
     - name: Build and push Docker image for Olivia.Client
       uses: docker/build-push-action@v2
       with:
         context: .
         file: ./Olivia.Client/Dockerfile
         push: true
-        tags: stzdiego/olivia.client:lastest
+        tags: stzdiego/olivia.client:latest
