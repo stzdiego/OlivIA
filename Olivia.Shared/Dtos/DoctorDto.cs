@@ -51,11 +51,11 @@ namespace Olivia.Shared.Dtos
         /// <summary>
         /// Gets or sets the doctor's start schedule.
         /// </summary>
-        public TimeSpan Start { get; set; }
+        public TimeSpan Start { get; set; } = new TimeSpan(8, 0, 0);
 
         /// <summary>
         /// Gets or sets the doctor's end schedule.
         /// </summary>
-        public TimeSpan End { get; set; }
+        public TimeSpan End { get; set; } = new TimeSpan(16, 0, 0);
     }
 }
