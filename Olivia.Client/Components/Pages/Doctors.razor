@@ -48,10 +48,21 @@
             }
         </RadzenStack>
     </RadzenStack>
-    <RadzenStack class="chat-sender" Orientation="Orientation.Horizontal">
-        <RadzenTextBox @ref="rtbMessage" Placeholder="Enter here..." Style="width: 100%;" @bind-Value="newMessageBind"
-            @oninput="TextAreaOnInput" @onkeyup="TextAreaKeyUp" Disabled="@(!isDoctorSelected)" />
-        <RadzenButton Icon="send" Variant="Variant.Outlined" Click="@(args => SendMessage())" Disabled="@(!isDoctorSelected)" />
+    <RadzenStack class="chat-sender" Gap="0">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.3rem"
+            Style="min-height: 2rem;">
+            <RadzenImage Path="images/typing.svg" Style="height: 2rem;padding: 0;margin: 0;"
+                Visible="@isWritingAgent" />
+            <RadzenText Text="Writing..." TextAlign="TextAlign.Center" TextStyle="TextStyle.Overline"
+                Visible="@isWritingAgent" Style="padding: 0;margin: 0;" />
+        </RadzenStack>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem">
+            <RadzenTextBox @ref="rtbMessage" Placeholder="Enter here..." Style="width: 100%;"
+                @bind-Value="newMessageBind" @oninput="TextAreaOnInput" @onkeyup="TextAreaKeyUp"
+                Disabled="@(!isDoctorSelected)" />
+            <RadzenButton Icon="send" Variant="Variant.Outlined" Click="@(args => SendMessage())"
+                Disabled="@(!isDoctorSelected)" />
+        </RadzenStack>
     </RadzenStack>
 </RadzenStack>
 
@@ -59,7 +70,7 @@
     .messages-container {
         display: flex;
         flex-direction: column;
-        height: 88vh;
+        height: 84vh;
     }
 
     .messages-description {
@@ -113,6 +124,7 @@
     private Guid doctorId;
     private bool isDoctorSelected;
     int messageCount = 0;
+    bool isWritingAgent;
 
     protected override async Task OnInitializedAsync()
     {
@@ -204,6 +216,7 @@
             newMessageBind = "";
             messages.Add(newUserMessage);
 
+            isWritingAgent = true;
             var response = await httpClient!.PostAsJsonAsync(OliviaApiSettings.NewMessageDoctorEndpoint, messageDto);
 
             if (response.IsSuccessStatusCode)
@@ -222,6 +235,10 @@
         catch
         {
             NotificationService.Notify(NotificationSeverity.Error, "Error", "An error occurred while sending the message.");
+        }
+        finally
+        {
+            isWritingAgent = false;
         }
     }
 }
