@@ -224,7 +224,7 @@ var assemblies = [
       { "name": "Olivia.AI.Agents.OpenAIAgent", "rp": "Olivia.AI_OpenAIAgent.html", "cl": 99, "ucl": 2, "cal": 101, "tl": 233, "cb": 24, "tb": 24, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.AI.Plugins.DoctorsManagerPlugin", "rp": "Olivia.AI_DoctorsManagerPlugin.html", "cl": 122, "ucl": 2, "cal": 124, "tl": 275, "cb": 7, "tb": 8, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.AI.Plugins.GeneralPlugin", "rp": "Olivia.AI_GeneralPlugin.html", "cl": 3, "ucl": 0, "cal": 3, "tl": 24, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
-      { "name": "Olivia.AI.Plugins.PatientManagerPlugin", "rp": "Olivia.AI_PatientManagerPlugin.html", "cl": 99, "ucl": 20, "cal": 119, "tl": 270, "cb": 5, "tb": 6, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Olivia.AI.Plugins.PatientManagerPlugin", "rp": "Olivia.AI_PatientManagerPlugin.html", "cl": 105, "ucl": 14, "cal": 119, "tl": 270, "cb": 6, "tb": 6, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
     ]},
   {
     "name": "Olivia.Api",
@@ -235,18 +235,18 @@ var assemblies = [
   {
     "name": "Olivia.Data",
     "classes": [
-      { "name": "Olivia.Data.OliviaDbContext", "rp": "Olivia.Data_OliviaDbContext.html", "cl": 8, "ucl": 3, "cal": 11, "tl": 58, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Olivia.Data.OliviaDbContext", "rp": "Olivia.Data_OliviaDbContext.html", "cl": 8, "ucl": 0, "cal": 8, "tl": 49, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
     ]},
   {
     "name": "Olivia.Services",
     "classes": [
       { "name": "Olivia.Services.ChatService", "rp": "Olivia.Services_ChatService.html", "cl": 55, "ucl": 5, "cal": 60, "tl": 152, "cb": 7, "tb": 8, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Services.DatabaseService", "rp": "Olivia.Services_DatabaseService.html", "cl": 30, "ucl": 0, "cal": 30, "tl": 116, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
-      { "name": "Olivia.Services.DoctorService", "rp": "Olivia.Services_DoctorService.html", "cl": 86, "ucl": 98, "cal": 184, "tl": 374, "cb": 10, "tb": 40, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
-      { "name": "Olivia.Services.GoogleCalendarService", "rp": "Olivia.Services_GoogleCalendarService.html", "cl": 0, "ucl": 37, "cal": 37, "tl": 77, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Olivia.Services.DoctorService", "rp": "Olivia.Services_DoctorService.html", "cl": 163, "ucl": 21, "cal": 184, "tl": 374, "cb": 29, "tb": 40, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Olivia.Services.GoogleCalendarService", "rp": "Olivia.Services_GoogleCalendarService.html", "cl": 29, "ucl": 12, "cal": 41, "tl": 82, "cb": 1, "tb": 2, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Services.PatientService", "rp": "Olivia.Services_PatientService.html", "cl": 41, "ucl": 6, "cal": 47, "tl": 119, "cb": 1, "tb": 2, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Services.ProgramationService", "rp": "Olivia.Services_ProgramationService.html", "cl": 25, "ucl": 0, "cal": 25, "tl": 77, "cb": 1, "tb": 2, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
-      { "name": "Olivia.Services.SendGridService", "rp": "Olivia.Services_SendGridService.html", "cl": 0, "ucl": 18, "cal": 18, "tl": 51, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Olivia.Services.SendGridService", "rp": "Olivia.Services_SendGridService.html", "cl": 17, "ucl": 1, "cal": 18, "tl": 53, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
     ]},
   {
     "name": "Olivia.Shared",
@@ -263,10 +263,10 @@ var assemblies = [
       { "name": "Olivia.Shared.Entities.Doctor", "rp": "Olivia.Shared_Doctor.html", "cl": 11, "ucl": 1, "cal": 12, "tl": 78, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Shared.Entities.Message", "rp": "Olivia.Shared_Message.html", "cl": 6, "ucl": 1, "cal": 7, "tl": 48, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Shared.Entities.Patient", "rp": "Olivia.Shared_Patient.html", "cl": 7, "ucl": 0, "cal": 7, "tl": 54, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
-      { "name": "Olivia.Shared.Settings.GoogleCalendarSettings", "rp": "Olivia.Shared_GoogleCalendarSettings.html", "cl": 0, "ucl": 6, "cal": 6, "tl": 41, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
-      { "name": "Olivia.Shared.Settings.MailSettings", "rp": "Olivia.Shared_MailSettings.html", "cl": 5, "ucl": 2, "cal": 7, "tl": 46, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
-      { "name": "Olivia.Shared.Settings.OliviaApiSettings", "rp": "Olivia.Shared_OliviaApiSettings.html", "cl": 0, "ucl": 5, "cal": 5, "tl": 36, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
-      { "name": "Olivia.Shared.Settings.OpenAISettings", "rp": "Olivia.Shared_OpenAISettings.html", "cl": 0, "ucl": 10, "cal": 10, "tl": 61, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Olivia.Shared.Settings.GoogleCalendarSettings", "rp": "Olivia.Shared_GoogleCalendarSettings.html", "cl": 6, "ucl": 0, "cal": 6, "tl": 41, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Olivia.Shared.Settings.MailSettings", "rp": "Olivia.Shared_MailSettings.html", "cl": 7, "ucl": 0, "cal": 7, "tl": 46, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Olivia.Shared.Settings.OliviaApiSettings", "rp": "Olivia.Shared_OliviaApiSettings.html", "cl": 5, "ucl": 0, "cal": 5, "tl": 36, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Olivia.Shared.Settings.OpenAISettings", "rp": "Olivia.Shared_OpenAISettings.html", "cl": 10, "ucl": 0, "cal": 10, "tl": 61, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
     ]},
 ];
 
@@ -275,41 +275,9 @@ var metrics = [{ "name": "Crap Score", "abbreviation": "crp", "explanationUrl": 
 var historicCoverageExecutionTimes = [];
 
 var riskHotspotMetrics = [
-      { "name": "Crap Score", "explanationUrl": "https://googletesting.blogspot.de/2011/02/this-code-is-crap.html" },
-      { "name": "Cyclomatic complexity", "explanationUrl": "https://en.wikipedia.org/wiki/Cyclomatic_complexity" },
 ];
 
 var riskHotspots = [
-  {
-    "assembly": "Olivia.Services", "class": "Olivia.Services.DoctorService", "reportPath": "Olivia.Services_DoctorService.html", "methodName": "GetMostRecentAvailableAppointmentAsync()", "methodShortName": "GetMostRecentAvailableAppointmentAsync()", "fileIndex": 0, "line": 204,
-    "metrics": [
-      { "value": 72, "exceeded": true },
-      { "value": 8, "exceeded": false },
-    ]},
-  {
-    "assembly": "Olivia.Services", "class": "Olivia.Services.DoctorService", "reportPath": "Olivia.Services_DoctorService.html", "methodName": "GetAvailableAppointmentsByDate()", "methodShortName": "GetAvailableAppointmentsByDate()", "fileIndex": 0, "line": 239,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "Olivia.Services", "class": "Olivia.Services.DoctorService", "reportPath": "Olivia.Services_DoctorService.html", "methodName": "GetPatientsPendingByDoctorByDate()", "methodShortName": "GetPatientsPendingByDoctorByDate()", "fileIndex": 0, "line": 274,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "Olivia.Services", "class": "Olivia.Services.DoctorService", "reportPath": "Olivia.Services_DoctorService.html", "methodName": "ApprovePatient()", "methodShortName": "ApprovePatient()", "fileIndex": 0, "line": 310,
-    "metrics": [
-      { "value": 20, "exceeded": true },
-      { "value": 4, "exceeded": false },
-    ]},
-  {
-    "assembly": "Olivia.Services", "class": "Olivia.Services.DoctorService", "reportPath": "Olivia.Services_DoctorService.html", "methodName": "PayPatient()", "methodShortName": "PayPatient()", "fileIndex": 0, "line": 356,
-    "metrics": [
-      { "value": 20, "exceeded": true },
-      { "value": 4, "exceeded": false },
-    ]},
 ];
 
 var branchCoverageAvailable = true;

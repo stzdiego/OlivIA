@@ -9,30 +9,35 @@ namespace Olivia.Tests.Olivia.Services;
 
 public class GoogleCalendarServiceTest
 {
-    private IGoogleCalendarSettings googleCalendarSettings;
+    private ServiceProvider serviceProvider;
 
     public GoogleCalendarServiceTest()
     {
-        /*
-        var builder = new ConfigurationBuilder();
-        builder.AddJsonFile("appsettings.Development.json");
-        var configuration = builder.Build();
-        this.googleCalendarSettings = new GoogleCalendarSettings();
-        configuration.GetSection("GoogleCalendarSettings").Bind(googleCalendarSettings);
+        var serviceCollection = new ServiceCollection();
 
-        var openAISettings = new OpenAISettings();
-        configuration.GetSection("OpenAISettings").Bind(openAISettings);
-        */
+        var mockIConfiguration = new Mock<IConfiguration>();
+        var mockIGoogleCalendarSettings = new Mock<IGoogleCalendarSettings>();
+
+        mockIGoogleCalendarSettings.Setup(x => x.ApplicationName).Returns("ApplicationName");
+        mockIGoogleCalendarSettings.Setup(x => x.CalendarId).Returns("CalendarId");
+        mockIGoogleCalendarSettings.Setup(x => x.ClientId).Returns("");
+        mockIGoogleCalendarSettings.Setup(x => x.ClientSecret).Returns("ClientSecret");
+        mockIGoogleCalendarSettings.Setup(x => x.User).Returns("User");
+
+        serviceCollection.AddTransient(_ => mockIConfiguration.Object);
+        serviceCollection.AddTransient(_ => mockIGoogleCalendarSettings.Object);
+
+        serviceProvider = serviceCollection.BuildServiceProvider();
     }
 
     [Fact]
-    public async Task CreateEvent_Should_Create()
+    public void CreateEvent_Should_Create()
     {
         // Arrange
-        //var googleCalendar = new GoogleCalendarService(googleCalendarSettings);
+        var plugin = new GoogleCalendarService(serviceProvider.GetService<IGoogleCalendarSettings>()!);
 
         // Act
-        //await googleCalendar.CreateEvent("Test", "Test", DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-4).AddHours(1));
+        var ex = Assert.ThrowsAsync<Exception>(() => plugin.CreateEvent("Test", "Test", DateTime.Now, DateTime.Now.AddHours(1), CancellationToken.None));
 
         // Assert
         Assert.True(true);

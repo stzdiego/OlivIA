@@ -39,15 +39,20 @@ public class GoogleCalendarService : ICalendarService
     /// <returns>Task.</returns>
     public async Task CreateEvent(string summary, string description, DateTime start, DateTime end, CancellationToken cancellationToken = default)
     {
-        UserCredential credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-          new ClientSecrets()
-          {
-              ClientId = this.settings.ClientId,
-              ClientSecret = this.settings.ClientSecret,
-          },
-          this.settings.Scope,
-          this.settings.User,
-          cancellationToken);
+        UserCredential credential = null;
+
+        if (!string.IsNullOrEmpty(this.settings.ClientId))
+        {
+            credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                new ClientSecrets()
+                {
+                    ClientId = this.settings.ClientId,
+                    ClientSecret = this.settings.ClientSecret,
+                },
+                this.settings.Scope,
+                this.settings.User,
+                cancellationToken);
+        }
 
         var services = new CalendarService(new BaseClientService.Initializer()
         {

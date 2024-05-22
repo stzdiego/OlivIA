@@ -15,5 +15,5 @@ public interface IMailService
     /// <param name="emails">Emails.</param>
     /// <param name="parameters">Parameters.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    Task SendEmailTemplateAsync(string template, IEnumerable<string> emails, object parameters);
+    Task<bool> SendEmailTemplateAsync(string template, IEnumerable<string> emails, object parameters);
 }
