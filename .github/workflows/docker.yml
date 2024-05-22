@@ -1,0 +1,34 @@
+name: Docker CI
+
+on:
+  workflow_run:
+    workflows: [".NET CI"]
+    types:
+      - completed
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Login to DockerHub
+      uses: docker/login-action@v1 
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+    - name: Build and push Docker image for Olivia.Api
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./Olivia.Api/Dockerfile
+        push: true
+        tags: stzdiego/olivia.api:lastest
+    - name: Build and push Docker image for Olivia.Client
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./Olivia.Client/Dockerfile
+        push: true
+        tags: stzdiego/olivia.client:lastest

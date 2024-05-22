@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  olivia.api:
+    image: stzdiego/olivia.api:latest
+    ports:
+      - "7051:7001"
+    env_file:
+      - .env
+    volumes:
+      - dbdata:/app/Data/
+
+  olivia.client:
+    image: stzdiego/olivia.client:latest
+    ports:
+      - "7050:7000"
+    env_file:
+      - .env
+    depends_on:
+      - olivia.api
+volumes:
+  dbdata:

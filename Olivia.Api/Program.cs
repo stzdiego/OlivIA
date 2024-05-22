@@ -17,15 +17,6 @@ using Olivia.Shared.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var certificate = new X509Certificate2(builder.Configuration["Kestrel:Certificates:Default:Path"] !, builder.Configuration["Kestrel:Certificates:Default:Password"]);
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ConfigureHttpsDefaults(httpsOptions =>
-    {
-        httpsOptions.ServerCertificate = certificate;
-    });
-});
-
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Olivia API", Version = "v0.1" });
