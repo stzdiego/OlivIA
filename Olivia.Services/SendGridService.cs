@@ -32,7 +32,7 @@ public class SendGridService : IMailService
     /// <param name="emails">Emails.</param>
     /// <param name="parameters">Parameters.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public async Task SendEmailTemplateAsync(string template, IEnumerable<string> emails, object parameters)
+    public async Task<bool> SendEmailTemplateAsync(string template, IEnumerable<string> emails, object parameters)
     {
         try
         {
@@ -42,10 +42,12 @@ public class SendGridService : IMailService
             var tos = emails.Select(email => new EmailAddress(email)).ToList();
             var msg = MailHelper.CreateSingleTemplateEmailToMultipleRecipients(from, tos, template, parameters);
             var response = await client.SendEmailAsync(msg);
+            return true;
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
+            return false;
         }
     }
 }

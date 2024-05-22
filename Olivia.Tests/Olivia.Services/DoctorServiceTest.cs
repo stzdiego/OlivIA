@@ -115,6 +115,109 @@ public class DoctorServiceTest
     }
 
     [Fact]
+    public async Task GetMostRecentAvailableAppointmentAsync_Should_Return_Datetime()
+    {
+        // Arrange
+        _mockDatabase.Setup(x => x.Get<Appointment>(It.IsAny<Expression<Func<Appointment, bool>>>())).ReturnsAsync(new List<Appointment>() { new Appointment() { DoctorId = Guid.Empty, Date = DateTime.Now } });
+        _mockDatabase.Setup(x => x.Find<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(_doctor);
+        _mockDatabase.Setup(x => x.Get<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(new List<Doctor>() { _doctor });
+        var doctorService = new DoctorService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<DoctorService>>()!);
+
+        // Act
+        var datetime = await doctorService.GetMostRecentAvailableAppointmentAsync(Guid.Empty);
+
+        // Assert
+        Assert.IsType<DateTime>(datetime);
+    }
+
+    [Fact]
+    public async Task GetAvailableAppointmentsByDate_Should_Return_List()
+    {
+        // Arrange
+        _mockDatabase.Setup(x => x.Get<Appointment>(It.IsAny<Expression<Func<Appointment, bool>>>())).ReturnsAsync(new List<Appointment>() { new Appointment() { DoctorId = Guid.Empty, Date = DateTime.Now } });
+        _mockDatabase.Setup(x => x.Find<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(_doctor);
+        _mockDatabase.Setup(x => x.Get<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(new List<Doctor>() { _doctor });
+        var doctorService = new DoctorService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<DoctorService>>()!);
+
+        // Act
+        var appointments = await doctorService.GetAvailableAppointmentsByDate(Guid.Empty, DateTime.Now);
+
+        // Assert
+        Assert.NotNull(appointments);
+    }
+
+    [Fact]
+    public async Task GetPatientsPendingByDoctorByDate_Should_Return_List()
+    {
+        // Arrange
+        _mockDatabase.Setup(x => x.Get<Appointment>(It.IsAny<Expression<Func<Appointment, bool>>>())).ReturnsAsync(new List<Appointment>() { new Appointment() { DoctorId = Guid.Empty, } });
+        _mockDatabase.Setup(x => x.Find<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(_doctor);
+        _mockDatabase.Setup(x => x.Get<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(new List<Doctor>() { _doctor });
+        _mockDatabase.Setup(x => x.Find<Patient>(It.IsAny<Expression<Func<Patient, bool>>>())).ReturnsAsync(new Patient() { Id = Guid.Empty, Name = "John", LastName = "Doe", Email = "email", Phone = 123456 });
+        var doctorService = new DoctorService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<DoctorService>>()!);
+
+        // Act
+        var appointments = await doctorService.GetPatientsPendingByDoctorByDate(Guid.Empty, DateTime.Now, DateTime.Now.AddDays(1), Shared.Enums.AppointmentStateEnum.PendingApproval);
+
+        // Assert
+        Assert.NotNull(appointments);
+    }
+
+    [Fact]
+    public async Task ApprovePatient_Should_Return_True()
+    {
+        // Arrange
+        _mockDatabase.Setup(x => x.Get<Appointment>(It.IsAny<Expression<Func<Appointment, bool>>>())).ReturnsAsync(new List<Appointment>() { new Appointment() { DoctorId = Guid.Empty, } });
+        _mockDatabase.Setup(x => x.Find<Appointment>(It.IsAny<Expression<Func<Appointment, bool>>>())).ReturnsAsync(new Appointment() { DoctorId = Guid.Empty, });
+        _mockDatabase.Setup(x => x.Find<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(_doctor);
+        _mockDatabase.Setup(x => x.Get<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(new List<Doctor>() { _doctor });
+        _mockDatabase.Setup(x => x.Find<Patient>(It.IsAny<Expression<Func<Patient, bool>>>())).ReturnsAsync(new Patient() { Id = Guid.Empty, Name = "John", LastName = "Doe", Email = "email", Phone = 123456 });
+        var doctorService = new DoctorService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<DoctorService>>()!);
+
+        // Act
+        var result = await doctorService.ApprovePatient(Guid.Empty);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task RefusedPatient_Should_Return_True()
+    {
+        // Arrange
+        _mockDatabase.Setup(x => x.Get<Appointment>(It.IsAny<Expression<Func<Appointment, bool>>>())).ReturnsAsync(new List<Appointment>() { new Appointment() { DoctorId = Guid.Empty, } });
+        _mockDatabase.Setup(x => x.Find<Appointment>(It.IsAny<Expression<Func<Appointment, bool>>>())).ReturnsAsync(new Appointment() { DoctorId = Guid.Empty, });
+        _mockDatabase.Setup(x => x.Find<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(_doctor);
+        _mockDatabase.Setup(x => x.Get<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(new List<Doctor>() { _doctor });
+        _mockDatabase.Setup(x => x.Find<Patient>(It.IsAny<Expression<Func<Patient, bool>>>())).ReturnsAsync(new Patient() { Id = Guid.Empty, Name = "John", LastName = "Doe", Email = "email", Phone = 123456 });
+        var doctorService = new DoctorService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<DoctorService>>()!);
+
+        // Act
+        var result = await doctorService.RefusedPatient(Guid.Empty);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task PayPatient_Should_Return_True()
+    {
+        // Arrange
+        _mockDatabase.Setup(x => x.Get<Appointment>(It.IsAny<Expression<Func<Appointment, bool>>>())).ReturnsAsync(new List<Appointment>() { new Appointment() { DoctorId = Guid.Empty, } });
+        _mockDatabase.Setup(x => x.Find<Appointment>(It.IsAny<Expression<Func<Appointment, bool>>>())).ReturnsAsync(new Appointment() { DoctorId = Guid.Empty, State = Shared.Enums.AppointmentStateEnum.PendingPayment });
+        _mockDatabase.Setup(x => x.Find<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(_doctor);
+        _mockDatabase.Setup(x => x.Get<Doctor>(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(new List<Doctor>() { _doctor });
+        _mockDatabase.Setup(x => x.Find<Patient>(It.IsAny<Expression<Func<Patient, bool>>>())).ReturnsAsync(new Patient() { Id = Guid.Empty, Name = "John", LastName = "Doe", Email = "email", Phone = 123456 });
+        var doctorService = new DoctorService(serviceProvider.GetService<IDatabase>()!, serviceProvider.GetService<ILogger<DoctorService>>()!);
+
+        // Act
+        var result = await doctorService.PayPatient(Guid.Empty);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
     public async Task GetAvailable_Should_Return_Null()
     {
         // Arrange

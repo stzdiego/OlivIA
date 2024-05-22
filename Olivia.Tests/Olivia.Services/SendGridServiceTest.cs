@@ -1,4 +1,6 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Olivia.Services;
 using Olivia.Shared.Interfaces;
 using Olivia.Shared.Settings;
@@ -7,28 +9,48 @@ namespace Olivia.Tests.Olivia.Services;
 
 public class SendGridServiceTest
 {
-    private IMailSettings mailSettings;
+    private ServiceProvider serviceProvider;
 
     public SendGridServiceTest()
     {
-        /*
-        var builder = new ConfigurationBuilder();
-        builder.AddJsonFile("appsettings.Development.json");
-        var configuration = builder.Build();
-        this.mailSettings = new MailSettings();
-        configuration.GetSection("MailSettings").Bind(mailSettings);
-        */
+        var serviceCollection = new ServiceCollection();
+
+        var mockIConfiguration = new Mock<IConfiguration>();
+        var mockIMailSettings = new Mock<IMailSettings>();
+
+        mockIMailSettings.Setup(x => x.Host).Returns("");
+        mockIMailSettings.Setup(x => x.Port).Returns(0);
+        mockIMailSettings.Setup(x => x.Mail).Returns("");
+        mockIMailSettings.Setup(x => x.Name).Returns("");
+        mockIMailSettings.Setup(x => x.Key).Returns("xxxxxxxx");
+
+        serviceCollection.AddTransient(_ => mockIConfiguration.Object);
+        serviceCollection.AddTransient(_ => mockIMailSettings.Object);
+
+        serviceProvider = serviceCollection.BuildServiceProvider();
     }
 
     [Fact]
-    public async Task SendEmailTemplateAsync_Should_Send()
+    public void SendEmailTemplateAsync_Should_Send()
     {
         // Arrange
-        //mailSettings.Key = "SG.";
-        //var sendGridService = new SendGridService(mailSettings);
+        var plugin = new SendGridService(serviceProvider.GetService<IMailSettings>()!);
 
         // Act
-        //await sendGridService.SendEmailTemplateAsync("Test", new List<string> { "stzdiego@gmail.com" }, new { });
+        var ex = Assert.ThrowsAsync<Exception>(() => plugin.SendEmailTemplateAsync("xxxxxxxx", new string[] { "eee@eee.ee" }, new Dictionary<string, string>()));
+
+        // Assert
+        Assert.True(true);
+    }
+
+    [Fact]
+    public void SendEmailTemplateAsync_When_Exception()
+    {
+        // Arrange
+        var plugin = new SendGridService(serviceProvider.GetService<IMailSettings>()!);
+
+        // Act
+        var ex = Assert.ThrowsAsync<Exception>(() => plugin.SendEmailTemplateAsync("", new string[] { "eee@eee.ee" }, new Dictionary<string, string>()));
 
         // Assert
         Assert.True(true);

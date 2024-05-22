@@ -45,14 +45,5 @@ public class OliviaDbContext : DbContext, IOliviaDbContext
         : base(options)
     {
     }
-
-    /// <summary>
-    /// OnModelCreating method.
-    /// </summary>
-    /// <param name="builder">ModelBuilder.</param>
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        base.OnModelCreating(builder);
-    }
 }
 #pragma warning restore SA1201 // ElementsMustAppearInTheCorrectOrder

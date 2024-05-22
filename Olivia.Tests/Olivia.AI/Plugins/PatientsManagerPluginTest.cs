@@ -26,7 +26,7 @@ public class PatientsManagerPluginTest
 
         mockIChatService.Setup(x => x.AsociateSender(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.CompletedTask);
         mockIDoctorService.Setup(x => x.GetAvailable()).ReturnsAsync(new List<Doctor>() { new Doctor() { Name = "John Doe", LastName = "Doe", Email = "ee@ee.ee", Information = "Information" } });
-        mockIMailService.Setup(x => x.SendEmailTemplateAsync(It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<Dictionary<string, string>>())).Returns(Task.CompletedTask);
+        mockIMailService.Setup(x => x.SendEmailTemplateAsync(It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<Dictionary<string, string>>())).Returns(Task.FromResult(true));
 
         serviceCollection.AddTransient(_ => mockIChatService.Object);
         serviceCollection.AddTransient(_ => mockIPatientService.Object);
@@ -55,6 +55,21 @@ public class PatientsManagerPluginTest
     {
         // Arrange
         var plugin = new PatientManagerPlugin(serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<IPatientService>()!, serviceProvider.GetService<IDoctorService>()!, serviceProvider.GetService<IProgramationService>()!, serviceProvider.GetService<IMailService>()!);
+
+        // Act
+        var result = await plugin.GetDoctorsInfoAsync(new Kernel(), Guid.Empty.ToString());
+
+        // Assert
+        Assert.NotNull(result);
+    }
+
+    [Fact]
+    public async Task GetDoctorsInfoAsync_Should_Information_Large()
+    {
+        // Arrange
+        var mockDoctorService = new Mock<IDoctorService>();
+        mockDoctorService.Setup(x => x.GetAvailable()).ReturnsAsync(new List<Doctor>() { new Doctor() { Name = "John Doe", LastName = "Doe", Email = "ee@ee.ee", Information = "El Dr. José Martínez, especialista en cardiología, cuenta con más de 20 años de experiencia en el diagnóstico y tratamiento de enfermedades del corazón. Graduado con honores de la Universidad Nacional Autónoma de México (UNAM), ha trabajado en prestigiosos hospitales nacionales e internacionales. Es autor de múltiples publicaciones científicas y miembro activo de la Sociedad Mexicana de Cardiología. Su enfoque se centra en la prevención y manejo integral de patologías cardiovasculares, brindando atención personalizada y de alta calidad a sus pacientes." } });
+        var plugin = new PatientManagerPlugin(serviceProvider.GetService<IChatService>()!, serviceProvider.GetService<IPatientService>()!, mockDoctorService.Object, serviceProvider.GetService<IProgramationService>()!, serviceProvider.GetService<IMailService>()!);
 
         // Act
         var result = await plugin.GetDoctorsInfoAsync(new Kernel(), Guid.Empty.ToString());

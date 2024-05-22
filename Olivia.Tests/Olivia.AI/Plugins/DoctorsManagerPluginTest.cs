@@ -32,7 +32,7 @@ public class DoctorsManagerPluginTest
         mockIPatientService.Setup(x => x.Find(It.IsAny<Guid>())).ReturnsAsync(new Patient() { Name = "John Doe", LastName = "Doe", Email = "ee@ee.ee" });
         mockIDoctorService.Setup(x => x.Find(It.IsAny<Guid>())).ReturnsAsync(new Doctor() { Name = "John Doe", LastName = "Doe", Email = "ee@ee.ee" });
         mockIDoctorService.Setup(x => x.PayPatient(It.IsAny<Guid>())).ReturnsAsync(true);
-        mockIMailService.Setup(x => x.SendEmailTemplateAsync(It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<Dictionary<string, string>>())).Returns(Task.CompletedTask); ;
+        mockIMailService.Setup(x => x.SendEmailTemplateAsync(It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<Dictionary<string, string>>())).Returns(Task.FromResult(true)); ;
 
         serviceCollection.AddTransient(_ => mockIPatientService.Object);
         serviceCollection.AddTransient(_ => mockIDoctorService.Object);
