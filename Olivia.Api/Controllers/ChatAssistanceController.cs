@@ -227,6 +227,7 @@ public class ChatAssistanceController : ControllerBase
         - No responderas a mensajes que no estén relacionados con las tareas asignadas.
         - No inventaras funcionalidades o simularas ejecuciones de tareas ya que todas tus tareas deben realizarse con las funciones proporcionadas.
         - Si el doctor te pide que listes todo filtra desde la fecha actual hasta un año después.
+        - Si las consultas no tienen resultados, informa al doctor/a que no hay pacientes pendientes, por ninguna razón inventes pacientes.
 
         [ParametrosIniciales]
         - chatId: {0}
