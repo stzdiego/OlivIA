@@ -702,3 +702,4 @@ Olivia.Api/appsettings.json
 Olivia.Api/Data/Olivia.db-shm
 Olivia.Api/Data/Olivia.db-shm
 Olivia.Tests/appsettings.Development.json
+Deploy/.env
