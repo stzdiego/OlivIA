@@ -22,4 +22,9 @@ public class AgentMessageDto
     /// Gets or sets the sender identifier.
     /// </summary>
     public Guid? SenderId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the sender name.
+    /// </summary>
+    public DateTime Date { get; set; }
 }

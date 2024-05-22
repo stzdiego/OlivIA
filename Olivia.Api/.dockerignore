@@ -1,0 +1,26 @@
+# Ignorar los archivos de configuración
+appsettings.json
+appsettings.*.json
+
+# Ignorar los archivos de Visual Studio y .NET Core
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.userprefs
+
+# Ignorar los archivos de Git
+.git/
+.gitignore
+
+# Ignorar los archivos de Docker
+Dockerfile
+.dockerignore
+
+# Ignorar los archivos de logs
+logs/
+*.log
+
+# Ignorar los archivos temporales
+tmp/

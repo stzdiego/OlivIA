@@ -1,0 +1,200 @@
+@using Olivia.Shared.Dtos
+@using Olivia.Shared.Enums
+@using Olivia.Shared.Interfaces
+@page "/patients"
+@inject IHttpClientFactory IHttpClientFactory
+@inject IOliviaApiSettings OliviaApiSettings
+@inject IJSRuntime JSRuntime
+@inject NotificationService NotificationService
+@using Olivia.Shared.Entities
+
+<PageTitle>Patient Assistant</PageTitle>
+
+<RadzenStack class="messages-container">
+    <RadzenStack class="messages-description" Gap="0.5rem" Orientation="Orientation.Horizontal"
+        AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+            <RadzenImage Path="images/olivia_icon.svg" Style="height: 2rem;" />
+            <RadzenText TextStyle="TextStyle.H5" Style="margin: 0;" Text="Patient assistant" />
+        </RadzenStack>
+    </RadzenStack>
+    <RadzenStack id="chat-messages" class="chat-messages" JustifyContent="JustifyContent.SpaceBetween">
+        <RadzenStack>
+            @foreach (var message in messages)
+            {
+                @if (message.Type is MessageTypeEnum.User)
+                {
+                    <RadzenStack class="message-list-item-is-mine" Orientation="Orientation.Horizontal"
+                        AlignItems="AlignItems.Center">
+                        <RadzenLabel Style="white-space: pre-line;" Text="@message.Content" />
+                        <RadzenText TextStyle="TextStyle.Caption" Text="@message.CreatedAt.ToString("HH:mm")"
+                            Style="color: gray;" />
+                    </RadzenStack>
+                }
+                else
+                {
+                    <RadzenStack class="message-list-item" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+                        <RadzenLabel Style="white-space: pre-line;" Text=@message.Content />
+                        <RadzenText TextStyle="TextStyle.Caption" Text="@message.CreatedAt.ToString("HH:mm")"
+                            Style="color: gray;" />
+                    </RadzenStack>
+                }
+            }
+        </RadzenStack>
+    </RadzenStack>
+    <RadzenStack class="chat-sender" Orientation="Orientation.Horizontal">
+        <RadzenTextBox @ref="rtbMessage" Placeholder="Enter here..." Style="width: 100%;" @bind-Value="newMessageBind"
+            @oninput="TextAreaOnInput" @onkeyup="TextAreaKeyUp" Disabled="@(!isChatCreated)" />
+        <RadzenButton Icon="send" Variant="Variant.Outlined" Click="@(args => SendMessage())" Disabled="@(!isChatCreated)" />
+    </RadzenStack>
+</RadzenStack>
+
+<style>
+    .messages-container {
+        display: flex;
+        flex-direction: column;
+        height: 88vh;
+    }
+
+    .messages-description {
+        width: 100%;
+        height: 5rem;
+        padding: 1rem;
+        background-color: #97B770;
+    }
+
+    .chat-sender {
+        flex-grow: 0;
+        height: 2.5rem;
+        margin: 1rem;
+    }
+
+    .chat-messages {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 0.5rem;
+    }
+
+    .message-list-item-is-mine {
+        padding: 0.5rem;
+        border-radius: 0.3rem;
+        background-color: #A8CA7E;
+        margin: 0.3rem;
+        align-self: flex-start;
+        flex-wrap: wrap;
+        max-width: 70%;
+    }
+
+    .message-list-item {
+        padding: 0.5rem;
+        border-radius: 0.3rem;
+        background-color: #CBDDB5;
+        margin: 0.3rem;
+        align-self: flex-end;
+        flex-wrap: wrap;
+        max-width: 70%;
+    }
+</style>
+
+@code {
+    private HttpClient? httpClient;
+    private List<Message> messages = new List<Message>();
+    private Guid chatId;
+    private string newMessageBind = "";
+    private string newMessageInput = "";
+    private RadzenTextBox? rtbMessage;
+    private bool isChatCreated;
+    int messageCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        httpClient = IHttpClientFactory.CreateClient("OliviaApi");
+        await CreateChatAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender && messageCount != messages.Count)
+        {
+            messageCount = messages.Count;
+            await JSRuntime.InvokeVoidAsync("scrollToBottom");
+        }
+    }
+
+    private async Task CreateChatAsync()
+    {
+        try
+        {
+            isChatCreated = false;
+            var response = await httpClient!.GetAsync(OliviaApiSettings.NewChatEndpoint);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var idDto = await response.Content.ReadFromJsonAsync<IdDto>();
+                chatId = idDto!.Id;
+                messages.Clear();
+                isChatCreated = true;
+            }
+        }
+        catch
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Error", "An error occurred while creating the chat.");
+        }
+    }
+
+    private void TextAreaOnInput(ChangeEventArgs args)
+    {
+        newMessageInput = args.Value?.ToString() ?? "";
+    }
+
+    private async Task TextAreaKeyUp(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+        {
+            await SendMessage();
+        }
+    }
+
+    private async Task SendMessage()
+    {
+        try
+        {
+            var newUserMessage = new Message
+                {
+                    CreatedAt = DateTime.Now,
+                    Content = newMessageInput,
+                    Type = MessageTypeEnum.User
+                };
+
+            var messageDto = new PatientNewMessageDto
+                {
+                    ChatId = chatId,
+                    Content = newMessageInput
+                };
+
+            newMessageInput = "";
+            newMessageBind = "";
+            messages.Add(newUserMessage);
+            StateHasChanged();
+            
+            var response = await httpClient!.PostAsJsonAsync(OliviaApiSettings.NewMessagePatientEndpoint, messageDto);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var messageResponse = await response.Content.ReadFromJsonAsync<AgentMessageDto>();
+                var newAgentMessage = new Message
+                    {
+                        CreatedAt = messageResponse!.Date,
+                        Content = messageResponse!.Content,
+                        Type = MessageTypeEnum.Agent
+                    };
+
+                messages.Add(newAgentMessage);
+            }
+        }
+        catch
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Error", "An error occurred while sending the message.");
+        }
+    }
+}

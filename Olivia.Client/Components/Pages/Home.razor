@@ -1,7 +1,42 @@
 ﻿@page "/"
+@inject NavigationManager NavigationManager
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Olivia Assistance</PageTitle>
 
-<h1>Hello, world!</h1>
+<RadzenStack Style="padding: 1rem 4rem;">
+    <RadzenImage Path="images/olivia_text.svg" Style="height: 6rem;" />
+    <hr />
+    <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Justify"
+        Text="Olivia Assistance is an intelligent and efficient medical assistance application, designed to facilitate appointment scheduling and patient management for doctors, while at the same time providing patients with a straightforward and direct way to request and manage their medical appointments." />
+    <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Left"
+        Text="The application consists of two main fronts:" />
+    <RadzenText TextStyle="TextStyle.H5" TextAlign="TextAlign.Left" Text="Patient Front" />
+    <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Left"
+        Text="This front is responsible for collecting the necessary information to schedule an appointment and presenting relevant information about the available doctors. Patients can request appointments and manage them in a straightforward and direct manner." />
+    <RadzenText TextStyle="TextStyle.H5" TextAlign="TextAlign.Left" Text="Doctor Front" />
+    <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Left"
+        Text="The second front is for doctors, where the application's artificial intelligence displays the patients' appointments and allows doctors to approve them. Once approved, doctors can indicate which patients have paid for their appointment, thus confirming the appointment." />
+    <RadzenText TextStyle="TextStyle.H5" TextAlign="TextAlign.Left" Text="Technology" />
+    <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Left"
+        Text="Olivia Assistance has been developed using cutting-edge technologies such as .NET 8 and SQLite, and follows the principles of hexagonal architecture to ensure a clean and maintainable software design. In addition, unit tests have been implemented with xUnit to ensure the quality and reliability of the software." />
+    <RadzenText TextStyle="TextStyle.H5" TextAlign="TextAlign.Left" Text="Source Code" />
+    <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Left"
+        Text="The source code of Olivia Assistance is available on GitHub, demonstrating transparency and dedication to software quality." />
+    <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Left"
+        Text="This project is the result of the work carried out for the Software Engineering II course at the Autonomous University of the West. Olivia Assistance is an example of how technology can be used to improve efficiency and convenience in the healthcare sector." />
 
-Welcome to your new app.
+    <RadzenStack AlignItems="AlignItems.Center">
+        <RadzenText TextStyle="TextStyle.H5" TextAlign="TextAlign.Left" Text="Follow us" />
+        <RadzenStack AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal" Gap="1rem"
+            Wrap="FlexWrap.Wrap">
+            <a href="https://github.com/stzdiego/OlivIA" target="_blank">
+                <RadzenButton ButtonStyle="ButtonStyle.Light">
+                    <RadzenImage Path="images/github-mark.svg" Style="height: 2rem;" />
+                </RadzenButton>
+            </a>
+        </RadzenStack>
+    </RadzenStack>
+</RadzenStack>
+
+@code {
+}

@@ -14,9 +14,19 @@
 </head>
 
 <body>
-    <Routes />
+    <Routes @rendermode=RenderMode.InteractiveServer />
     <script src="_framework/blazor.web.js"></script>
-    <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
+    <script
+        src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
+
+    <script>
+        window.scrollToBottom = () => {
+            setTimeout(() => {
+                var element = document.querySelector(".chat-messages");
+                element.scrollTop = element.scrollHeight;
+            }, 0);
+        }
+    </script>
 </body>
 
 </html>
