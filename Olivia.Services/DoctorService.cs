@@ -207,9 +207,19 @@ public class DoctorService : IDoctorService
             .ToHashSet();
         var doctor = await this.Find(doctorId);
 
+        TimeZoneInfo doctorTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time"); // Zona horaria de Bogotá, Colombia
         var now = DateTime.UtcNow;
-        var start = new DateTime(now.Year, now.Month, now.Day, doctor!.Start.Hours, doctor.Start.Minutes, doctor.Start.Seconds);
-        var end = new DateTime(now.Year, now.Month, now.Day, doctor.End.Hours, doctor.End.Minutes, doctor.End.Seconds);
+        DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(now, doctorTimeZone);
+
+        var start = new DateTime(localTime.Year, localTime.Month, localTime.Day, doctor!.Start.Hours, doctor.Start.Minutes, doctor.Start.Seconds);
+        var end = new DateTime(localTime.Year, localTime.Month, localTime.Day, doctor.End.Hours, doctor.End.Minutes, doctor.End.Seconds);
+
+        // Si la hora actual es después de la hora de inicio del médico, comienza a buscar desde la próxima hora completa.
+        if (localTime > start)
+        {
+            var minutesToNextHour = 60 - localTime.Minute;
+            start = localTime.AddMinutes(minutesToNextHour);
+        }
 
         for (var nextAppointment = start; nextAppointment <= end; nextAppointment = nextAppointment.AddHours(1))
         {
@@ -226,7 +236,7 @@ public class DoctorService : IDoctorService
             }
         }
 
-        throw new InvalidOperationException("No available appointment found.");
+        throw new Exception("No available appointments");
     }
 
     /// <summary>
@@ -248,8 +258,11 @@ public class DoctorService : IDoctorService
             .ToHashSet();
         var availableAppointments = new List<DateTime>();
 
-        var start = new DateTime(date.Year, date.Month, date.Day, doctor!.Start.Hours, doctor.Start.Minutes, doctor.Start.Seconds);
-        var end = new DateTime(date.Year, date.Month, date.Day, doctor.End.Hours, doctor.End.Minutes, doctor.End.Seconds);
+        TimeZoneInfo doctorTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time"); // Zona horaria de Bogotá, Colombia
+        DateTime localDate = TimeZoneInfo.ConvertTimeFromUtc(date, doctorTimeZone);
+
+        var start = new DateTime(localDate.Year, localDate.Month, localDate.Day, doctor!.Start.Hours, doctor.Start.Minutes, doctor.Start.Seconds);
+        var end = new DateTime(localDate.Year, localDate.Month, localDate.Day, doctor.End.Hours, doctor.End.Minutes, doctor.End.Seconds);
 
         for (var i = start; i < end; i = i.AddHours(1))
         {

@@ -242,7 +242,7 @@ var assemblies = [
     "classes": [
       { "name": "Olivia.Services.ChatService", "rp": "Olivia.Services_ChatService.html", "cl": 55, "ucl": 5, "cal": 60, "tl": 152, "cb": 7, "tb": 8, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Services.DatabaseService", "rp": "Olivia.Services_DatabaseService.html", "cl": 30, "ucl": 0, "cal": 30, "tl": 116, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
-      { "name": "Olivia.Services.DoctorService", "rp": "Olivia.Services_DoctorService.html", "cl": 163, "ucl": 21, "cal": 184, "tl": 374, "cb": 29, "tb": 40, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Olivia.Services.DoctorService", "rp": "Olivia.Services_DoctorService.html", "cl": 167, "ucl": 26, "cal": 193, "tl": 387, "cb": 28, "tb": 42, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Services.GoogleCalendarService", "rp": "Olivia.Services_GoogleCalendarService.html", "cl": 29, "ucl": 12, "cal": 41, "tl": 82, "cb": 1, "tb": 2, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Services.PatientService", "rp": "Olivia.Services_PatientService.html", "cl": 41, "ucl": 6, "cal": 47, "tl": 119, "cb": 1, "tb": 2, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Olivia.Services.ProgramationService", "rp": "Olivia.Services_ProgramationService.html", "cl": 25, "ucl": 0, "cal": 25, "tl": 77, "cb": 1, "tb": 2, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
@@ -275,9 +275,17 @@ var metrics = [{ "name": "Crap Score", "abbreviation": "crp", "explanationUrl": 
 var historicCoverageExecutionTimes = [];
 
 var riskHotspotMetrics = [
+      { "name": "Crap Score", "explanationUrl": "https://googletesting.blogspot.de/2011/02/this-code-is-crap.html" },
+      { "name": "Cyclomatic complexity", "explanationUrl": "https://en.wikipedia.org/wiki/Cyclomatic_complexity" },
 ];
 
 var riskHotspots = [
+  {
+    "assembly": "Olivia.Services", "class": "Olivia.Services.DoctorService", "reportPath": "Olivia.Services_DoctorService.html", "methodName": "GetMostRecentAvailableAppointmentAsync()", "methodShortName": "GetMostRecentAvailableAppointmentAsync()", "fileIndex": 0, "line": 204,
+    "metrics": [
+      { "value": 17.87, "exceeded": true },
+      { "value": 10, "exceeded": false },
+    ]},
 ];
 
 var branchCoverageAvailable = true;

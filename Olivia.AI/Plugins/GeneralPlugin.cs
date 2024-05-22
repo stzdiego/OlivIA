@@ -19,6 +19,6 @@ public sealed class GeneralPlugin : IPlugin
     [Description("Obtiene la fecha y hora actual.")]
     public static string GetTime()
     {
-        return DateTime.Now.ToString("HH:mm:ss");
+        return DateTime.UtcNow.ToString("HH:mm:ss");
     }
 }
