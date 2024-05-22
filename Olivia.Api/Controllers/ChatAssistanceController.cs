@@ -96,7 +96,7 @@ public class ChatAssistanceController : ControllerBase
 
             await this.chatService.NewMessage(chatMessage.ChatId, MessageTypeEnum.User, chatMessage.Content);
             messages = await this.chatService.GetSummary(chatMessage.ChatId);
-            AgentMessageDto response = new AgentMessageDto() { Id = chatMessage.ChatId, Content = await this.agent!.Send(messages) };
+            AgentMessageDto response = new AgentMessageDto() { Id = chatMessage.ChatId, Content = await this.agent!.Send(messages), Date = DateTime.Now };
             await this.chatService.NewMessage(chatMessage.ChatId, MessageTypeEnum.Agent, response.Content);
 
             return this.Ok(response);
@@ -133,7 +133,7 @@ public class ChatAssistanceController : ControllerBase
 
             await this.chatService.NewMessage(chatMessage.ChatId, MessageTypeEnum.User, chatMessage.Content);
             messages = await this.chatService.GetSummary(chatMessage.ChatId);
-            AgentMessageDto response = new AgentMessageDto() { Id = chatMessage.ChatId, Content = await this.agent!.Send(messages) };
+            AgentMessageDto response = new AgentMessageDto() { Id = chatMessage.ChatId, Content = await this.agent!.Send(messages), Date = DateTime.Now };
             await this.chatService.NewMessage(chatMessage.ChatId, MessageTypeEnum.Agent, response.Content);
 
             return this.Ok(response);
@@ -220,7 +220,7 @@ public class ChatAssistanceController : ControllerBase
         - Obediente
 
         [Reglas]
-        - Iniciar una conversación saludando al doctor por su nombre (doctorName).
+        - Iniciar una conversación saludando al doctor/a por su nombre (doctorName).
         - Completar las tareas en el orden en que se presentan.
         - Solicitar aprobación antes de tomar cualquier acción consiguiente.
         - Si el usuario no proporciona suficiente información, seguir haciendo preguntas hasta que haya suficiente información para completar la tarea.

@@ -1,20 +1,27 @@
-// Copyright (c) Olivia Inc.. All Rights Reserved.
-// Licensed under the MIT License. See LICENSE in the project root for license information.
-
-#pragma warning disable SA1200 // UsingDirectivesMustBePlacedWithinNamespace
+using Microsoft.Extensions.Options;
 using Olivia.Client.Components;
+using Olivia.Shared.Interfaces;
+using Olivia.Shared.Settings;
 using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddRadzenComponents();
 
+////OliviaApi
+builder.Services.Configure<OliviaApiSettings>(builder.Configuration.GetSection(nameof(OliviaApiSettings)));
+builder.Services.AddSingleton<IOliviaApiSettings>(s => s.GetRequiredService<IOptions<OliviaApiSettings>>().Value);
+
+builder.Services.AddHttpClient("OliviaApi", (s, c) =>
+{
+    var settings = s.GetRequiredService<IOliviaApiSettings>();
+    c.BaseAddress = new Uri(settings.Url);
+});
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);

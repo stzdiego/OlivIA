@@ -1,67 +1,31 @@
 ﻿@inherits LayoutComponentBase
 
-<RadzenLayout>
-    <RadzenHeader Style="padding: 0.8rem 0.5rem 0rem 0.5rem;">
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
-            JustifyContent="JustifyContent.SpaceBetween" Gap="0">
-            <RadzenStack Orientation="Orientation.Horizontal" Gap="0">
-                <RadzenText TextStyle="TextStyle.H5" Text="Olivia" Style="color: white;" />
-            </RadzenStack>
-            <RadzenStack Orientation="Orientation.Horizontal" Gap="0">
-                <RadzenText TextStyle="TextStyle.Overline" Text="Medical assistant" Style="color: white;" />
-            </RadzenStack>
+<RadzenLayout Style="background-color: #F7FEEF;">
+    <RadzenHeader Style="background-color: #608334;">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+            <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
+            <RadzenLabel Text="Olivia Assistance" />
         </RadzenStack>
     </RadzenHeader>
-
-    <RadzenSidebar Style="padding: 0.5rem 0.5rem 0rem 0.5rem;">
-        <RadzenStack Gap="0.3rem">
-            <RadzenButton Text="New chat" Variant="Variant.Outlined" Shade="Shade.Lighter" />
-            <RadzenText TextStyle="TextStyle.Caption" Text="Chats" />
-            <ChatList />
-        </RadzenStack>
+    <RadzenSidebar Responsive="false" Style="width: max-content">
+        <RadzenPanelMenu DisplayStyle="@(sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)" ShowArrow="false">
+            <RadzenPanelMenuItem Text="Home" Icon="home" Path="/" />
+            <RadzenPanelMenuItem Text="Patient" Icon="person" Path="patients" />
+            <RadzenPanelMenuItem Text="Doctor" Icon="person_add" Path="doctors" />
+        </RadzenPanelMenu>
     </RadzenSidebar>
-
-    <RadzenBody class="chat-information">
-        <ChatDescription Class="chat-information-header" />
-        <MessageViewer Class="chat-information-messages" />
-        <ChatStatusReponse Class="chat-information-sender" />
-        <MessageSender Class="chat-information-sender" />
+    <RadzenBody Style="padding: 0px;">
+        @Body
     </RadzenBody>
-
-    <RadzenFooter Style="background-color: rgb(230, 230, 230);">
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
-            JustifyContent="JustifyContent.SpaceBetween" Gap="0">
-            <RadzenStack Orientation="Orientation.Horizontal" Gap="0">
-                <RadzenText TextStyle="TextStyle.Caption" Text="© 2024 Olivia" />
-            </RadzenStack>
-            <RadzenStack Orientation="Orientation.Horizontal" Gap="0">
-                <RadzenText TextStyle="TextStyle.Caption" Text="v0.0.1" />
-            </RadzenStack>
+    <RadzenFooter Style="background-color: #608334;padding: 0.5rem;">
+        <RadzenStack AlignItems="AlignItems.End" JustifyContent="JustifyContent.Center" Gap="0">
+            <RadzenText TextStyle="TextStyle.Caption" Text="Olivia Assistance ® 2024" Style="color: white;" />
         </RadzenStack>
     </RadzenFooter>
 </RadzenLayout>
 
-<RadzenComponents />
+<RadzenComponents/>
 
-<style>
-    .chat-information {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        padding: 0;
-    }
-
-    .chat-information-header,
-    .chat-information-sender {
-        background-color: #f0f0f0;
-        border-bottom: 1px solid #ccc;
-        padding: 0.7rem;
-        
-    }
-
-    .chat-information-messages {
-        flex: 1;
-        overflow-y: auto;
-        padding: 20px;
-    }
-</style>
+@code {
+    bool sidebarExpanded = false;
+}

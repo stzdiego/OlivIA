@@ -69,5 +69,10 @@ namespace Olivia.Shared.Entities
         /// Gets or sets a value indicating whether the doctor is available.
         /// </summary>
         public bool Available { get; set; } = true;
+
+        /// <summary>
+        /// Gets the doctor's full name.
+        /// </summary>
+        public string FullName => $"{this.Name} {this.LastName}";
     }
 }
